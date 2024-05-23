@@ -20,7 +20,6 @@ firebase_credentials = {
     "client_x509_cert_url": os.getenv("FIREBASE_CLIENT_CERT_URL")
 }
 
-print('private_key:', firebase_credentials.get('private_key'))
 # Initialize Firebase Admin SDK
 cred = credentials.Certificate(firebase_credentials)
 initialize_app(cred)

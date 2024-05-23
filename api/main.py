@@ -8,15 +8,7 @@ from jose import JWTError, jwt
 import firebase_admin
 import datetime
 
-from data.firebase_config import db
-
-app = FastAPI()
-
-
-# Initialize Firebase Admin SDK
-cred = credentials.Certificate("firebase_credentials.json")
-firebase_admin.initialize_app(cred)
-db = firestore.client()
+from data.firebase import db
 
 app = FastAPI()
 
