@@ -91,7 +91,7 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
 @router.post("/register", response_model=User)
 async def register(user: User):
     hashed_password = get_password_hash(user.password)
-    user_dict = user.dict()
+    user_dict = user.model_dump(exclude={"password"})
     user_dict.update({"hashed_password": hashed_password})
     user_ref = db.collection('players').document(user.username)
     if user_ref.get().exists:
