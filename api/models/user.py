@@ -9,9 +9,9 @@ class User(BaseModel):
     @classmethod
     def normalize_username(cls, value):
         if len(value) < 3:
-            raise ValueError("Password should have at least 3 characters")
+            raise ValueError("Username should have at least 3 characters")
         if len(value) > 20:
-            raise ValueError("Password should have at most 20 characters")
+            raise ValueError("Username should have at most 20 characters")
         return value.lower()
 
     @field_validator("password")
@@ -33,10 +33,12 @@ class UserInDB(BaseModel):
     username: str
     email: EmailStr | None = Field(default=None)
     hashed_password: str
+    token: str | None = Field(default=None)
 
 class UserResponse(BaseModel):
     username: str
     email: EmailStr | None = Field(default=None)
+    token: str | None = Field(default=None)
 
 class Config:
     from_attributes = True
