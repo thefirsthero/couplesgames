@@ -1,10 +1,19 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, field_validator
 from typing import Optional, List
 
 class WouldYouRatherQuestion(BaseModel):
     option1: str
     option2: str
     category: Optional[str] = None
+
+    @classmethod
+    @field_validator('category')
+    def validate_category(cls, value):
+        if value:
+            valid_categories = ['relationships', 'career', 'finance', 'health', 'fun']
+            if value.lower() not in valid_categories:
+                raise ValueError(f'Invalid category. Must be one of {", ".join(valid_categories)}')
+        return value
 
 class WouldYouRatherQuestionResponse(BaseModel):
     id: str
