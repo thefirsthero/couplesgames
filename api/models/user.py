@@ -29,7 +29,9 @@ class User(BaseModel):
             raise ValueError("Password must contain at least one digit")
         return value
 
-class UserInDB(User):
+class UserInDB(BaseModel):
+    username: str
+    email: EmailStr | None = Field(default=None)
     hashed_password: str
 
 class UserResponse(BaseModel):
