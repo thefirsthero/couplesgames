@@ -1,15 +1,26 @@
 from pydantic import BaseModel, EmailStr, Field, field_validator
 
 class User(BaseModel):
-    username: str = Field(..., min_length=3, max_length=20, description="Username must be between 3 and 20 characters")
+    username: str
     email: EmailStr | None = Field(default=None)
-    password: str = Field(..., min_length=6, max_length=20, description="Password must be between 6 and 20 characters")
+    password: str
 
     @field_validator("username")
+    @classmethod
     def normalize_username(cls, value):
+        if len(value) < 3:
+            raise ValueError("Password should have at least 3 characters")
+        if len(value) > 20:
+            raise ValueError("Password should have at most 20 characters")
         return value.lower()
+
     @field_validator("password")
+    @classmethod
     def password_complexity(cls, value):
+        if len(value) < 6:
+            raise ValueError("Password should have at least 6 characters")
+        if len(value) > 20:
+            raise ValueError("Password should have at most 20 characters")
         if not any(char.isupper() for char in value):
             raise ValueError("Password must contain at least one uppercase letter")
         if not any(char.islower() for char in value):
@@ -20,3 +31,10 @@ class User(BaseModel):
 
 class UserInDB(User):
     hashed_password: str
+
+class UserResponse(BaseModel):
+    username: str
+    email: EmailStr | None = Field(default=None)
+
+class Config:
+    from_attributes = True

@@ -1,9 +1,8 @@
-# controllers/auth_controller.py
 from fastapi import APIRouter, HTTPException, Depends, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from datetime import timedelta
 from models.token import Token
-from models.user import User
+from models.user import User, UserResponse
 from services.auth_service import AuthService
 
 router = APIRouter()
@@ -23,7 +22,7 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
     )
     return {"access_token": access_token, "token_type": "bearer"}
 
-@router.post("/register", response_model=User)
+@router.post("/register", response_model=UserResponse)
 async def register(user: User):
     return await AuthService.register_user(user)
 
