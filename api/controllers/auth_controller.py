@@ -1,9 +1,10 @@
 from fastapi import APIRouter, HTTPException, Depends, status
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from fastapi.security import OAuth2PasswordRequestForm
 from datetime import timedelta
 from models.token import Token
 from models.user import User, UserResponse
 from services.auth_service import AuthService
+from data.firebase import db
 
 router = APIRouter()
 
@@ -20,6 +21,8 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
     access_token = AuthService.create_access_token(
         data={"sub": user.username}, expires_delta=access_token_expires
     )
+    # Persist the token in the database
+    db.collection('players').document(user.username).update({"token": access_token})
     return {"access_token": access_token, "token_type": "bearer"}
 
 @router.post("/register", response_model=UserResponse)

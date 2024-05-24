@@ -75,6 +75,9 @@ class AuthService:
         user = cls.get_user(username=token_data.username)
         if user is None:
             raise credentials_exception
+        # Ensure token matches the stored token
+        if user.token != token:
+            raise credentials_exception
         return user
 
     @classmethod
@@ -91,7 +94,6 @@ class AuthService:
     
     @classmethod
     async def handle_token_expiration(cls):
-        # This method can be scheduled to run periodically to handle token expiration
         users_ref = db.collection('players').stream()
         for user in users_ref:
             user_data = user.to_dict()
