@@ -87,3 +87,35 @@ class RoomService:
         questions = room_dict.get("questions", [])
         response_questions = [{"id": idx, "option1": q["option1"], "option2": q["option2"], "category": q["category"]} for idx, q in enumerate(questions)]
         return response_questions
+    
+    @staticmethod
+    async def leave_room(room_id: str, current_user: User) -> RoomResponse:
+        room_ref = db.collection('rooms').document(room_id)
+        room = room_ref.get()
+        if not room.exists:
+            raise HTTPException(status_code=404, detail="Room not found")
+        room_dict = room.to_dict()
+        if room_dict.get("player1") == current_user.username:
+            room_dict["player1"] = room_dict.get("player2")
+            room_dict["player2"] = None
+        elif room_dict.get("player2") == current_user.username:
+            room_dict["player2"] = None
+        else:
+            raise HTTPException(status_code=400, detail="You are not in the room")
+        
+        if not room_dict["player1"]:
+            room_ref.delete()
+            return {"room_id": room_id, "room_name": room_dict["room_name"], "player1": None, "player2": None, "is_active": False, "questions": None}
+        
+        room_ref.update(room_dict)
+        return {"room_id": room_id, **room_dict}
+
+    @staticmethod
+    async def remove_user_from_rooms(username: str):
+        rooms_ref = db.collection('rooms').where("player1", "==", username).stream()
+        async for room in rooms_ref:
+            await RoomService.leave_room(room.id, User(username=username))
+
+        rooms_ref = db.collection('rooms').where("player2", "==", username).stream()
+        async for room in rooms_ref:
+            await RoomService.leave_room(room.id, User(username=username))

@@ -1,4 +1,5 @@
 import datetime
+import os
 from typing import Optional
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
@@ -8,7 +9,7 @@ from models.token import TokenData
 from models.user import User, UserInDB
 from data.firebase import db
 from dotenv import load_dotenv
-import os
+from services.room_service import RoomService
 
 load_dotenv()
 
@@ -87,3 +88,19 @@ class AuthService:
             raise HTTPException(status_code=400, detail="Username already registered")
         user_ref.set(user_dict)
         return user
+    
+    @classmethod
+    async def handle_token_expiration(cls):
+        # This method can be scheduled to run periodically to handle token expiration
+        users_ref = db.collection('players').stream()
+        for user in users_ref:
+            user_data = user.to_dict()
+            token = user_data.get("token")
+            if token:
+                try:
+                    jwt.decode(token, cls.SECRET_KEY, algorithms=[cls.ALGORITHM])
+                except JWTError:
+                    # Token has expired, remove user from rooms
+                    username = user_data.get("username")
+                    if username:
+                        await RoomService.remove_user_from_rooms(username)
