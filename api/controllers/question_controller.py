@@ -5,10 +5,10 @@ from services.question_service import QuestionService
 
 router = APIRouter()
 
-@router.post("/would_you_rather", response_model=WouldYouRatherQuestionResponse)
+@router.post("/would_you_rather/add", response_model=WouldYouRatherQuestionResponse)
 async def add_would_you_rather_question(question: WouldYouRatherQuestion):
     return await QuestionService.add_would_you_rather_question(question)
 
-@router.get("/would_you_rather", response_model=List[WouldYouRatherQuestionResponse])
+@router.get("/would_you_rather/get", response_model=List[WouldYouRatherQuestionResponse])
 async def get_would_you_rather_questions(category: Optional[str] = Query(None)):
     return await QuestionService.get_would_you_rather_questions(category)
