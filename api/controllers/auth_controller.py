@@ -90,6 +90,8 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
 
 @router.post("/register", response_model=User)
 async def register(user: User):
+    user.username = user.username.lower()
+    
     hashed_password = get_password_hash(user.password)
     user_dict = user.model_dump(exclude={"password"})
     user_dict.update({"hashed_password": hashed_password})
