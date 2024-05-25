@@ -129,3 +129,4 @@ class RoomService:
         except Exception as e:
             LoggingService.log_exception(e, __name__, 'remove_user_from_rooms', 106, username)
             raise
+
