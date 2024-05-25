@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import RedirectResponse
 import uvicorn
@@ -26,8 +26,18 @@ app.include_router(question_router, prefix="/questions", tags=["questions"])
 async def redirect_to_docs():
     return RedirectResponse(url="/docs")
 
-if __name__ == "__main__":
+async def start_scheduler():
+    global scheduler
     scheduler = AsyncIOScheduler()
-    scheduler.add_job(AuthService.handle_token_expiration, 'interval', minutes=1)  # Adjust the interval as needed
+    scheduler.add_job(AuthService.handle_token_expiration, 'interval', minutes=1)
     scheduler.start()
+
+async def stop_scheduler():
+    global scheduler
+    scheduler.shutdown()
+
+app.add_event_handler("startup", start_scheduler)
+app.add_event_handler("shutdown", stop_scheduler)
+
+if __name__ == "__main__":
     uvicorn.run(app, host="localhost", port=8000)
