@@ -29,6 +29,6 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
 async def register(user: User):
     return await AuthService.register_user(user)
 
-@router.get("/protected-resource")
-async def protected_resource(current_user: User = Depends(AuthService.get_current_user)):
-    return {"message": "This is a protected resource", "user": current_user.username}
+@router.get("/login-status")
+async def login_status(current_user: User = Depends(AuthService.get_current_user)):
+    return {"message": "You are logged in", "user": current_user.username}
