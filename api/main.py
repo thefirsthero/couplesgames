@@ -1,3 +1,4 @@
+import os
 from fastapi import FastAPI, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import RedirectResponse
@@ -29,7 +30,7 @@ async def redirect_to_docs():
 async def start_scheduler():
     global scheduler
     scheduler = AsyncIOScheduler()
-    scheduler.add_job(AuthService.handle_token_expiration, 'interval', minutes=1)
+    scheduler.add_job(AuthService.handle_token_expiration, 'interval', minutes=int(os.getenv("TOKEN_EXPIRATION_CHECK_INTERVAL")))
     scheduler.start()
 
 async def stop_scheduler():
