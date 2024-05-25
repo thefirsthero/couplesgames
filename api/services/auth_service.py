@@ -1,3 +1,4 @@
+# services/auth_service.py
 import datetime
 import os
 from typing import Optional
@@ -10,6 +11,7 @@ from models.user import User, UserInDB
 from data.firebase import db
 from dotenv import load_dotenv
 from services.room_service import RoomService
+from services.logging_service import LoggingService
 
 load_dotenv()
 
@@ -42,20 +44,28 @@ class AuthService:
 
     @classmethod
     def get_user(cls, username: str):
-        user_ref = db.collection('players').document(username.lower()).get()
-        if user_ref.exists:
-            user_dict = user_ref.to_dict()
-            return UserInDB(**user_dict)
-        return None
+        try:
+            user_ref = db.collection('players').document(username.lower()).get()
+            if user_ref.exists:
+                user_dict = user_ref.to_dict()
+                return UserInDB(**user_dict)
+            return None
+        except Exception as e:
+            LoggingService.log_exception(e, __name__, 'get_user', 38, username)
+            return None
 
     @classmethod
     async def authenticate_user(cls, username: str, password: str):
-        user = cls.get_user(username)
-        if not user:
+        try:
+            user = cls.get_user(username)
+            if not user:
+                return False
+            if not cls.verify_password(password, user.hashed_password):
+                return False
+            return user
+        except Exception as e:
+            LoggingService.log_exception(e, __name__, 'authenticate_user', 49, username)
             return False
-        if not cls.verify_password(password, user.hashed_password):
-            return False
-        return user
 
     @classmethod
     async def get_current_user(cls, token: str = Depends(oauth2_scheme)):
@@ -75,34 +85,41 @@ class AuthService:
         user = cls.get_user(username=token_data.username)
         if user is None:
             raise credentials_exception
-        # Ensure token matches the stored token
         if user.token != token:
             raise credentials_exception
         return user
 
     @classmethod
     async def register_user(cls, user: User):
-        user.username = user.username.lower()
-        hashed_password = cls.get_password_hash(user.password)
-        user_dict = user.model_dump(exclude={"password"})
-        user_dict.update({"hashed_password": hashed_password})
-        user_ref = db.collection('players').document(user.username)
-        if user_ref.get().exists:
-            raise HTTPException(status_code=400, detail="Username already registered")
-        user_ref.set(user_dict)
-        return user
-    
+        try:
+            user.username = user.username.lower()
+            hashed_password = cls.get_password_hash(user.password)
+            user_dict = user.model_dump(exclude={"password"})
+            user_dict.update({"hashed_password": hashed_password})
+            user_ref = db.collection('players').document(user.username)
+            if user_ref.get().exists:
+                raise HTTPException(status_code=400, detail="Username already registered")
+            user_ref.set(user_dict)
+            LoggingService.log('INFO', 'User registered successfully', __name__, 'register_user', 80, user.username)
+            return user
+        except Exception as e:
+            LoggingService.log_exception(e, __name__, 'register_user', 83, user.username)
+            raise
+
     @classmethod
     async def handle_token_expiration(cls):
-        users_ref = db.collection('players').stream()
-        for user in users_ref:
-            user_data = user.to_dict()
-            token = user_data.get("token")
-            if token:
-                try:
-                    jwt.decode(token, cls.SECRET_KEY, algorithms=[cls.ALGORITHM])
-                except JWTError:
-                    # Token has expired, remove user from rooms
-                    username = user_data.get("username")
-                    if username:
-                        await RoomService.remove_user_from_rooms(username)
+        try:
+            users_ref = db.collection('players').stream()
+            for user in users_ref:
+                user_data = user.to_dict()
+                token = user_data.get("token")
+                if token:
+                    try:
+                        jwt.decode(token, cls.SECRET_KEY, algorithms=[cls.ALGORITHM])
+                    except JWTError:
+                        username = user_data.get("username")
+                        if username:
+                            await RoomService.remove_user_from_rooms(username)
+            LoggingService.log('INFO', 'Token expiration handled', __name__, 'handle_token_expiration', 98)
+        except Exception as e:
+            LoggingService.log_exception(e, __name__, 'handle_token_expiration', 100)
