@@ -1,4 +1,4 @@
-from pydantic import BaseModel, field_validator
+from pydantic import BaseModel, validator
 from typing import Optional
 
 class WouldYouRatherQuestion(BaseModel):
@@ -6,8 +6,7 @@ class WouldYouRatherQuestion(BaseModel):
     option2: str
     category: Optional[str] = None
 
-    @classmethod
-    @field_validator('category')
+    @validator('category')
     def validate_category(cls, value):
         if value:
             valid_categories = ['relationships', 'career', 'finance', 'health', 'fun']
