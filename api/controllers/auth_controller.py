@@ -32,3 +32,22 @@ async def register(user: User):
 @router.get("/login-status")
 async def login_status(current_user: User = Depends(AuthService.get_current_user)):
     return {"message": "You are logged in", "user": current_user.username}
+
+@router.delete("/delete-user")
+async def delete_user(username: str, password: str, current_user: User = Depends(AuthService.get_current_user)):
+    # Check if the current user is authenticated
+    if not current_user:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Authentication required")
+
+    # Validate username and password
+    user = await AuthService.authenticate_user(username, password)
+    if not user:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid username or password")
+
+    # Delete the user
+    deleted_user = await AuthService.delete_user(username)
+    if not deleted_user:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+
+    return {"message": "User deleted successfully"}
+

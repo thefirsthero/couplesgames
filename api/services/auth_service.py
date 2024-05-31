@@ -123,3 +123,18 @@ class AuthService:
             LoggingService.log('INFO', 'Token expiration handled', __name__, 'handle_token_expiration', 98)
         except Exception as e:
             LoggingService.log_exception(e, __name__, 'handle_token_expiration', 100)
+
+    @classmethod
+    async def delete_user(cls, username: str):
+        try:
+            user_ref = db.collection('players').document(username.lower())
+            user_data = user_ref.get()
+            if user_data.exists:
+                user_ref.delete()
+                LoggingService.log('INFO', 'User deleted successfully', __name__, 'delete_user', 99, username)
+                return True
+            else:
+                return False
+        except Exception as e:
+            LoggingService.log_exception(e, __name__, 'delete_user', 103, username)
+            raise
