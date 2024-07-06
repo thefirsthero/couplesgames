@@ -1,6 +1,6 @@
 import re
 from pydantic import BaseModel, field_validator
-from typing import Optional, List
+from typing import Dict, Optional, List
 from .question import WouldYouRatherQuestion
 
 class Room(BaseModel):
@@ -9,6 +9,9 @@ class Room(BaseModel):
     player2: Optional[str] = None
     is_active: bool = True
     questions: Optional[List[WouldYouRatherQuestion]] = None
+    turn: Optional[str] = None
+    votes: Dict[str, Dict[str, str]] = {}  # Dictionary to track votes for each question
+
 
     @field_validator("room_name")
     @classmethod

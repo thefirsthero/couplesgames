@@ -13,8 +13,10 @@ class RoomService:
             room_dict = room.dict()
             room_dict.update({
                 "player1": current_user.username,
+                "turn": current_user.username,
                 "is_active": True,
-                "questions": []
+                "questions": [],
+                "votes": {}
             })
             doc_ref = db.collection('rooms').add(room_dict)
             LoggingService.log('INFO', 'Room created successfully', __name__, 'create_room', 13, current_user.username)
@@ -22,6 +24,7 @@ class RoomService:
         except Exception as e:
             LoggingService.log_exception(e, __name__, 'create_room', 16, current_user.username)
             raise
+
 
     @staticmethod
     async def join_room(room_id: str, current_user: User) -> RoomResponse:
