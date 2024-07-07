@@ -1,7 +1,7 @@
 import React from 'react'
 import { Chip, Divider, Surface, Text } from 'react-native-paper'
 
-import { SegmentedButton } from '@/components'
+import { Games, SegmentedButton } from '@/components'
 import Locales from '@/locales'
 
 const TabsHome = () => (
@@ -14,7 +14,6 @@ const TabsHome = () => (
       justifyContent: 'center',
     }}
   >
-
     <Text variant="displaySmall">{Locales.t('gameStyle')}</Text>
     <SegmentedButton
       buttons={[
@@ -36,6 +35,7 @@ const TabsHome = () => (
     <Divider />
 
     <Text variant="displaySmall">{Locales.t('titleHome')}</Text>
+    <Games />
 
     <Divider />
 

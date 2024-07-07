@@ -10,6 +10,7 @@ import TabBar from '@/components/common/TabBar'
 import TabsHeader from '@/components/common/TabsHeader'
 
 import SegmentedButton from './games/SegmentedButton'
+import Games from './games/Games'
 
 export {
   DrawerContent,
@@ -19,4 +20,5 @@ export {
   TabBar,
   TabsHeader,
   SegmentedButton,
+  Games,
 }
