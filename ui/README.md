@@ -1,70 +1,107 @@
-# expo-router-starter-kit 🏎️📱
+# expo-react-native-paper
 
-Expo-router-starter-kit is a streamlined template for building cross-platform mobile apps with Expo. This template provides a starting point with updated features and simplified components for efficient development.
+[![CodeQL](https://github.com/youzarsiph/expo-react-native-paper/actions/workflows/codeql.yml/badge.svg)](https://github.com/youzarsiph/expo-react-native-paper/actions/workflows/codeql.yml)
+[![ESLint](https://github.com/youzarsiph/expo-react-native-paper/actions/workflows/eslint.yml/badge.svg)](https://github.com/youzarsiph/expo-react-native-paper/actions/workflows/eslint.yml)
+[![Prettier](https://github.com/youzarsiph/expo-react-native-paper/actions/workflows/prettier.yml/badge.svg)](https://github.com/youzarsiph/expo-react-native-paper/actions/workflows/prettier.yml)
 
-## 💻 Installation
+This repository is a template for React Native Expo applications. It integrates Expo Router and React Native Paper. It also demonstrates how to use Github Actions for linting and formatting.
 
-```bash
-# Clone and create a new repository from this template
-# Install dependencies
-pnpm install
-```
+## Features
 
-```bash
-# Run the project
-pnpm ios
-```
+- Expo
+- Expo Router
+- Material Design V3
+- Cross Platform
+- LTR and RTL support
+- Multi lingual (`ar`, `en` and `tr`)
 
-```bash
-# or
-pnpm android
-```
+## Platforms
 
-## 🌐 Environment Variables
+- Web
+- IOS
+- Android
 
-1. Create a `.env` file in the root of the project.
-2. Define environment variables inside the `.env` file. Variables must start with `EXPO_PUBLIC_`.
-3. Update `_utils/env-loader` schema to include new variables:
+## Screenshots
 
-   ```typescript
-   const schema = z.object({
-     EXPO_PUBLIC_MY_NEW_VARIABLE: z.string(),
-   });
+### Languages
+
+![Arabic](screenshots/lang/ar.png)
+![Turkish](screenshots/lang/en.png)
+![Turkish](screenshots/lang/tr.png)
+
+### Light Theme
+
+![Home Screen Light](screenshots/light/home.png)
+![Settings Screen Light](screenshots/light/settings.png)
+![Modal Screen Light](screenshots/light/modal.png)
+![Drawer Home Screen Light](screenshots/light/drawer-home.png)
+![Drawer Settings Screen Light](screenshots/light/drawer-settings.png)
+![Drawer opened Light](screenshots/light/drawer.png)
+
+### Dark Theme
+
+![Home Screen Dark](screenshots/dark/home.png)
+![Settings Screen Dark](screenshots/dark/settings.png)
+![Modal Screen Dark](screenshots/dark/modal.png)
+![Drawer Home Screen Dark](screenshots/dark/drawer-home.png)
+![Drawer Settings Screen Dark](screenshots/dark/drawer-settings.png)
+![Drawer opened Dark](screenshots/dark/drawer.png)
+
+### Custom Themes
+
+![Default Theme](screenshots/themes/default.png)
+![Blue Theme](screenshots/themes/blue.png)
+![Brown Theme](screenshots/themes/brown.png)
+![Cyan Theme](screenshots/themes/cyan.png)
+![Green Theme](screenshots/themes/green.png)
+![Indigo Theme](screenshots/themes/indigo.png)
+![Lime Theme](screenshots/themes/lime.png)
+![Olive Theme](screenshots/themes/olive.png)
+![Orange Theme](screenshots/themes/orange.png)
+![Red Theme](screenshots/themes/red.png)
+![Teal Theme](screenshots/themes/teal.png)
+![Violet Theme](screenshots/themes/violet.png)
+
+## Getting Started
+
+These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
+
+### Prerequisites
+
+- Node.js
+- npm
+
+### Installation
+
+1. Clone the repo
+   ```sh
+   git clone https://github.com/youzarsiph/expo-react-native-paper.git
+   ```
+2. Open `package.json` and update the `name` field to match your app's name
+3. Install NPM packages
+   ```sh
+   npm install
    ```
 
-```typescript
-const my_env_var = process.env.EXPO_PUBLIC_MY_NEW_VARIABLE;
-```
+## Built With
 
-Note: Remember to restart the project after creating the .env file.
+- TypeScript
+- React
+- React Native
+- Expo
+- Expo Router
+- React Native Paper
 
-## 🔗 Deep Linking
+## Contributing
 
-For setting up deep linking, follow the documentation provided by Expo: [Deep Linking](https://docs.expo.dev/guides/deep-linking/).
+Contributions are what make the open-source community such an amazing place to learn, inspire, and create. Any contributions you make are greatly appreciated.
 
-## 📁 File Structure
+1. Fork the Project
+2. Create your Feature Branch (git checkout -b feature/AmazingFeature)
+3. Commit your Changes (git commit -m 'Add some AmazingFeature')
+4. Push to the Branch (git push origin feature/AmazingFeature)
+5. Open a Pull Request
 
-The project is organized as follows:
+## License
 
-```shell
-- src          - Source code for the application.
-- /components  - Reusable components.
-- /screens     - Application screens.
-- /assets      - Application assets (all assets stored here will be bundled).
-- /utils       - Helper functions and utilities.
-```
-
-## 🖥 Screens
-
-Main screens included in the template:
-
-- **Home Screen**: The primary screen users see after logging in.
-- **Secondary Screen**: Additional screen for supplementary features.
-- **Settings Screen**: Allows users to customize their app experience.
-- **Navigation**: Includes Top Navigation, Bottom Navigation, and Native Modal for seamless app navigation.
-
-## 👥 Contributors
-
-We are inviting developers who are passionate about Expo and React Native to collaborate with us. Whether it's contributing code, sharing ideas, or providing feedback, all forms of collaboration are welcome.
-
-Special thanks to our contributors, including [@kewinzaq1](https://github.com/kewinzaq1).
+Distributed under the MIT License. See LICENSE for more information.
