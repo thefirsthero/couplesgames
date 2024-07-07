@@ -1,50 +1,70 @@
-# Welcome to your Expo app 👋
+# expo-router-starter-kit 🏎️📱
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Expo-router-starter-kit is a streamlined template for building cross-platform mobile apps with Expo. This template provides a starting point with updated features and simplified components for efficient development.
 
-## Get started
-
-1. Install dependencies
-
-   ```bash
-   npm install
-   ```
-
-2. Start the app
-
-   ```bash
-    npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+## 💻 Installation
 
 ```bash
-npm run reset-project
+# Clone and create a new repository from this template
+# Install dependencies
+pnpm install
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+```bash
+# Run the project
+pnpm ios
+```
 
-## Learn more
+```bash
+# or
+pnpm android
+```
 
-To learn more about developing your project with Expo, look at the following resources:
+## 🌐 Environment Variables
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+1. Create a `.env` file in the root of the project.
+2. Define environment variables inside the `.env` file. Variables must start with `EXPO_PUBLIC_`.
+3. Update `_utils/env-loader` schema to include new variables:
 
-## Join the community
+   ```typescript
+   const schema = z.object({
+     EXPO_PUBLIC_MY_NEW_VARIABLE: z.string(),
+   });
+   ```
 
-Join our community of developers creating universal apps.
+```typescript
+const my_env_var = process.env.EXPO_PUBLIC_MY_NEW_VARIABLE;
+```
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+Note: Remember to restart the project after creating the .env file.
+
+## 🔗 Deep Linking
+
+For setting up deep linking, follow the documentation provided by Expo: [Deep Linking](https://docs.expo.dev/guides/deep-linking/).
+
+## 📁 File Structure
+
+The project is organized as follows:
+
+```shell
+- src          - Source code for the application.
+- /components  - Reusable components.
+- /screens     - Application screens.
+- /assets      - Application assets (all assets stored here will be bundled).
+- /utils       - Helper functions and utilities.
+```
+
+## 🖥 Screens
+
+Main screens included in the template:
+
+- **Home Screen**: The primary screen users see after logging in.
+- **Secondary Screen**: Additional screen for supplementary features.
+- **Settings Screen**: Allows users to customize their app experience.
+- **Navigation**: Includes Top Navigation, Bottom Navigation, and Native Modal for seamless app navigation.
+
+## 👥 Contributors
+
+We are inviting developers who are passionate about Expo and React Native to collaborate with us. Whether it's contributing code, sharing ideas, or providing feedback, all forms of collaboration are welcome.
+
+Special thanks to our contributors, including [@kewinzaq1](https://github.com/kewinzaq1).
