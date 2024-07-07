@@ -1,15 +1,2 @@
-<<<<<<< HEAD
-node_modules
-__tests__/
-.vscode/
-android/
-coverage/
-ios/
-.expo
-.expo-shared
-docs/
-cli/
-=======
 /.expo
 node_modules
->>>>>>> origin/develop

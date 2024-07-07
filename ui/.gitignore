@@ -50,12 +50,6 @@ web-build/
 *.p12
 *.key
 *.mobileprovision
-<<<<<<< HEAD
-*.orig.*
-web-build/
-yarn-error.log
-/coverage
-=======
 
 # Metro
 .metro-health-check*
@@ -65,7 +59,6 @@ npm-debug.*
 yarn-debug.*
 yarn-error.*
 
->>>>>>> origin/develop
 # macOS
 .DS_Store
 *.pem
