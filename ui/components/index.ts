@@ -9,6 +9,8 @@ import StackHeader from '@/components/StackHeader'
 import TabBar from '@/components/TabBar'
 import TabsHeader from '@/components/TabsHeader'
 
+import SegmentedButton from './SegmentedButton'
+
 export {
   DrawerContent,
   DrawerHeader,
@@ -16,4 +18,5 @@ export {
   LoadingIndicator,
   TabBar,
   TabsHeader,
+  SegmentedButton,
 }

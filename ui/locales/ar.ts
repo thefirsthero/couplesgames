@@ -15,8 +15,6 @@ const Arabic = {
   darkMode: 'داكن',
   color: 'اللون',
   changeColor: 'تغيير لون السمة',
-  changeScreenCode:
-    'قم بتغيير أي نص، احفظ الملف، وسيتم تحديث التطبيق الخاص بك تلقائيًا',
   goHome: 'الذهاب إلى الشاشة الرئيسية',
   openScreenCode: 'افتح الكود لهذه الشاشة',
   save: 'حفظ',

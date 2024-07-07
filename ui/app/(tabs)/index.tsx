@@ -1,6 +1,7 @@
 import React from 'react'
 import { Chip, Divider, Surface, Text } from 'react-native-paper'
 
+import { SegmentedButton } from '@/components'
 import Locales from '@/locales'
 
 const TabsHome = () => (
@@ -13,6 +14,27 @@ const TabsHome = () => (
       justifyContent: 'center',
     }}
   >
+
+    <Text variant="displaySmall">{Locales.t('gameStyle')}</Text>
+    <SegmentedButton
+      buttons={[
+        {
+          value: 'Solo',
+          label: 'Solo',
+        },
+        {
+          value: 'IRL',
+          label: 'IRL',
+        },
+        {
+          value: 'Online',
+          label: 'Online',
+        },
+      ]}
+    />
+
+    <Divider />
+
     <Text variant="displaySmall">{Locales.t('titleHome')}</Text>
 
     <Divider />
@@ -22,10 +44,6 @@ const TabsHome = () => (
     <Chip textStyle={{ fontFamily: 'JetBrainsMono_400Regular' }}>
       app/(tabs)/index.tsx
     </Chip>
-
-    <Text variant="bodyLarge" style={{ textAlign: 'center' }}>
-      {Locales.t('changeScreenCode')}
-    </Text>
   </Surface>
 )
 
