@@ -2,14 +2,14 @@
  * Components
  */
 
-import DrawerContent from '@/components/DrawerContent'
-import DrawerHeader from '@/components/DrawerHeader'
-import LoadingIndicator from '@/components/LoadingIndicator'
-import StackHeader from '@/components/StackHeader'
-import TabBar from '@/components/TabBar'
-import TabsHeader from '@/components/TabsHeader'
+import DrawerContent from '@/components/common/DrawerContent'
+import DrawerHeader from '@/components/common/DrawerHeader'
+import LoadingIndicator from '@/components/common/LoadingIndicator'
+import StackHeader from '@/components/common/StackHeader'
+import TabBar from '@/components/common/TabBar'
+import TabsHeader from '@/components/common/TabsHeader'
 
-import SegmentedButton from './SegmentedButton'
+import SegmentedButton from './games/SegmentedButton'
 
 export {
   DrawerContent,
