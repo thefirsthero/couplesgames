@@ -16,7 +16,6 @@ const Turkish = {
   color: 'Renk',
   changeColor: 'Tema rengini değiştir',
   goHome: 'Ana ekrana git',
-  openScreenCode: 'Bu ekranın kodunu aç',
   save: 'Kaydet',
   screen404: 'Bu ekran mevcut değil',
   titleHome: 'Ana Sayfa',

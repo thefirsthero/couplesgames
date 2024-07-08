@@ -16,7 +16,6 @@ const Arabic = {
   color: 'اللون',
   changeColor: 'تغيير لون السمة',
   goHome: 'الذهاب إلى الشاشة الرئيسية',
-  openScreenCode: 'افتح الكود لهذه الشاشة',
   save: 'حفظ',
   screen404: 'هذه الشاشة غير موجودة',
   titleHome: 'الرئيسية',
