@@ -6,7 +6,7 @@ import GameCard from './GameCard'
 const Games = () => {
   const data = Array.from({ length: 22 }, (_, index) => ({
     id: index,
-    title: `Game ${index + 1}`,
+    title: `Game Would You Rather ${index + 1}`,
     icon: `alpha-${String.fromCharCode(97 + (index % 4))}-circle`,
   }))
 
@@ -20,7 +20,6 @@ const Games = () => {
         data={data}
         keyExtractor={(item) => item.id.toString()}
         renderItem={renderItem}
-        numColumns={2}
       />
     </Surface>
   )

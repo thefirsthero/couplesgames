@@ -1,50 +1,54 @@
-import React from 'react'
-import { Chip, Divider, Surface, Text } from 'react-native-paper'
-
-import { Games, SegmentedButton } from '@/components'
-import Locales from '@/locales'
+import React from 'react';
+import { Chip, Divider, Surface, Text, Tooltip } from 'react-native-paper';
+import { View } from 'react-native';
+import { Games, SegmentedButton } from '@/components';
+import Locales from '@/locales';
 
 const TabsHome = () => (
   <Surface
     style={{
       flex: 1,
-      gap: 16,
       padding: 32,
-      alignItems: 'center',
-      justifyContent: 'center',
     }}
   >
-    <Text variant="displaySmall">{Locales.t('gameStyle')}</Text>
-    <SegmentedButton
-      buttons={[
-        {
-          value: 'Solo',
-          label: 'Solo',
-        },
-        {
-          value: 'IRL',
-          label: 'IRL',
-        },
-        {
-          value: 'Online',
-          label: 'Online',
-        },
-      ]}
-    />
+    <View style={{ flex: 1 }}>
+      <Tooltip title={Locales.t('gameStyleTooltip')}>
+        <Text variant="displaySmall">{Locales.t('gameStyle')}</Text>
+      </Tooltip>
+      <SegmentedButton
+        buttons={[
+          {
+            value: 'Solo',
+            label: 'Solo',
+          },
+          {
+            value: 'IRL',
+            label: 'IRL',
+          },
+          {
+            value: 'Online',
+            label: 'Online',
+          },
+        ]}
+      />
+    </View>
+    
+    <View style={{ flex: 0.25 }}>
+    <Divider/>
+    </View>
+    
 
-    <Divider />
-
-    <Text variant="displaySmall">{Locales.t('titleHome')}</Text>
-    <Games />
-
-    <Divider />
-
-    <Text variant="bodyLarge">{Locales.t('openScreenCode')}</Text>
-
-    <Chip textStyle={{ fontFamily: 'JetBrainsMono_400Regular' }}>
-      app/(tabs)/index.tsx
-    </Chip>
+    <View style={{ flex: 3 }}>
+      <Tooltip title={Locales.t('titleHomeTooltip')}>
+        <Text variant="displaySmall">{Locales.t('titleHome')}</Text>
+      </Tooltip>
+      <Games />
+      <Divider style={{ marginTop: 16 }} />
+      <Chip textStyle={{ fontFamily: 'JetBrainsMono_400Regular' }}>
+        {Locales.t('moreGames')}
+      </Chip>
+    </View>
   </Surface>
-)
+);
 
-export default TabsHome
+export default TabsHome;

@@ -35,6 +35,7 @@ const GameCard = ({ gamecards }: GameCardProps) => {
         style={styles.container}
         title={title}
         left={() => <List.Icon icon={icon} />}
+        onPress={() => {}}
       />
     ))
   )

@@ -16,10 +16,10 @@ const English = {
   color: 'Color',
   changeColor: 'Change theme color',
   goHome: 'Go to home screen',
-  openScreenCode: 'Open up the code for this screen',
   save: 'Save',
   screen404: "This screen doesn't exist",
   titleHome: 'Games',
+  titleHomeTooltip: 'Pick a Game to Play',
   titleModal: 'Modal',
   titleNotFound: 'Not Found',
   titleSettings: 'Settings',
@@ -38,6 +38,8 @@ const English = {
   olive: 'olive',
   brown: 'brown',
   gameStyle: 'Game Style',
+  gameStyleTooltip: 'Pick solo to play against a computer. Pick IRL to use one phone and play against someone IRL. Pick Online to play online.',
+  moreGames: 'More games coming soon...',
 }
 
 export default English
