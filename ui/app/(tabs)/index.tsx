@@ -9,11 +9,13 @@ const TabsHome = () => (
     style={{
       flex: 1,
       padding: 32,
+      // alignItems: 'center',
+      // justifyContent: 'center',
     }}
   >
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1, alignItems: 'center'}}>
       <Tooltip title={Locales.t('gameStyleTooltip')}>
-        <Text variant="displaySmall">{Locales.t('gameStyle')}</Text>
+        <Text variant="displaySmall">{Locales.t('titleGameStyle')}</Text>
       </Tooltip>
       <SegmentedButton
         buttons={[
@@ -37,10 +39,9 @@ const TabsHome = () => (
     <Divider/>
     </View>
     
-
-    <View style={{ flex: 3 }}>
-      <Tooltip title={Locales.t('titleHomeTooltip')}>
-        <Text variant="displaySmall">{Locales.t('titleHome')}</Text>
+    <View style={{ flex: 3, alignItems: 'center'}}>
+      <Tooltip title={Locales.t('gameSelectTooltip')}>
+        <Text variant="displaySmall">{Locales.t('titleGameSelect')}</Text>
       </Tooltip>
       <Games />
       <Divider style={{ marginTop: 16 }} />

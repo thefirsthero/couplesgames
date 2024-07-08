@@ -19,7 +19,6 @@ const English = {
   save: 'Save',
   screen404: "This screen doesn't exist",
   titleHome: 'Games',
-  titleHomeTooltip: 'Pick a Game to Play',
   titleModal: 'Modal',
   titleNotFound: 'Not Found',
   titleSettings: 'Settings',
@@ -37,9 +36,11 @@ const English = {
   lime: 'lime',
   olive: 'olive',
   brown: 'brown',
-  gameStyle: 'Game Style',
+  titleGameStyle: 'Game Style',
   gameStyleTooltip: 'Pick solo to play against a computer. Pick IRL to use one phone and play against someone IRL. Pick Online to play online.',
   moreGames: 'More games coming soon...',
+  titleGameSelect: 'Game Select',
+  gameSelectTooltip: 'Pick a Game to Play',
 }
 
 export default English
