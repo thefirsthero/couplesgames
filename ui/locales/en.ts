@@ -15,13 +15,11 @@ const English = {
   darkMode: 'Dark',
   color: 'Color',
   changeColor: 'Change theme color',
-  changeScreenCode:
-    'Change any of the text, save the file, and your app will automatically update',
   goHome: 'Go to home screen',
   openScreenCode: 'Open up the code for this screen',
   save: 'Save',
   screen404: "This screen doesn't exist",
-  titleHome: 'Home',
+  titleHome: 'Games',
   titleModal: 'Modal',
   titleNotFound: 'Not Found',
   titleSettings: 'Settings',
@@ -39,6 +37,7 @@ const English = {
   lime: 'lime',
   olive: 'olive',
   brown: 'brown',
+  gameStyle: 'Game Style',
 }
 
 export default English

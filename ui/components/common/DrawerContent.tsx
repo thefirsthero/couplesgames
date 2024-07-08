@@ -18,7 +18,7 @@ const DrawerContent = (props: DrawerContentProps) => (
     />
     <Drawer.Item
       label={Locales.t('titleHome')}
-      icon="home"
+      icon="gamepad-variant"
       active={props.navProps.state.index === 0}
       onPress={() => router.push('/drawer/')}
     />

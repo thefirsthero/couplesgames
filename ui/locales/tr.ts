@@ -15,8 +15,6 @@ const Turkish = {
   darkMode: 'Karanlık',
   color: 'Renk',
   changeColor: 'Tema rengini değiştir',
-  changeScreenCode:
-    'Herhangi bir metni değiştirin, dosyayı kaydedin ve uygulamanız otomatik olarak güncellenecektir',
   goHome: 'Ana ekrana git',
   openScreenCode: 'Bu ekranın kodunu aç',
   save: 'Kaydet',
