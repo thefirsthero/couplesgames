@@ -3,31 +3,33 @@ import { FlatList, StyleSheet } from 'react-native'
 import { List, Surface } from 'react-native-paper'
 import GameCard from './GameCard'
 
-const Games = () => (
-  <Surface style={styles.surface} elevation={0}>
-  <FlatList
-    horizontal
-    showsHorizontalScrollIndicator={true}
-    data={[
-      { title: 'Would You Rather', icon: 'alpha-w-circle' },
-      { title: 'Coming Soon...', icon: 'alpha-c-circle'  },
-    ]}
-    renderItem={({ item }) => (
-      <GameCard gamecards={[{ title: item.title, icon: item.icon }]} />
-    )}
-    
-  />
-  </Surface>
-)
+const Games = () => {
+  const data = Array.from({ length: 22 }, (_, index) => ({
+    id: index,
+    title: `Game ${index + 1}`,
+    icon: `alpha-${String.fromCharCode(97 + (index % 4))}-circle`,
+  }))
+
+  const renderItem = ({ item }: { item: { id: number, title: string, icon: string } }) => (
+    <GameCard gamecards={[{ title: item.title, icon: item.icon }]} />
+  )
+
+  return (
+    <Surface style={styles.surface} elevation={0}>
+      <FlatList
+        data={data}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={renderItem}
+        numColumns={2}
+      />
+    </Surface>
+  )
+}
 
 export default Games
 
 const styles = StyleSheet.create({
   surface: {
-    padding: 8,
-    height: 80,
-    width: 300,
-    alignItems: 'center',
-    justifyContent: 'center',
+    flex: 1,
   },
-});
+})
