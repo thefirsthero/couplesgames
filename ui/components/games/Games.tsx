@@ -1,19 +1,33 @@
 import * as React from 'react'
-import { List, MD3Colors } from 'react-native-paper'
+import { FlatList, StyleSheet } from 'react-native'
+import { List, Surface } from 'react-native-paper'
+import GameCard from './GameCard'
 
 const Games = () => (
-  <List.Section>
-    <List.Subheader>Some title</List.Subheader>
-    <List.Item title="First Item" left={() => <List.Icon icon="folder" />} />
-    <List.Item
-      title="Second Item"
-      left={() => <List.Icon color={MD3Colors.tertiary70} icon="folder" />}
-    />
-  </List.Section>
+  <Surface style={styles.surface} elevation={0}>
+  <FlatList
+    horizontal
+    showsHorizontalScrollIndicator={true}
+    data={[
+      { title: 'Would You Rather', icon: 'alpha-w-circle' },
+      { title: 'Coming Soon...', icon: 'alpha-c-circle'  },
+    ]}
+    renderItem={({ item }) => (
+      <GameCard gamecards={[{ title: item.title, icon: item.icon }]} />
+    )}
+    
+  />
+  </Surface>
 )
 
 export default Games
 
-{
-  /* <GameCard name="Would You Rather" image="https://picsum.photos/700" /> */
-}
+const styles = StyleSheet.create({
+  surface: {
+    padding: 8,
+    height: 80,
+    width: 300,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});

@@ -1,16 +1,45 @@
 import * as React from 'react'
-import { Card } from 'react-native-paper'
+import { List, useTheme } from 'react-native-paper'
+import { StyleSheet } from 'react-native'
 
 interface GameCardProps {
-  name: string
-  image: string
+  gamecards: {
+    title: string
+    icon: string
+  }[]
 }
 
-const GameCard: React.FC<GameCardProps> = ({ name, image }) => (
-  <Card>
-    <Card.Cover source={{ uri: image }} />
-    <Card.Title title={name} />
-  </Card>
-)
+const GameCard = ({ gamecards }: GameCardProps) => {
+  const theme = useTheme()
+  const styles = StyleSheet.create({
+    container: {
+      margin: 4,
+      padding: 16,
+      borderRadius: 4,
+      backgroundColor: theme.colors.surface,
+      shadowColor: theme.colors.shadow,
+      shadowOffset: {
+        width: 0,
+        height: 2,
+      },
+      shadowOpacity: 0.25,
+      shadowRadius: 3.84,
+      elevation: 5,
+    },
+  })
+
+  return (
+    gamecards.map(({ title, icon }) => (
+      <List.Item
+        key={title}
+        style={styles.container}
+        title={title}
+        left={() => <List.Icon icon={icon} />}
+      />
+    ))
+  )
+}
 
 export default GameCard
+
+
