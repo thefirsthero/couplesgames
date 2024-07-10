@@ -4,12 +4,20 @@ import { List, Surface } from 'react-native-paper'
 import GameCard from './GameCard'
 
 const Games = () => {
-  const data = Array.from({ length: 22 }, (_, index) => ({
-    id: index,
-    title: `Game Would You Rather ${index + 1}`,
-    icon: `alpha-${String.fromCharCode(97 + (index % 4))}-circle`,
-    route: '/games/would_you_rather/solo',
-  }))
+  const data = [
+    {
+      id: 1,
+      title: 'Would You Rather',
+      icon: 'alpha-w-circle',
+      route: '/games/would_you_rather/solo',
+    },
+    {
+      id: 2,
+      title: 'Truth or Dare',
+      icon: 'alpha-b-circle',
+      route: '/games/truth_or_dare',
+    }
+  ]
 
   const renderItem = ({ item }: { item: { id: number, title: string, icon: string, route: string } }) => (
     <GameCard gamecards={[{ title: item.title, icon: item.icon, route: item.route }]} />
