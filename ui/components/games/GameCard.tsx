@@ -1,15 +1,18 @@
 import * as React from 'react'
 import { List, useTheme } from 'react-native-paper'
 import { StyleSheet } from 'react-native'
+import { useRouter } from 'expo-router'
 
 interface GameCardProps {
   gamecards: {
     title: string
     icon: string
+    route: string
   }[]
 }
 
 const GameCard = ({ gamecards }: GameCardProps) => {
+  const router = useRouter()
   const theme = useTheme()
   const styles = StyleSheet.create({
     container: {
@@ -29,13 +32,13 @@ const GameCard = ({ gamecards }: GameCardProps) => {
   })
 
   return (
-    gamecards.map(({ title, icon }) => (
+    gamecards.map(({ title, icon, route }) => (
       <List.Item
         key={title}
         style={styles.container}
         title={title}
         left={() => <List.Icon icon={icon} />}
-        onPress={() => {}}
+        onPress={() => {router.push(route)}}
       />
     ))
   )

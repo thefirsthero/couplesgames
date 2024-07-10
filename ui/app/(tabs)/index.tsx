@@ -3,7 +3,6 @@ import { Chip, Divider, Surface, Text, Tooltip } from 'react-native-paper';
 import { View } from 'react-native';
 import { Games, SegmentedButton } from '@/components';
 import Locales from '@/locales';
-import { Stack, useRouter } from "expo-router";
 
 const TabsHome = () => (
   <Surface
