@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { List, useTheme } from 'react-native-paper'
-import { StyleSheet } from 'react-native'
+import { StyleSheet, View } from 'react-native'
 import { useRouter } from 'expo-router'
 
 interface GameCardProps {
@@ -33,17 +33,20 @@ const GameCard = ({ gamecards }: GameCardProps) => {
 
   return (
     gamecards.map(({ title, icon, route }) => (
-      <List.Item
-        key={title}
-        style={styles.container}
-        title={title}
-        left={() => <List.Icon icon={icon} />}
-        onPress={() => {router.push(route)}}
-      />
+      <View style={styles.container}>
+        <List.Item
+          key={title}
+          title={title}
+          left={() => <List.Icon icon={icon} />}
+          onPress={() => {router.push(route)}}
+          style={{ flex: 1 }}
+        />
+      </View>
     ))
   )
 }
 
 export default GameCard
+
 
 
