@@ -81,7 +81,7 @@ const WouldYouRatherGameScreen: React.FC = () => {
         onDismiss={() => setSnackbarVisible(false)}
         duration={Snackbar.DURATION_SHORT}
       >
-        {percentage !== null && `You chose ${percentage.toFixed(2)}% of people chose this option.`}
+        {percentage !== null && `Nice! ${percentage.toFixed(2)}% of people chose this option.`}
       </Snackbar>
     </Surface>
   );

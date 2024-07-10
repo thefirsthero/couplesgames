@@ -3,13 +3,17 @@ import { FlatList, StyleSheet } from 'react-native'
 import { List, Surface } from 'react-native-paper'
 import GameCard from './GameCard'
 
-const Games = () => {
+type gameStyle = {
+  title: string
+}
+
+const Games = ( { gameStyle }: { gameStyle: gameStyle }) => {
   const data = [
     {
       id: 1,
       title: 'Would You Rather',
       icon: 'alpha-w-circle',
-      route: '/games/would_you_rather/solo',
+      route: `/games/would_you_rather/${gameStyle.title}`,
     },
     {
       id: 2,

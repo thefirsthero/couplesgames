@@ -36,7 +36,7 @@ const English = {
   olive: 'olive',
   brown: 'brown',
   titleGameStyle: 'Game Style',
-  gameStyleTooltip: 'Pick solo to play against a computer. Pick IRL to use one phone and play against someone IRL. Pick Online to play online.',
+  gameStyleTooltip: 'Choose who you want to play against',
   moreGames: 'More games coming soon...',
   titleGameSelect: 'Game Select',
   gameSelectTooltip: 'Pick a Game to Play',
