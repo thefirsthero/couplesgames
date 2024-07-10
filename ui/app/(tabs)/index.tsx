@@ -1,10 +1,19 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Chip, Divider, Surface, Text, Tooltip } from 'react-native-paper';
 import { View } from 'react-native';
 import { Games, SegmentedButton } from '@/components';
 import Locales from '@/locales';
 
-const TabsHome = () => (
+
+
+const TabsHome = () => {
+  const [selectedSegment, setSelectedSegment] = useState('Solo'); // Initialize with default value
+
+  const handleSegmentChange = (selectedValue: string) => {
+    setSelectedSegment(selectedValue);
+  };
+
+  return(
   <Surface
     style={{
       flex: 1,
@@ -20,18 +29,19 @@ const TabsHome = () => (
       <SegmentedButton
         buttons={[
           {
-            value: 'Solo',
+            value: 'solo',
             label: 'Solo',
           },
           {
-            value: 'IRL',
+            value: 'irl',
             label: 'IRL',
           },
           {
-            value: 'Online',
+            value: 'online',
             label: 'Online',
           },
         ]}
+        onPress={handleSegmentChange}
       />
     </View>
     
@@ -43,13 +53,16 @@ const TabsHome = () => (
       <Tooltip title={Locales.t('gameSelectTooltip')}>
         <Text variant="displaySmall">{Locales.t('titleGameSelect')}</Text>
       </Tooltip>
-      <Games />
+      <Games 
+        gameStyle={{ title:  selectedSegment}}
+      />
       <Divider style={{ marginTop: 16 }} />
       <Chip textStyle={{ fontFamily: 'JetBrainsMono_400Regular' }}>
         {Locales.t('moreGames')}
       </Chip>
     </View>
   </Surface>
-);
+  );
+};
 
 export default TabsHome;
