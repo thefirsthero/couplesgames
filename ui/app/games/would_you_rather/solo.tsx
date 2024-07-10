@@ -1,12 +1,46 @@
-import { View, Text } from 'react-native'
-import React from 'react'
+import React from 'react';
+import { StyleSheet } from 'react-native';
+import { Surface, Text, Button } from 'react-native-paper';
+import { useNavigation } from 'expo-router';
 
-const solo = () => {
+const NewScreen = () => {
+  const navigation = useNavigation();
+
+  React.useLayoutEffect(() => {
+    navigation.setOptions({
+      title: 'Would You Rather',
+    });
+  }, [navigation]);
+
   return (
-    <View>
-      <Text>solo</Text>
-    </View>
-  )
-}
+    <Surface style={styles.container}>
+      <Text style={styles.title}>New Screen</Text>
+      <Text style={styles.content}>
+        This is a new screen using React Native Paper.
+      </Text>
+      <Button mode="contained" onPress={() => console.log('Button pressed')}>
+        Press me
+      </Button>
+    </Surface>
+  );
+};
 
-export default solo
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 16,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 16,
+  },
+  content: {
+    fontSize: 16,
+    marginBottom: 16,
+  },
+});
+
+export default NewScreen;
