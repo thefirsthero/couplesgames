@@ -7,7 +7,7 @@ import Locales from '@/locales';
 
 
 const TabsHome = () => {
-  const [selectedSegment, setSelectedSegment] = useState('Solo'); // Initialize with default value
+  const [selectedSegment, setSelectedSegment] = useState('solo');
 
   const handleSegmentChange = (selectedValue: string) => {
     setSelectedSegment(selectedValue);
@@ -18,8 +18,6 @@ const TabsHome = () => {
     style={{
       flex: 1,
       padding: 32,
-      // alignItems: 'center',
-      // justifyContent: 'center',
     }}
   >
     <View style={{ flex: 1, alignItems: 'center'}}>
