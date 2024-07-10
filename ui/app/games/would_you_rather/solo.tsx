@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { StyleSheet, View } from 'react-native';
-import { Surface, Button, Text } from 'react-native-paper';
+import { StyleSheet } from 'react-native';
+import { Surface, Snackbar } from 'react-native-paper';
 import { useRouter } from 'expo-router';
 import WouldYouRatherQuestion from '@/components/games/would_you_rather/WouldYouRatherQuestion';
 
@@ -24,6 +24,12 @@ const questions: Question[] = [
     option_b: 'Swim 5 miles',
     votes_b: 901412,
   },
+  {
+    option_a: 'Speak every language except the language of the country you\'re currently in',
+    votes_a: 597685,
+    option_b: 'Speak only the language of the country you\'re in, but know the meaning of every single word in that language',
+    votes_b: 1084849,
+  },
   // Add more questions here
 ];
 
@@ -33,6 +39,7 @@ const WouldYouRatherGameScreen: React.FC = () => {
   const [responses, setResponses] = useState<{ questionId: number; answer: 'a' | 'b'; percentage: number }[]>([]);
   const [selectedAnswer, setSelectedAnswer] = useState<'a' | 'b' | null>(null);
   const [percentage, setPercentage] = useState<number | null>(null);
+  const [snackbarVisible, setSnackbarVisible] = useState(false);
 
   const handleAnswer = (answer: 'a' | 'b') => {
     const currentQuestion = questions[currentQuestionIndex];
@@ -45,14 +52,16 @@ const WouldYouRatherGameScreen: React.FC = () => {
     setResponses([...responses, { questionId: currentQuestionIndex, answer, percentage }]);
     setSelectedAnswer(answer);
     setPercentage(percentage);
+    setSnackbarVisible(true);
 
     setTimeout(() => {
       if (currentQuestionIndex < questions.length - 1) {
         setCurrentQuestionIndex(currentQuestionIndex + 1);
         setSelectedAnswer(null);
         setPercentage(null);
+        setSnackbarVisible(false);
       } else {
-        router.push({
+        router.replace({
           pathname: '/results',
           params: { responses: JSON.stringify([...responses, { questionId: currentQuestionIndex, answer, percentage }]) },
         });
@@ -66,8 +75,14 @@ const WouldYouRatherGameScreen: React.FC = () => {
         question={questions[currentQuestionIndex]}
         onAnswer={handleAnswer}
         selectedAnswer={selectedAnswer}
-        percentage={percentage}
       />
+      <Snackbar
+        visible={snackbarVisible}
+        onDismiss={() => setSnackbarVisible(false)}
+        duration={Snackbar.DURATION_SHORT}
+      >
+        {percentage !== null && `You chose ${percentage.toFixed(2)}% of people chose this option.`}
+      </Snackbar>
     </Surface>
   );
 };
