@@ -7,7 +7,7 @@ import Locales from '@/locales';
 
 
 const TabsHome = () => {
-  const [selectedSegment, setSelectedSegment] = useState('Solo');
+  const [selectedSegment, setSelectedSegment] = useState('solo');
 
   const handleSegmentChange = (selectedValue: string) => {
     setSelectedSegment(selectedValue);

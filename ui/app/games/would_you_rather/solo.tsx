@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { StyleSheet } from 'react-native';
 import { Surface, Snackbar } from 'react-native-paper';
-import { useRouter } from 'expo-router';
+import { useRouter, useNavigation } from 'expo-router';
 import WouldYouRatherQuestion from '@/components/games/would_you_rather/WouldYouRatherQuestion';
 
 type Question = {
@@ -40,6 +40,13 @@ const WouldYouRatherGameScreen: React.FC = () => {
   const [selectedAnswer, setSelectedAnswer] = useState<'a' | 'b' | null>(null);
   const [percentage, setPercentage] = useState<number | null>(null);
   const [snackbarVisible, setSnackbarVisible] = useState(false);
+  const navigation = useNavigation();
+
+  React.useLayoutEffect(() => {
+    navigation.setOptions({
+      title: 'Would You Rather',
+    });
+  }, [navigation]);
 
   const handleAnswer = (answer: 'a' | 'b') => {
     const currentQuestion = questions[currentQuestionIndex];
