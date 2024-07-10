@@ -8,7 +8,7 @@ const Games = () => {
     id: index,
     title: `Game Would You Rather ${index + 1}`,
     icon: `alpha-${String.fromCharCode(97 + (index % 4))}-circle`,
-    route: '/games/would_you_rather/irl',
+    route: '/games/would_you_rather/solo',
   }))
 
   const renderItem = ({ item }: { item: { id: number, title: string, icon: string, route: string } }) => (
