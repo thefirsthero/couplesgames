@@ -39,12 +39,6 @@ const TabLayout = () => (
                 onPress={() => router.push('/modal')}
               />
             </Tooltip>
-            <Tooltip title={Locales.t('drawerNav')}>
-              <Appbar.Action
-                icon="gesture-swipe"
-                onPress={() => router.push('/drawer/')}
-              />
-            </Tooltip>
           </>
         ),
         tabBarIcon: (props) => (

@@ -4,7 +4,6 @@
 
 const Arabic = {
   stackNav: 'التنقل المكدس',
-  drawerNav: 'التنقل الدرج',
   appearance: 'المظهر',
   language: 'اللغة',
   changeLanguage: 'تغيير لغة التطبيق',

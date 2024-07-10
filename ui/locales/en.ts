@@ -4,7 +4,6 @@
 
 const English = {
   stackNav: 'Stack Navigation',
-  drawerNav: 'Drawer Navigation',
   appearance: 'Appearance',
   language: 'Language',
   changeLanguage: "Change app's language",

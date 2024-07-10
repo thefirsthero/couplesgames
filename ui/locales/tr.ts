@@ -4,7 +4,6 @@
 
 const Turkish = {
   stackNav: 'Yığın Navigasyon',
-  drawerNav: 'Çekmece Navigasyon',
   appearance: 'Görünüm',
   language: 'Dil',
   changeLanguage: 'Uygulamanın dilini değiştir',
