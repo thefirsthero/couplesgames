@@ -1,62 +1,60 @@
-// app/game-screen.tsx
 import React, { useState } from 'react';
 import { StyleSheet } from 'react-native';
-import { Surface, Text, Button } from 'react-native-paper';
+import { Surface } from 'react-native-paper';
 import { useRouter } from 'expo-router';
-import QuestionComponent from '@/components/games/would_you_rather/WouldYouRatherQuestion';
+import WouldYouRatherQuestion from '@/components/games/would_you_rather/WouldYouRatherQuestion';
 
 type Question = {
-  id: number;
-  text: string;
-  option1: string;
-  option2: string;
+  option_a: string;
+  votes_a: number;
+  option_b: string;
+  votes_b: number;
 };
 
 const questions: Question[] = [
   {
-    id: 1,
-    text: 'Would you rather have the ability to fly or be invisible?',
-    option1: 'Fly',
-    option2: 'Invisible',
+    option_a: 'Be painted by Van Gogh',
+    votes_a: 462554,
+    option_b: 'Be painted by Da Vinci',
+    votes_b: 1121946,
   },
   {
-    id: 2,
-    text: 'Would you rather have superhuman strength or the ability to run really fast?',
-    option1: 'Strength',
-    option2: 'Speed',
-  },
-  {
-    id: 3,
-    text: 'Would you rather be able to speak any language fluently or have a photographic memory?',
-    option1: 'Language',
-    option2: 'Memory',
-  },
-  {
-    id: 4,
-    text: 'Would you rather be able to eat any food you want without gaining weight or never feel hunger again?',
-    option1: 'Eat anything',
-    option2: 'Never feel hungry',
+    option_a: 'Run 26 miles',
+    votes_a: 915383,
+    option_b: 'Swim 5 miles',
+    votes_b: 901412,
   },
   // Add more questions here
 ];
 
-const GameScreen: React.FC = () => {
+const WouldYouRatherGameScreen: React.FC = () => {
   const router = useRouter();
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [responses, setResponses] = useState<{ questionId: number; answer: string }[]>([]);
+  const [responses, setResponses] = useState<{ questionId: number; answer: 'a' | 'b'; percentage: number }[]>([]);
 
-  const handleAnswer = (answer: string) => {
-    setResponses([...responses, { questionId: questions[currentQuestionIndex].id, answer }]);
+  const handleAnswer = (answer: 'a' | 'b') => {
+    const currentQuestion = questions[currentQuestionIndex];
+    const totalVotes = currentQuestion.votes_a + currentQuestion.votes_b;
+    const percentage =
+      answer === 'a'
+        ? (currentQuestion.votes_a / totalVotes) * 100
+        : (currentQuestion.votes_b / totalVotes) * 100;
+
+    setResponses([...responses, { questionId: currentQuestionIndex, answer, percentage }]);
+
     if (currentQuestionIndex < questions.length - 1) {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
     } else {
-      router.push('/results');
+      router.push({
+        pathname: '/results',
+        params: { responses: JSON.stringify([...responses, { questionId: currentQuestionIndex, answer, percentage }]) },
+      });
     }
   };
 
   return (
     <Surface style={styles.container}>
-      <QuestionComponent
+      <WouldYouRatherQuestion
         question={questions[currentQuestionIndex]}
         onAnswer={handleAnswer}
       />
@@ -72,4 +70,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default GameScreen;
+export default WouldYouRatherGameScreen;

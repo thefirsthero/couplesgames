@@ -1,15 +1,31 @@
 import React from 'react';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, FlatList } from 'react-native';
 import { Surface, Text, Button } from 'react-native-paper';
-import { useRouter } from 'expo-router';
+import { useRouter, useLocalSearchParams } from 'expo-router';
+
+type Response = {
+  questionId: number;
+  answer: 'a' | 'b';
+  percentage: number;
+};
 
 const ResultScreen: React.FC = () => {
   const router = useRouter();
+  const params = useLocalSearchParams<{ responses?: string }>();
+  const responses: Response[] = JSON.parse(params.responses ?? '[]');
 
   return (
     <Surface style={styles.container}>
       <Text style={styles.title}>Game Over</Text>
-      <Text style={styles.content}>Thanks for playing!</Text>
+      <FlatList
+        data={responses}
+        keyExtractor={(item) => item.questionId.toString()}
+        renderItem={({ item }) => (
+          <Text style={styles.resultText}>
+            Question {item.questionId + 1}: {item.percentage.toFixed(2)}% of people chose your answer
+          </Text>
+        )}
+      />
       <Button mode="contained" onPress={() => router.push('/')}>
         Back to Home
       </Button>
@@ -29,9 +45,9 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 16,
   },
-  content: {
+  resultText: {
     fontSize: 16,
-    marginBottom: 16,
+    marginBottom: 8,
   },
 });
 
