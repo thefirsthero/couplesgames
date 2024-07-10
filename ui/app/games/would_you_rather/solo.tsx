@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { StyleSheet } from 'react-native';
-import { Surface } from 'react-native-paper';
+import { StyleSheet, View } from 'react-native';
+import { Surface, Button, Text } from 'react-native-paper';
 import { useRouter } from 'expo-router';
 import WouldYouRatherQuestion from '@/components/games/would_you_rather/WouldYouRatherQuestion';
 
@@ -31,6 +31,8 @@ const WouldYouRatherGameScreen: React.FC = () => {
   const router = useRouter();
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [responses, setResponses] = useState<{ questionId: number; answer: 'a' | 'b'; percentage: number }[]>([]);
+  const [selectedAnswer, setSelectedAnswer] = useState<'a' | 'b' | null>(null);
+  const [percentage, setPercentage] = useState<number | null>(null);
 
   const handleAnswer = (answer: 'a' | 'b') => {
     const currentQuestion = questions[currentQuestionIndex];
@@ -41,15 +43,21 @@ const WouldYouRatherGameScreen: React.FC = () => {
         : (currentQuestion.votes_b / totalVotes) * 100;
 
     setResponses([...responses, { questionId: currentQuestionIndex, answer, percentage }]);
+    setSelectedAnswer(answer);
+    setPercentage(percentage);
 
-    if (currentQuestionIndex < questions.length - 1) {
-      setCurrentQuestionIndex(currentQuestionIndex + 1);
-    } else {
-      router.push({
-        pathname: '/results',
-        params: { responses: JSON.stringify([...responses, { questionId: currentQuestionIndex, answer, percentage }]) },
-      });
-    }
+    setTimeout(() => {
+      if (currentQuestionIndex < questions.length - 1) {
+        setCurrentQuestionIndex(currentQuestionIndex + 1);
+        setSelectedAnswer(null);
+        setPercentage(null);
+      } else {
+        router.push({
+          pathname: '/results',
+          params: { responses: JSON.stringify([...responses, { questionId: currentQuestionIndex, answer, percentage }]) },
+        });
+      }
+    }, 2000);
   };
 
   return (
@@ -57,6 +65,8 @@ const WouldYouRatherGameScreen: React.FC = () => {
       <WouldYouRatherQuestion
         question={questions[currentQuestionIndex]}
         onAnswer={handleAnswer}
+        selectedAnswer={selectedAnswer}
+        percentage={percentage}
       />
     </Surface>
   );
