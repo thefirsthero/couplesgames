@@ -15,6 +15,7 @@ import { StackHeader } from '@/components'
 import Locales from '@/locales'
 import { Themes } from '@/styles'
 import { Setting } from '@/types'
+import Toast from 'react-native-toast-message';
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -113,6 +114,9 @@ const RootLayoutNav = () => {
           options={{ title: Locales.t('titleModal'), presentation: 'modal' }}
         />
       </Stack>
+      <Toast 
+        visibilityTime={2000}
+      />
     </PaperProvider>
   )
 }

@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { StyleSheet } from 'react-native';
-import { Surface, Snackbar } from 'react-native-paper';
+import { Surface } from 'react-native-paper';
 import { useRouter, useNavigation } from 'expo-router';
 import WouldYouRatherQuestion from '@/components/games/would_you_rather/WouldYouRatherQuestion';
+import Toast from 'react-native-toast-message';
 
 type Question = {
   option_a: string;
@@ -39,7 +40,6 @@ const WouldYouRatherGameScreen: React.FC = () => {
   const [responses, setResponses] = useState<{ questionId: number; answer: 'a' | 'b'; percentage: number }[]>([]);
   const [selectedAnswer, setSelectedAnswer] = useState<'a' | 'b' | null>(null);
   const [percentage, setPercentage] = useState<number | null>(null);
-  const [snackbarVisible, setSnackbarVisible] = useState(false);
   const navigation = useNavigation();
 
   React.useLayoutEffect(() => {
@@ -59,14 +59,12 @@ const WouldYouRatherGameScreen: React.FC = () => {
     setResponses([...responses, { questionId: currentQuestionIndex, answer, percentage }]);
     setSelectedAnswer(answer);
     setPercentage(percentage);
-    setSnackbarVisible(true);
-
+    showToast({ percentage: percentage});
     setTimeout(() => {
       if (currentQuestionIndex < questions.length - 1) {
         setCurrentQuestionIndex(currentQuestionIndex + 1);
         setSelectedAnswer(null);
         setPercentage(null);
-        setSnackbarVisible(false);
       } else {
         router.replace({
           pathname: '/results',
@@ -76,6 +74,14 @@ const WouldYouRatherGameScreen: React.FC = () => {
     }, 2000);
   };
 
+  const showToast = ({ percentage }: { percentage: number }) => {
+    Toast.show({
+        type: 'success',
+        text1: 'Nice!',
+        text2: `${percentage.toFixed(2)}% of people chose this option.`
+    });
+};
+
   return (
     <Surface style={styles.container}>
       <WouldYouRatherQuestion
@@ -83,13 +89,6 @@ const WouldYouRatherGameScreen: React.FC = () => {
         onAnswer={handleAnswer}
         selectedAnswer={selectedAnswer}
       />
-      <Snackbar
-        visible={snackbarVisible}
-        onDismiss={() => setSnackbarVisible(false)}
-        duration={Snackbar.DURATION_SHORT}
-      >
-        {percentage !== null && `Nice! ${percentage.toFixed(2)}% of people chose this option.`}
-      </Snackbar>
     </Surface>
   );
 };

@@ -4,8 +4,6 @@ import { View } from 'react-native';
 import { Games, SegmentedButton } from '@/components';
 import Locales from '@/locales';
 
-
-
 const TabsHome = () => {
   const [selectedSegment, setSelectedSegment] = useState('solo');
 
