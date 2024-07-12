@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { FlatList, StyleSheet } from 'react-native'
 import { List, Surface } from 'react-native-paper'
-import GameCard from './GameCard'
+import GameCard from './SelectGameCard'
 
 type gameStyle = {
   title: string

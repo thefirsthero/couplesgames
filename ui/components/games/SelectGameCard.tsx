@@ -32,17 +32,18 @@ const GameCard = ({ gamecards }: GameCardProps) => {
   })
 
   return (
-    gamecards.map(({ title, icon, route }) => (
-      <View style={styles.container}>
-        <List.Item
-          key={title}
-          title={title}
-          left={() => <List.Icon icon={icon} />}
-          onPress={() => {router.push(route)}}
-          style={{ flex: 1 }}
-        />
-      </View>
-    ))
+    <View>
+      {gamecards.map(({ title, icon, route }, index) => (
+        <View key={index} style={styles.container}>
+          <List.Item
+            title={title}
+            left={() => <List.Icon icon={icon} />}
+            onPress={() => {router.push(route)}}
+            style={{ flex: 1 }}
+          />
+        </View>
+      ))}
+    </View>
   )
 }
 

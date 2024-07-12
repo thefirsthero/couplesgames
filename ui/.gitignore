@@ -27,6 +27,7 @@ yarn-error.log*
 
 # local env files
 .env*.local
+.env
 
 # vercel
 .vercel
@@ -74,3 +75,6 @@ yarn-error.*
 
 expo-env.d.ts
 # @end expo-cli
+
+# vscode
+.vscode/
