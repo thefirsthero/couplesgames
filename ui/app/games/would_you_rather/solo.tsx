@@ -67,7 +67,7 @@ const WouldYouRatherGameScreen: React.FC = () => {
         setPercentage(null);
       } else {
         router.replace({
-          pathname: '/results',
+          pathname: '/games/would_you_rather/results',
           params: { responses: JSON.stringify([...responses, { questionId: currentQuestionIndex, answer, percentage }]) },
         });
       }
