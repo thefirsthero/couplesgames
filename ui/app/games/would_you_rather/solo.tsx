@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { StyleSheet } from 'react-native';
 import { Surface } from 'react-native-paper';
 import { useRouter, useNavigation } from 'expo-router';
-import WouldYouRatherQuestion from '@/components/games/would_you_rather/WouldYouRatherQuestion';
+import WouldYouRatherQuestion from '@/components/games/would_you_rather/Questions';
 import Toast from 'react-native-toast-message';
 
 type Question = {
