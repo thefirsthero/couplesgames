@@ -1,6 +1,6 @@
 import React, { memo, useState } from 'react';
 import { Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { emailValidator } from '@/utils/emailValidator'
+import { emailValidator } from '@/utils/validation'
 import TextInput from '@/components/auth/TextInput'
 import BackButton from '@/components/auth/BackButton'
 import Background from '@/components/auth/Background'

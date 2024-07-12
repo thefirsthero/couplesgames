@@ -8,9 +8,7 @@ import Button from '@/components/auth/Button'
 import TextInput from '@/components/auth/TextInput'
 import BackButton from '@/components/auth/BackButton'
 // import { theme } from '../core/theme'
-import { emailValidator } from '@/utils/emailValidator'
-import { passwordValidator } from '@/utils/passwordValidator'
-import { nameValidator } from '@/utils/nameValidator'
+import { emailValidator, passwordValidator, nameValidator } from '@/utils/validation'
 import { Navigation } from '@/types/Navigation'
 
 type Props = {
