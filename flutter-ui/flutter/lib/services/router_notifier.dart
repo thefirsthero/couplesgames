@@ -68,7 +68,7 @@ GoRouter router(RouterRef ref) {
         name: 'home',
         path: '/',
         builder: (context, state) {
-          return const HomeScreen(title: "DevToDollars");
+          return const HomeScreen(title: "Games");
         },
         routes: [
           GoRoute(

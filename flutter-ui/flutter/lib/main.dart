@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_web_plugins/url_strategy.dart';
+import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:devtodollars/services/router_notifier.dart';
 
@@ -20,14 +21,10 @@ class MyApp extends ConsumerWidget {
   @override
   Widget build(context, ref) {
     final goRouter = ref.watch(routerProvider);
-    return MaterialApp.router(
-      title: 'DevToDollars',
+    return ShadApp.materialRouter(
+      title: 'Couples Games',
       debugShowCheckedModeBanner: false,
       routerConfig: goRouter,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
       builder: (context, child) => Container(child: child),
     );
   }
