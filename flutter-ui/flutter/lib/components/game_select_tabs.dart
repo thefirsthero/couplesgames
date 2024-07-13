@@ -36,6 +36,7 @@ class _GameSelectTabsState extends ConsumerState<GameSelectTabs> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Container(),
+                // New games list component
               ],
             ),
           ),
@@ -50,6 +51,7 @@ class _GameSelectTabsState extends ConsumerState<GameSelectTabs> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Container(),
+                // New games list component
               ],
             ),
           ),
@@ -64,6 +66,7 @@ class _GameSelectTabsState extends ConsumerState<GameSelectTabs> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Container(),
+                // New games list component
               ],
             ),
           ),
