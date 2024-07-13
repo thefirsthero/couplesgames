@@ -1,107 +1,95 @@
-import React, { memo, useState } from 'react'
-import { TouchableOpacity, StyleSheet, View } from 'react-native'
-import { Text } from 'react-native-paper'
-import Background from '@/components/auth/Background'
-import Logo from '@/components/auth/Logo'
-import Header from '@/components/auth/Header'
-import Button from '@/components/auth/Button'
-import TextInput from '@/components/auth/TextInput'
-import BackButton from '@/components/auth/BackButton'
-// import { theme } from '../core/theme'
-import { emailValidator, passwordValidator } from '@/utils/validation'
-import { Navigation } from '@/types/Navigation'
+import React, { useState } from 'react'
+import { Alert, StyleSheet, View, AppState } from 'react-native'
+import { supabase } from '@/utils/supabase'
+import { Button, Input } from '@rneui/themed'
 
-type Props = {
-  navigation: Navigation;
-};
+// Tells Supabase Auth to continuously refresh the session automatically if
+// the app is in the foreground. When this is added, you will continue to receive
+// `onAuthStateChange` events with the `TOKEN_REFRESHED` or `SIGNED_OUT` event
+// if the user's session is terminated. This should only be registered once.
+AppState.addEventListener('change', (state) => {
+  if (state === 'active') {
+    supabase.auth.startAutoRefresh()
+  } else {
+    supabase.auth.stopAutoRefresh()
+  }
+})
 
-const LoginScreen = ({ navigation }: Props) => {
-  const [email, setEmail] = useState({ value: '', error: '' });
-  const [password, setPassword] = useState({ value: '', error: '' });
+export default function Auth() {
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [loading, setLoading] = useState(false)
 
-  const _onLoginPressed = () => {
-    const emailError = emailValidator(email.value);
-    const passwordError = passwordValidator(password.value);
+  async function signInWithEmail() {
+    setLoading(true)
+    const { error } = await supabase.auth.signInWithPassword({
+      email: email,
+      password: password,
+    })
 
-    if (emailError || passwordError) {
-      setEmail({ ...email, error: emailError });
-      setPassword({ ...password, error: passwordError });
-      return;
-    }
+    if (error) Alert.alert(error.message)
+    setLoading(false)
+  }
 
-    navigation.navigate('Dashboard');
-  };
+  async function signUpWithEmail() {
+    setLoading(true)
+    const {
+      data: { session },
+      error,
+    } = await supabase.auth.signUp({
+      email: email,
+      password: password,
+    })
+
+    if (error) Alert.alert(error.message)
+    if (!session) Alert.alert('Please check your inbox for email verification!')
+    setLoading(false)
+  }
 
   return (
-    <Background>
-      <BackButton goBack={() => navigation.navigate('HomeScreen')} />
-
-      <Logo />
-
-      <Header>Welcome back.</Header>
-
-      <TextInput
-        label="Email"
-        returnKeyType="next"
-        value={email.value}
-        onChangeText={text => setEmail({ value: text, error: '' })}
-        error={!!email.error}
-        errorText={email.error}
-        autoCapitalize="none"
-        autoComplete="email"
-        textContentType="emailAddress"
-        keyboardType="email-address"
-      />
-
-      <TextInput
-        label="Password"
-        returnKeyType="done"
-        value={password.value}
-        onChangeText={text => setPassword({ value: text, error: '' })}
-        error={!!password.error}
-        errorText={password.error}
-        secureTextEntry
-      />
-
-      <View style={styles.forgotPassword}>
-        <TouchableOpacity
-          onPress={() => navigation.navigate('ForgotPasswordScreen')}
-        >
-          <Text style={styles.label}>Forgot your password?</Text>
-        </TouchableOpacity>
+    <View style={styles.container}>
+      <View style={[styles.verticallySpaced, styles.mt20]}>
+        <Input
+          label="Email"
+          leftIcon={{ type: 'font-awesome', name: 'envelope' }}
+          onChangeText={(text) => setEmail(text)}
+          value={email}
+          placeholder="email@address.com"
+          autoCapitalize={'none'}
+        />
       </View>
-
-      <Button mode="contained" onPress={_onLoginPressed}>
-        Login
-      </Button>
-
-      <View style={styles.row}>
-        <Text style={styles.label}>Don’t have an account? </Text>
-        <TouchableOpacity onPress={() => navigation.navigate('RegisterScreen')}>
-          <Text style={styles.link}>Sign up</Text>
-        </TouchableOpacity>
+      <View style={styles.verticallySpaced}>
+        <Input
+          label="Password"
+          leftIcon={{ type: 'font-awesome', name: 'lock' }}
+          onChangeText={(text) => setPassword(text)}
+          value={password}
+          secureTextEntry={true}
+          placeholder="Password"
+          autoCapitalize={'none'}
+        />
       </View>
-    </Background>
-  );
-};
+      <View style={[styles.verticallySpaced, styles.mt20]}>
+        <Button title="Sign in" disabled={loading} onPress={() => signInWithEmail()} />
+      </View>
+      <View style={styles.verticallySpaced}>
+        <Button title="Sign up" disabled={loading} onPress={() => signUpWithEmail()} />
+      </View>
+    </View>
+  )
+}
 
 const styles = StyleSheet.create({
-  forgotPassword: {
-    width: '100%',
-    alignItems: 'flex-end',
-    marginBottom: 24,
+  container: {
+    marginTop: 40,
+    padding: 12,
   },
-  row: {
-    flexDirection: 'row',
-    marginTop: 4,
+  verticallySpaced: {
+    paddingTop: 4,
+    paddingBottom: 4,
+    alignSelf: 'stretch',
   },
-  label: {
-    // color: theme.colors.secondary,
+  mt20: {
+    marginTop: 20,
   },
-  link: {
-    fontWeight: 'bold',
-    // color: theme.colors.primary,
-  },
-});
-
-export default memo(LoginScreen);
+})

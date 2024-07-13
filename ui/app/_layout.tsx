@@ -7,7 +7,7 @@ import { NotoSans_400Regular } from '@expo-google-fonts/noto-sans'
 import * as Localization from 'expo-localization'
 import { SplashScreen, Stack } from 'expo-router'
 import * as SecureStore from 'expo-secure-store'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Platform, useColorScheme } from 'react-native'
 import { PaperProvider } from 'react-native-paper'
 
@@ -16,6 +16,9 @@ import Locales from '@/locales'
 import { Themes } from '@/styles'
 import { Setting } from '@/types'
 import Toast from 'react-native-toast-message';
+import { Session } from '@supabase/supabase-js'
+import { supabase } from '@/utils/supabase'
+import Auth from './auth/Login'
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -62,6 +65,17 @@ const RootLayoutNav = () => {
     color: 'default',
     language: 'auto',
   })
+  const [session, setSession] = useState<Session | null>(null)
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session)
+    })
+
+    supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session)
+    })
+  }, [])
 
   // Load settings from the device
   React.useEffect(() => {
@@ -108,11 +122,17 @@ const RootLayoutNav = () => {
           ),
         }}
       >
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen
-          name="modal"
-          options={{ title: Locales.t('titleModal'), presentation: 'modal' }}
-        />
+        {session ? (
+          <>
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            <Stack.Screen
+              name="modal"
+              options={{ title: Locales.t('titleModal'), presentation: 'modal' }}
+            />
+          </>
+        ) : (
+          <Stack.Screen name="auth" options={{ headerShown: false }} />
+        )}
       </Stack>
       <Toast 
         visibilityTime={2000}

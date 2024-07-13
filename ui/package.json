@@ -22,6 +22,7 @@
     "@react-native-async-storage/async-storage": "^1.23.1",
     "@react-navigation/drawer": "^6.6.15",
     "@react-navigation/native": "^6.0.2",
+    "@reduxjs/toolkit": "^2.2.6",
     "@rneui/themed": "^4.0.0-rc.8",
     "@shopify/flash-list": "1.6.4",
     "@shopify/react-native-skia": "1.2.3",
@@ -51,7 +52,8 @@
     "react-native-status-bar-height": "^2.6.0",
     "react-native-toast-message": "^2.2.0",
     "react-native-url-polyfill": "^2.0.0",
-    "react-native-web": "~0.19.6"
+    "react-native-web": "~0.19.6",
+    "react-redux": "^9.1.2"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

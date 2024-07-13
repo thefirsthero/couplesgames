@@ -1,7 +1,8 @@
 import React from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 import { Surface, Button } from 'react-native-paper';
-import { useRouter, useLocalSearchParams } from 'expo-router';
+import { useRouter, useLocalSearchParams, useNavigation } from 'expo-router';
+import { useTheme } from 'react-native-paper';
 
 type Response = {
   questionId: number;
@@ -10,17 +11,25 @@ type Response = {
 };
 
 const ResultScreen: React.FC = () => {
+  const theme = useTheme();
   const router = useRouter();
   const params = useLocalSearchParams<{ responses?: string }>();
   const responses: Response[] = JSON.parse(params.responses ?? '[]');
+  const navigation = useNavigation();
+
+  React.useLayoutEffect(() => {
+    navigation.setOptions({
+      title: 'Results',
+    });
+  }, [navigation]);
 
   const averagePercentage = responses.reduce((acc, response) => acc + response.percentage, 0) / responses.length;
 
   return (
-    <Surface style={styles.container}>
-      <Text style={styles.title}>Game Over</Text>
-      <Text style={styles.content}>Thanks for playing!</Text>
-      <Text style={styles.summaryText}>You are: {averagePercentage.toFixed(2)}% common :)</Text>
+    <Surface style={[styles.container, {}]}>
+      <Text style={[styles.title, { color: theme.colors.primary }]}>Game Over</Text>
+      <Text style={[styles.content, { color: theme.colors.secondary }]}>Thanks for playing!</Text>
+      <Text style={[styles.summaryText, { color: theme.colors.primary }]}>You are: {averagePercentage.toFixed(2)}% common :)</Text>
       <Button mode="contained" onPress={() => router.push('/')}>
         Back to Home
       </Button>
@@ -52,3 +61,4 @@ const styles = StyleSheet.create({
 });
 
 export default ResultScreen;
+
