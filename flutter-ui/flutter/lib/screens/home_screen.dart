@@ -2,7 +2,6 @@ import 'package:devtodollars/components/common/bottom_nav_bar.dart';
 import 'package:devtodollars/components/home_screen/game_select_tabs.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:devtodollars/services/auth_notifier.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {

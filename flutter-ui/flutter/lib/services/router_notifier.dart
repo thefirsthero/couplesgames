@@ -103,14 +103,14 @@ GoRouter router(RouterRef ref) {
         name: 'would_you_rather_solo',
         path: '/would_you_rather_solo',
         builder: (context, state) {
-          return WYRSoloScreen();
+          return const WYRSoloScreen();
         },
       ),
       GoRoute(
         name: 'gameover',
         path: '/gameover',
         builder: (context, state) {
-          return GameOverScreen();
+          return const GameOverScreen();
         },
       )
     ],

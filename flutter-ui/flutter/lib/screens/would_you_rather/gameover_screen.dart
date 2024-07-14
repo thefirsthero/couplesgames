@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:devtodollars/services/questions_notifier.dart';
 
 class GameOverScreen extends ConsumerWidget {
+  const GameOverScreen({super.key});
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final userChoices = ref.watch(userChoicesProvider);
