@@ -33,11 +33,15 @@ class _WYRSoloScreenState extends ConsumerState<WYRSoloScreen> {
 
     ref.read(userChoicesProvider.notifier).state = userChoices;
 
-    ShadToaster.of(context).show(ShadToast(
-      title: const Text('Nice! ☺'),
-      description: Text(
-          '${percentage.toStringAsFixed(2)}% of other people chose the same option'),
-    ));
+    ShadToaster.of(context).show(
+      ShadToast(
+        showCloseIconOnlyWhenHovered: false,
+        duration: const Duration(seconds: 3),
+        title: const Text('Nice! ☺'),
+        description: Text(
+            '${percentage.toStringAsFixed(2)}% of other people chose the same option'),
+      ),
+    );
 
     if (index == questions.length - 1) {
       context.replaceNamed('gameover');
@@ -90,8 +94,7 @@ class QuestionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Color baseColor =
-        Colors.primaries[index % Colors.primaries.length];
+    final Color baseColor = Colors.primaries[index % Colors.primaries.length];
     final Color topColor = baseColor.withOpacity(0.8);
     final Color bottomColor = baseColor.withOpacity(0.5);
 
@@ -105,7 +108,8 @@ class QuestionCard extends StatelessWidget {
               margin: EdgeInsets.only(bottom: 8),
               child: Center(
                 child: Padding(
-                  padding: const EdgeInsets.all(16.0), // Add padding inside the card
+                  padding:
+                      const EdgeInsets.all(16.0), // Add padding inside the card
                   child: Text(
                     question.optionA,
                     style: TextStyle(fontSize: 24),
@@ -142,7 +146,8 @@ class QuestionCard extends StatelessWidget {
               margin: EdgeInsets.only(top: 8),
               child: Center(
                 child: Padding(
-                  padding: const EdgeInsets.all(16.0), // Add padding inside the card
+                  padding:
+                      const EdgeInsets.all(16.0), // Add padding inside the card
                   child: Text(
                     question.optionB,
                     style: TextStyle(fontSize: 24),
