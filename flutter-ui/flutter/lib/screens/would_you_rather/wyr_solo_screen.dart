@@ -21,10 +21,6 @@ class _WYRSoloScreenState extends ConsumerState<WYRSoloScreen> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(widget.title),
         actions: [
-          TextButton(
-            onPressed: () => context.replaceNamed("payments"),
-            child: const Text("Payments"),
-          ),
           TextButton(onPressed: authNotif.signOut, child: const Text("Logout")),
         ],
       ),
