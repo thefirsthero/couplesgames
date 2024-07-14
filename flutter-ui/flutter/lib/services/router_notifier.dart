@@ -1,3 +1,5 @@
+import 'package:devtodollars/screens/settings.dart';
+import 'package:devtodollars/screens/would_you_rather/wyr_solo_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
@@ -86,6 +88,21 @@ GoRouter router(RouterRef ref) {
         builder: (BuildContext context, GoRouterState state) {
           final qp = state.uri.queryParameters;
           return PaymentsScreen(price: qp["price"]);
+        },
+      ),
+      GoRoute(
+        name: 'settings',
+        path: '/settings',
+        builder: (context, state) {
+          return const SettingsScreen(title: 'Settings');
+        },
+      ),
+      // WYR Routes
+      GoRoute(
+        name: 'would_you_rather_solo',
+        path: '/would_you_rather_solo',
+        builder: (context, state) {
+          return const WYRSoloScreen(title: 'Would You Rather');
         },
       ),
     ],
