@@ -81,8 +81,6 @@ class _GameSelectTabsState extends ConsumerState<GameSelectTabs> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        // This can be replaced with an actual ListView when needed
-        // ...games.map((game) => Text(game.name)).toList()
         ListView.separated(
           itemCount: games.length,
           shrinkWrap: true,
