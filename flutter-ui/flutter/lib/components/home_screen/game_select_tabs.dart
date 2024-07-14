@@ -1,3 +1,4 @@
+import 'package:devtodollars/models/game_select_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -11,66 +12,96 @@ class GameSelectTabs extends ConsumerStatefulWidget {
 }
 
 class _GameSelectTabsState extends ConsumerState<GameSelectTabs> {
-  int _selectedIndex = 0;
+  String _selectedIndex = 'solo';
 
-  void _onItemTapped(int index) {
+  void _onItemTapped(String index) {
     setState(() {
       _selectedIndex = index;
     });
   }
 
+  List<GameSelectModel> games = [];
+
+  void _getInitialInfo() {
+    games = GameSelectModel.getGames();
+  }
+
   @override
   Widget build(BuildContext context) {
+    _getInitialInfo();
+
     return ShadTabs<String>(
       defaultValue: 'solo',
       tabBarConstraints: const BoxConstraints(maxWidth: 400),
       contentConstraints: const BoxConstraints(maxWidth: 400),
       tabs: [
-        ShadTab(
+        _buildTab(
           value: 'solo',
-          text: const Text('Solo'),
-          content: ShadCard(
-            title: const Text('Play Solo'),
-            description: const Text("..."),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(),
-                // New games list component
-              ],
-            ),
-          ),
+          text: 'Solo',
+          title: 'Play Solo',
+          content: _buildGameList(games),
         ),
-        ShadTab(
+        _buildTab(
           value: 'irl',
-          text: const Text('IRL'),
-          content: ShadCard(
-            title: const Text('Play IRL'),
-            description: const Text("..."),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(),
-                // New games list component
-              ],
-            ),
-          ),
+          text: 'IRL',
+          title: 'Play IRL',
+          content: _buildGameList(games),
         ),
-        ShadTab(
+        _buildTab(
           value: 'online',
-          text: const Text('Online'),
-          content: ShadCard(
-            title: const Text('Play Online'),
-            description: const Text("..."),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(),
-                // New games list component
-              ],
-            ),
-          ),
+          text: 'Online',
+          title: 'Play Online',
+          content: _buildGameList(games),
         ),
+      ],
+    );
+  }
+
+  ShadTab<String> _buildTab({
+    required String value,
+    required String text,
+    required String title,
+    required Widget content,
+  }) {
+    return ShadTab<String>(
+      value: value,
+      text: Text(text),
+      onPressed: () => _onItemTapped(value),
+      content: ShadCard(
+        title: Text(title),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [content],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildGameList(List<GameSelectModel> games) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        // This can be replaced with an actual ListView when needed
+        // ...games.map((game) => Text(game.name)).toList()
+        ListView.separated(
+          itemCount: games.length,
+          shrinkWrap: true,
+          separatorBuilder: (context, index) => const SizedBox(
+            height: 25,
+          ),
+          padding: const EdgeInsets.only(left: 20, right: 20),
+          itemBuilder: (context, index) {
+            return ListTile(
+              leading:
+                  CircleAvatar(child: Text(games[index].name[0].toUpperCase())),
+              title: Text(games[index].name),
+              onTap: () {
+                context
+                    .goNamed('${games[index].baseRouteName}_$_selectedIndex');
+              },
+            );
+          },
+        )
       ],
     );
   }
