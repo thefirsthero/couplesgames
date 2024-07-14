@@ -95,7 +95,7 @@ class _GameSelectTabsState extends ConsumerState<GameSelectTabs> {
               title: Text(games[index].name),
               onTap: () {
                 context
-                    .goNamed('${games[index].baseRouteName}_$_selectedIndex');
+                    .pushNamed('${games[index].baseRouteName}_$_selectedIndex');
               },
             );
           },
