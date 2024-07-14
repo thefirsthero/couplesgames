@@ -6,7 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
 class WYRSoloScreen extends ConsumerStatefulWidget {
-  const WYRSoloScreen({Key? key}) : super(key: key);
+  const WYRSoloScreen({super.key});
 
   @override
   ConsumerState<WYRSoloScreen> createState() => _WYRSoloScreenState();
@@ -47,7 +47,7 @@ class _WYRSoloScreenState extends ConsumerState<WYRSoloScreen> {
       context.replaceNamed('gameover');
     } else {
       _pageController.nextPage(
-        duration: Duration(milliseconds: 300),
+        duration: const Duration(milliseconds: 300),
         curve: Curves.easeIn,
       );
     }
@@ -59,7 +59,7 @@ class _WYRSoloScreenState extends ConsumerState<WYRSoloScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Would You Rather'),
+        title: const Text('Would You Rather'),
       ),
       body: PageView.builder(
         controller: _pageController,
@@ -87,6 +87,7 @@ class QuestionCard extends StatelessWidget {
   final Function(String) onOptionSelected;
 
   const QuestionCard({
+    super.key, 
     required this.question,
     required this.index,
     required this.onOptionSelected,
@@ -105,14 +106,14 @@ class QuestionCard extends StatelessWidget {
             onTap: () => onOptionSelected('A'),
             child: Card(
               color: topColor,
-              margin: EdgeInsets.only(bottom: 8),
+              margin: const EdgeInsets.only(bottom: 8),
               child: Center(
                 child: Padding(
                   padding:
                       const EdgeInsets.all(16.0), // Add padding inside the card
                   child: Text(
                     question.optionA,
-                    style: TextStyle(fontSize: 24),
+                    style: const TextStyle(fontSize: 24),
                     textAlign: TextAlign.center,
                   ),
                 ),
@@ -123,7 +124,7 @@ class QuestionCard extends StatelessWidget {
         Stack(
           alignment: Alignment.center,
           children: [
-            Divider(
+            const Divider(
               thickness: 2,
               indent: 20,
               endIndent: 20,
@@ -131,7 +132,7 @@ class QuestionCard extends StatelessWidget {
             Container(
               color: Theme.of(context).colorScheme.surface,
               padding: const EdgeInsets.symmetric(horizontal: 8.0),
-              child: Text(
+              child: const Text(
                 'OR',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
@@ -143,14 +144,14 @@ class QuestionCard extends StatelessWidget {
             onTap: () => onOptionSelected('B'),
             child: Card(
               color: bottomColor,
-              margin: EdgeInsets.only(top: 8),
+              margin: const EdgeInsets.only(top: 8),
               child: Center(
                 child: Padding(
                   padding:
                       const EdgeInsets.all(16.0), // Add padding inside the card
                   child: Text(
                     question.optionB,
-                    style: TextStyle(fontSize: 24),
+                    style: const TextStyle(fontSize: 24),
                     textAlign: TextAlign.center,
                   ),
                 ),
