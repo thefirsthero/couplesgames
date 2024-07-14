@@ -34,7 +34,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           ],
         ),
       ),
-      bottomNavigationBar: const BottomTabs(),
+      bottomNavigationBar: const BottomTabs(initialIndex: 0),
     );
   }
 }

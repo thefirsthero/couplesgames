@@ -3,7 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 class BottomTabs extends ConsumerStatefulWidget {
-  const BottomTabs({super.key});
+  final int initialIndex;
+
+  const BottomTabs({
+    super.key,
+    required this.initialIndex,
+  });
 
   @override
   ConsumerState<BottomTabs> createState() => _BottomTabsState();
@@ -12,8 +17,16 @@ class BottomTabs extends ConsumerStatefulWidget {
 class _BottomTabsState extends ConsumerState<BottomTabs> {
   int _selectedIndex = 0;
 
+  @override
+  void initState() {
+    super.initState();
+    _selectedIndex = widget.initialIndex;
+  }
+
   void _onItemTapped(int index) {
     setState(() {
+      _selectedIndex = index;
+
       if (index == 0) {
         context.replaceNamed('home');
         return;

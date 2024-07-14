@@ -35,7 +35,7 @@ class SettingsScreenState extends ConsumerState<SettingsScreen> {
           children: <Widget>[Text('Put stuff here')],
         ),
       ),
-      bottomNavigationBar: const BottomTabs(),
+      bottomNavigationBar: const BottomTabs(initialIndex: 1),
     );
   }
 }
