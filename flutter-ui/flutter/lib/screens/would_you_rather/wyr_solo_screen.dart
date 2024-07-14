@@ -1,20 +1,18 @@
-import 'package:devtodollars/components/common/bottom_nav_bar.dart';
-import 'package:devtodollars/components/home_screen/game_select_tabs.dart';
+import 'package:devtodollars/services/auth_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:devtodollars/services/auth_notifier.dart';
 
-class HomeScreen extends ConsumerStatefulWidget {
-  const HomeScreen({super.key, required this.title});
+class WYRSoloScreen extends ConsumerStatefulWidget {
+  const WYRSoloScreen({super.key, required this.title});
 
   final String title;
 
   @override
-  ConsumerState<HomeScreen> createState() => _HomeScreenState();
+  ConsumerState<WYRSoloScreen> createState() => _WYRSoloScreenState();
 }
 
-class _HomeScreenState extends ConsumerState<HomeScreen> {
+class _WYRSoloScreenState extends ConsumerState<WYRSoloScreen> {
   @override
   Widget build(BuildContext context) {
     final authNotif = ref.watch(authProvider.notifier);
@@ -33,12 +31,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       body: const Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            GameSelectTabs(),
-          ],
+          children: <Widget>[Text('Put stuff here')],
         ),
       ),
-      bottomNavigationBar: const BottomTabs(),
     );
   }
 }

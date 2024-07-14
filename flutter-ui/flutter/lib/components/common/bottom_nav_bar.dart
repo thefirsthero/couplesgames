@@ -14,19 +14,28 @@ class _BottomTabsState extends ConsumerState<BottomTabs> {
 
   void _onItemTapped(int index) {
     setState(() {
-      _selectedIndex = index;
+      if (index == 0) {
+        context.replaceNamed('home');
+        return;
+      }
+
+      context.replaceNamed('settings');
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return BottomNavigationBar(
+      backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+      selectedItemColor: Theme.of(context).colorScheme.primary,
       items: const <BottomNavigationBarItem>[
         BottomNavigationBarItem(
+          tooltip: 'Choose your game here',
           icon: Icon(Icons.gamepad_outlined),
           label: 'Games',
         ),
         BottomNavigationBarItem(
+          tooltip: 'App settings found here',
           icon: Icon(Icons.settings),
           label: 'Settings',
         ),
