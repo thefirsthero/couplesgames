@@ -1,4 +1,5 @@
 import 'package:devtodollars/screens/settings.dart';
+import 'package:devtodollars/screens/would_you_rather/gameover_screen.dart';
 import 'package:devtodollars/screens/would_you_rather/wyr_solo_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -102,9 +103,16 @@ GoRouter router(RouterRef ref) {
         name: 'would_you_rather_solo',
         path: '/would_you_rather_solo',
         builder: (context, state) {
-          return const WYRSoloScreen(title: 'Would You Rather');
+          return WYRSoloScreen();
         },
       ),
+      GoRoute(
+        name: 'gameover',
+        path: '/gameover',
+        builder: (context, state) {
+          return GameOverScreen();
+        },
+      )
     ],
   );
 }

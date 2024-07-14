@@ -1,35 +1,159 @@
-import 'package:devtodollars/services/auth_notifier.dart';
+import 'package:devtodollars/models/wyr_questions_model.dart';
+import 'package:devtodollars/services/questions_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shadcn_ui/shadcn_ui.dart';
 
 class WYRSoloScreen extends ConsumerStatefulWidget {
-  const WYRSoloScreen({super.key, required this.title});
-
-  final String title;
+  const WYRSoloScreen({Key? key}) : super(key: key);
 
   @override
   ConsumerState<WYRSoloScreen> createState() => _WYRSoloScreenState();
 }
 
 class _WYRSoloScreenState extends ConsumerState<WYRSoloScreen> {
+  final PageController _pageController = PageController();
+
+  void _onOptionSelected(String selectedOption, int index) {
+    final questions = ref.read(questionsProvider);
+    final userChoices = ref.read(userChoicesProvider);
+
+    double percentage;
+    if (selectedOption == 'A') {
+      percentage = questions[index].votesA /
+          (questions[index].votesA + questions[index].votesB);
+    } else {
+      percentage = questions[index].votesB /
+          (questions[index].votesA + questions[index].votesB);
+    }
+
+    percentage *= 100;
+    userChoices.add(percentage);
+
+    ref.read(userChoicesProvider.notifier).state = userChoices;
+
+    ShadToaster.of(context).show(ShadToast(
+      title: const Text('Nice! ☺'),
+      description: Text(
+          '${percentage.toStringAsFixed(2)}% of other people chose the same option'),
+    ));
+
+    if (index == questions.length - 1) {
+      context.replaceNamed('gameover');
+    } else {
+      _pageController.nextPage(
+        duration: Duration(milliseconds: 300),
+        curve: Curves.easeIn,
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final authNotif = ref.watch(authProvider.notifier);
+    final questions = ref.watch(questionsProvider);
+
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
-        actions: [
-          TextButton(onPressed: authNotif.signOut, child: const Text("Logout")),
-        ],
+        title: Text('Would You Rather'),
       ),
-      body: const Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[Text('Put stuff here')],
+      body: PageView.builder(
+        controller: _pageController,
+        itemCount: questions.length,
+        itemBuilder: (context, index) {
+          return Padding(
+            padding: const EdgeInsets.all(16.0), // Adjust padding as needed
+            child: QuestionCard(
+              question: questions[index],
+              index: index,
+              onOptionSelected: (selectedOption) {
+                _onOptionSelected(selectedOption, index);
+              },
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
+class QuestionCard extends StatelessWidget {
+  final WYRQuestion question;
+  final int index;
+  final Function(String) onOptionSelected;
+
+  const QuestionCard({
+    required this.question,
+    required this.index,
+    required this.onOptionSelected,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final Color baseColor =
+        Colors.primaries[index % Colors.primaries.length];
+    final Color topColor = baseColor.withOpacity(0.8);
+    final Color bottomColor = baseColor.withOpacity(0.5);
+
+    return Column(
+      children: [
+        Expanded(
+          child: GestureDetector(
+            onTap: () => onOptionSelected('A'),
+            child: Card(
+              color: topColor,
+              margin: EdgeInsets.only(bottom: 8),
+              child: Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0), // Add padding inside the card
+                  child: Text(
+                    question.optionA,
+                    style: TextStyle(fontSize: 24),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ),
+            ),
+          ),
         ),
-      ),
+        Stack(
+          alignment: Alignment.center,
+          children: [
+            Divider(
+              thickness: 2,
+              indent: 20,
+              endIndent: 20,
+            ),
+            Container(
+              color: Theme.of(context).colorScheme.surface,
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: Text(
+                'OR',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+            ),
+          ],
+        ),
+        Expanded(
+          child: GestureDetector(
+            onTap: () => onOptionSelected('B'),
+            child: Card(
+              color: bottomColor,
+              margin: EdgeInsets.only(top: 8),
+              child: Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0), // Add padding inside the card
+                  child: Text(
+                    question.optionB,
+                    style: TextStyle(fontSize: 24),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
