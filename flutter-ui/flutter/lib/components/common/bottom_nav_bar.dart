@@ -21,6 +21,8 @@ class _BottomTabsState extends ConsumerState<BottomTabs> {
   @override
   Widget build(BuildContext context) {
     return BottomNavigationBar(
+      backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+      selectedItemColor: Theme.of(context).colorScheme.primary,
       items: const <BottomNavigationBarItem>[
         BottomNavigationBarItem(
           icon: Icon(Icons.gamepad_outlined),
