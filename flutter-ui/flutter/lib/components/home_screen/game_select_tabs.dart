@@ -81,6 +81,7 @@ class _GameSelectTabsState extends ConsumerState<GameSelectTabs> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
+        const SizedBox(height: 20),
         ListView.separated(
           itemCount: games.length,
           shrinkWrap: true,
