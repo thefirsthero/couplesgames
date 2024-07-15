@@ -15,6 +15,14 @@ class WYRSoloScreen extends ConsumerStatefulWidget {
 class _WYRSoloScreenState extends ConsumerState<WYRSoloScreen> {
   final PageController _pageController = PageController();
 
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(userChoicesProvider.notifier).state = [];
+    });
+  }
+
   void _onOptionSelected(String selectedOption, int index) {
     final questions = ref.read(questionsProvider);
     final userChoices = ref.read(userChoicesProvider);
@@ -32,6 +40,7 @@ class _WYRSoloScreenState extends ConsumerState<WYRSoloScreen> {
     userChoices.add(percentage);
 
     ref.read(userChoicesProvider.notifier).state = userChoices;
+    ref.read(questionsProvider.notifier).answerQuestion(index, percentage);
 
     ShadToaster.of(context).show(
       ShadToast(
@@ -53,6 +62,10 @@ class _WYRSoloScreenState extends ConsumerState<WYRSoloScreen> {
     }
   }
 
+  void _quitGame() {
+    context.replaceNamed('gameover');
+  }
+
   @override
   Widget build(BuildContext context) {
     final questions = ref.watch(questionsProvider);
@@ -60,23 +73,31 @@ class _WYRSoloScreenState extends ConsumerState<WYRSoloScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Would You Rather'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.exit_to_app),
+            onPressed: _quitGame,
+          ),
+        ],
       ),
-      body: PageView.builder(
-        controller: _pageController,
-        itemCount: questions.length,
-        itemBuilder: (context, index) {
-          return Padding(
-            padding: const EdgeInsets.all(16.0), // Adjust padding as needed
-            child: QuestionCard(
-              question: questions[index],
-              index: index,
-              onOptionSelected: (selectedOption) {
-                _onOptionSelected(selectedOption, index);
+      body: questions.isEmpty
+          ? const Center(child: CircularProgressIndicator())
+          : PageView.builder(
+              controller: _pageController,
+              itemCount: questions.length,
+              itemBuilder: (context, index) {
+                return Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: QuestionCard(
+                    question: questions[index],
+                    index: index,
+                    onOptionSelected: (selectedOption) {
+                      _onOptionSelected(selectedOption, index);
+                    },
+                  ),
+                );
               },
             ),
-          );
-        },
-      ),
     );
   }
 }
@@ -87,7 +108,7 @@ class QuestionCard extends StatelessWidget {
   final Function(String) onOptionSelected;
 
   const QuestionCard({
-    super.key, 
+    super.key,
     required this.question,
     required this.index,
     required this.onOptionSelected,
@@ -109,8 +130,7 @@ class QuestionCard extends StatelessWidget {
               margin: const EdgeInsets.only(bottom: 8),
               child: Center(
                 child: Padding(
-                  padding:
-                      const EdgeInsets.all(16.0), // Add padding inside the card
+                  padding: const EdgeInsets.all(16.0),
                   child: Text(
                     question.optionA,
                     style: const TextStyle(fontSize: 24),
@@ -147,8 +167,7 @@ class QuestionCard extends StatelessWidget {
               margin: const EdgeInsets.only(top: 8),
               child: Center(
                 child: Padding(
-                  padding:
-                      const EdgeInsets.all(16.0), // Add padding inside the card
+                  padding: const EdgeInsets.all(16.0),
                   child: Text(
                     question.optionB,
                     style: const TextStyle(fontSize: 24),
