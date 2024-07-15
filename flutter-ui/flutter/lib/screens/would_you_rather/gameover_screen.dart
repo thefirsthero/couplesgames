@@ -8,7 +8,11 @@ class GameOverScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final userChoices = ref.watch(userChoicesProvider);
-    double average = userChoices.reduce((a, b) => a + b) / userChoices.length;
+
+    // If no questions were answered, set average to 0 to avoid division by zero error
+    double average = userChoices.isEmpty
+        ? 0
+        : userChoices.reduce((a, b) => a + b) / userChoices.length;
 
     // Determine the color based on the average percentage
     Color backgroundColor;
@@ -74,7 +78,9 @@ class GameOverScreen extends ConsumerWidget {
   }
 
   String _getPercentageDescription(double percentage) {
-    if (percentage < 25) {
+    if (percentage == 0) {
+      return 'You didn\'t play 😔';
+    } else if (percentage < 25) {
       return 'You are less common';
     } else if (percentage < 50) {
       return 'You are somewhat common';

@@ -28,7 +28,7 @@ class QuestionsNotifier extends StateNotifier<List<WYRQuestion>> {
       if (response.data != null) {
         List<dynamic> data = response.data;
         List<WYRQuestion> questions = data.map((json) => WYRQuestion.fromJson(json)).toList();
-        questions.shuffle(Random());  // Randomize the list
+        questions.shuffle(Random());
         state = questions;
       } else {
         debugPrint('Error: Failed to load questions. Response data is null.');
