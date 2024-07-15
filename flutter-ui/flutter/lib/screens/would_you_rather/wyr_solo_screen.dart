@@ -1,4 +1,3 @@
-// wyr_solo_screen.dart
 import 'package:devtodollars/models/wyr_questions_model.dart';
 import 'package:devtodollars/services/questions_notifier.dart';
 import 'package:flutter/material.dart';
