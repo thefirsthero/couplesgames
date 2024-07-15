@@ -18,7 +18,6 @@ class _WYRSoloScreenState extends ConsumerState<WYRSoloScreen> {
   @override
   void initState() {
     super.initState();
-    // Reset the user choices state when the screen is opened
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(userChoicesProvider.notifier).state = [];
     });
@@ -41,6 +40,7 @@ class _WYRSoloScreenState extends ConsumerState<WYRSoloScreen> {
     userChoices.add(percentage);
 
     ref.read(userChoicesProvider.notifier).state = userChoices;
+    ref.read(questionsProvider.notifier).answerQuestion(index, percentage);
 
     ShadToaster.of(context).show(
       ShadToast(
@@ -80,22 +80,24 @@ class _WYRSoloScreenState extends ConsumerState<WYRSoloScreen> {
           ),
         ],
       ),
-      body: PageView.builder(
-        controller: _pageController,
-        itemCount: questions.length,
-        itemBuilder: (context, index) {
-          return Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: QuestionCard(
-              question: questions[index],
-              index: index,
-              onOptionSelected: (selectedOption) {
-                _onOptionSelected(selectedOption, index);
+      body: questions.isEmpty
+          ? const Center(child: CircularProgressIndicator())
+          : PageView.builder(
+              controller: _pageController,
+              itemCount: questions.length,
+              itemBuilder: (context, index) {
+                return Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: QuestionCard(
+                    question: questions[index],
+                    index: index,
+                    onOptionSelected: (selectedOption) {
+                      _onOptionSelected(selectedOption, index);
+                    },
+                  ),
+                );
               },
             ),
-          );
-        },
-      ),
     );
   }
 }
