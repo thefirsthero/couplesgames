@@ -62,6 +62,10 @@ class _WYRSoloScreenState extends ConsumerState<WYRSoloScreen> {
     }
   }
 
+  void _quitGame() {
+    context.replaceNamed('gameover');
+  }
+
   @override
   Widget build(BuildContext context) {
     final questions = ref.watch(questionsProvider);
@@ -69,6 +73,12 @@ class _WYRSoloScreenState extends ConsumerState<WYRSoloScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Would You Rather'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.exit_to_app),
+            onPressed: _quitGame,
+          ),
+        ],
       ),
       body: PageView.builder(
         controller: _pageController,
@@ -96,7 +106,7 @@ class QuestionCard extends StatelessWidget {
   final Function(String) onOptionSelected;
 
   const QuestionCard({
-    super.key, 
+    super.key,
     required this.question,
     required this.index,
     required this.onOptionSelected,
@@ -118,8 +128,7 @@ class QuestionCard extends StatelessWidget {
               margin: const EdgeInsets.only(bottom: 8),
               child: Center(
                 child: Padding(
-                  padding:
-                      const EdgeInsets.all(16.0),
+                  padding: const EdgeInsets.all(16.0),
                   child: Text(
                     question.optionA,
                     style: const TextStyle(fontSize: 24),
@@ -156,8 +165,7 @@ class QuestionCard extends StatelessWidget {
               margin: const EdgeInsets.only(top: 8),
               child: Center(
                 child: Padding(
-                  padding:
-                      const EdgeInsets.all(16.0),
+                  padding: const EdgeInsets.all(16.0),
                   child: Text(
                     question.optionB,
                     style: const TextStyle(fontSize: 24),
