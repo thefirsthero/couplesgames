@@ -1,3 +1,4 @@
+// wyr_solo_screen.dart
 import 'package:devtodollars/models/wyr_questions_model.dart';
 import 'package:devtodollars/services/questions_notifier.dart';
 import 'package:flutter/material.dart';
@@ -14,6 +15,15 @@ class WYRSoloScreen extends ConsumerStatefulWidget {
 
 class _WYRSoloScreenState extends ConsumerState<WYRSoloScreen> {
   final PageController _pageController = PageController();
+
+  @override
+  void initState() {
+    super.initState();
+    // Reset the user choices state when the screen is opened
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(userChoicesProvider.notifier).state = [];
+    });
+  }
 
   void _onOptionSelected(String selectedOption, int index) {
     final questions = ref.read(questionsProvider);
@@ -66,7 +76,7 @@ class _WYRSoloScreenState extends ConsumerState<WYRSoloScreen> {
         itemCount: questions.length,
         itemBuilder: (context, index) {
           return Padding(
-            padding: const EdgeInsets.all(16.0), // Adjust padding as needed
+            padding: const EdgeInsets.all(16.0),
             child: QuestionCard(
               question: questions[index],
               index: index,
@@ -110,7 +120,7 @@ class QuestionCard extends StatelessWidget {
               child: Center(
                 child: Padding(
                   padding:
-                      const EdgeInsets.all(16.0), // Add padding inside the card
+                      const EdgeInsets.all(16.0),
                   child: Text(
                     question.optionA,
                     style: const TextStyle(fontSize: 24),
@@ -148,7 +158,7 @@ class QuestionCard extends StatelessWidget {
               child: Center(
                 child: Padding(
                   padding:
-                      const EdgeInsets.all(16.0), // Add padding inside the card
+                      const EdgeInsets.all(16.0),
                   child: Text(
                     question.optionB,
                     style: const TextStyle(fontSize: 24),
