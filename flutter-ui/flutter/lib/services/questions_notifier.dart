@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'package:devtodollars/models/wyr_questions_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -20,16 +21,22 @@ class QuestionsNotifier extends StateNotifier<List<WYRQuestion>> {
   }
 
   Future<void> fetchQuestions() async {
-    final supabaseClient = Supabase.instance.client;
-    final response = await supabaseClient.functions.invoke('get_wyr_solo_questions');
+    try {
+      final supabaseClient = Supabase.instance.client;
+      final response = await supabaseClient.functions.invoke('get_wyr_solo_questions');
 
-    if (response.data != null) {
-      List<dynamic> data = response.data;
-      debugPrint('data map: ${data.map((json) => WYRQuestion.fromJson(json)).toList()}');
-
-      state = data.map((json) => WYRQuestion.fromJson(json)).toList();
-    } else {
-      throw Exception('Failed to load questions. The response was: ${response.data.toString()}');
+      if (response.data != null) {
+        List<dynamic> data = response.data;
+        List<WYRQuestion> questions = data.map((json) => WYRQuestion.fromJson(json)).toList();
+        questions.shuffle(Random());  // Randomize the list
+        state = questions;
+      } else {
+        debugPrint('Error: Failed to load questions. Response data is null.');
+        throw Exception('Failed to load questions. Response data is null.');
+      }
+    } catch (error) {
+      debugPrint('Error fetching questions: $error');
+      throw Exception('Failed to load questions. Error: $error');
     }
   }
 
