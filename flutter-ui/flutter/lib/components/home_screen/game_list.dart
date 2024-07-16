@@ -1,9 +1,9 @@
-import 'package:devtodollars/models/game_select_model.dart';
+import 'package:devtodollars/models/game_list_model.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 class GameList extends StatelessWidget {
-  final List<GameSelectModel> games;
+  final List<GameListModel> games;
   final String selectedIndex;
 
   const GameList({
@@ -23,7 +23,8 @@ class GameList extends StatelessWidget {
       padding: const EdgeInsets.only(left: 20, right: 20),
       itemBuilder: (context, index) {
         return ListTile(
-          leading: CircleAvatar(child: Text(games[index].name[0].toUpperCase())),
+          leading:
+              CircleAvatar(child: Text(games[index].name[0].toUpperCase())),
           title: Text(games[index].name),
           onTap: () {
             context.pushNamed('${games[index].baseRouteName}_$selectedIndex');

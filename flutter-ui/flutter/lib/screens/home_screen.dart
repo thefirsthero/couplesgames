@@ -1,7 +1,7 @@
 import 'package:devtodollars/components/common/bottom_nav_bar.dart';
 import 'package:devtodollars/components/home_screen/game_list.dart';
 import 'package:devtodollars/components/home_screen/shad_tab.dart';
-import 'package:devtodollars/models/game_select_model.dart';
+import 'package:devtodollars/models/game_list_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:devtodollars/services/auth_notifier.dart';
@@ -25,10 +25,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     });
   }
 
-  List<GameSelectModel> games = [];
+  List<GameListModel> games = [];
 
   void _getInitialInfo() {
-    games = GameSelectModel.getGames();
+    games = GameListModel.getGames();
   }
 
   @override
@@ -100,7 +100,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 
-  Widget _buildGameList(List<GameSelectModel> games, bool isLandscape) {
+  Widget _buildGameList(List<GameListModel> games, bool isLandscape) {
     return isLandscape
         ? Column(
             mainAxisSize: MainAxisSize.min,
