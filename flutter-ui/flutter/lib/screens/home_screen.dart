@@ -1,10 +1,9 @@
 import 'package:devtodollars/components/common/bottom_nav_bar.dart';
-import 'package:devtodollars/components/home_screen/game_list.dart';
-import 'package:devtodollars/components/home_screen/shad_tab.dart';
 import 'package:devtodollars/models/game_list_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:devtodollars/services/auth_notifier.dart';
+import 'package:go_router/go_router.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
@@ -102,14 +101,30 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   Widget _buildGameList(List<GameListModel> games, bool isLandscape) {
     return isLandscape
-        ? Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const SizedBox(height: 20),
-              Expanded(
-                  child: GameList(games: games, selectedIndex: _selectedIndex)),
-            ],
-          )
+        ? Column(mainAxisSize: MainAxisSize.min, children: [
+            const SizedBox(height: 20),
+            Expanded(
+              child: ListView.separated(
+                itemCount: games.length,
+                shrinkWrap: true,
+                separatorBuilder: (context, index) => const SizedBox(
+                  height: 25,
+                ),
+                padding: const EdgeInsets.only(left: 20, right: 20),
+                itemBuilder: (context, index) {
+                  return ListTile(
+                    leading: CircleAvatar(
+                        child: Text(games[index].name[0].toUpperCase())),
+                    title: Text(games[index].name),
+                    onTap: () {
+                      context.pushNamed(
+                          '${games[index].baseRouteName}_$_selectedIndex');
+                    },
+                  );
+                },
+              ),
+            )
+          ])
         : SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: ConstrainedBox(
@@ -121,10 +136,45 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   const SizedBox(height: 20),
-                  GameList(games: games, selectedIndex: _selectedIndex),
+                  ListView.separated(
+                    itemCount: games.length,
+                    shrinkWrap: true,
+                    separatorBuilder: (context, index) => const SizedBox(
+                      height: 25,
+                    ),
+                    padding: const EdgeInsets.only(left: 20, right: 20),
+                    itemBuilder: (context, index) {
+                      return ListTile(
+                        leading: CircleAvatar(
+                            child: Text(games[index].name[0].toUpperCase())),
+                        title: Text(games[index].name),
+                        onTap: () {
+                          context.pushNamed(
+                              '${games[index].baseRouteName}_$_selectedIndex');
+                        },
+                      );
+                    },
+                  ),
                 ],
               ),
             ),
           );
   }
+}
+
+class ShadTabItem extends ShadTab<String> {
+  ShadTabItem({
+    super.key,
+    required super.value,
+    required String text,
+    required String title,
+    required Widget content,
+    required VoidCallback super.onPressed,
+  }) : super(
+          text: Text(text),
+          content: ShadCard(
+            title: Text(title),
+            content: content,
+          ),
+        );
 }
