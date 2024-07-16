@@ -50,28 +50,33 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             LayoutBuilder(
               builder: (context, constraints) {
                 bool isLandscape = constraints.maxWidth > constraints.maxHeight;
-                return ShadTabs<String>(
-                  defaultValue: 'solo',
-                  tabBarConstraints: const BoxConstraints(maxWidth: 400),
-                  contentConstraints: const BoxConstraints(maxWidth: 400),
-                  tabs: [
-                    _buildTab(
-                      value: 'solo',
-                      text: 'Solo',
-                      title: 'Play Solo',
-                      content: _buildGameList(games, isLandscape),
-                    ),
-                    _buildTab(
-                      value: 'irl',
-                      text: 'IRL',
-                      title: 'Play IRL',
-                      content: _buildGameList(games, isLandscape),
-                    ),
-                    _buildTab(
-                      value: 'online',
-                      text: 'Online',
-                      title: 'Play Online',
-                      content: _buildGameList(games, isLandscape),
+                return Column(
+                  children: [
+                    const SizedBox(height: 20),
+                    ShadTabs<String>(
+                      defaultValue: 'solo',
+                      tabBarConstraints: const BoxConstraints(maxWidth: 400),
+                      contentConstraints: const BoxConstraints(maxWidth: 400),
+                      tabs: [
+                        _buildTab(
+                          value: 'solo',
+                          text: 'Solo',
+                          title: 'Play Solo',
+                          content: _buildGameList(games, isLandscape),
+                        ),
+                        _buildTab(
+                          value: 'irl',
+                          text: 'IRL',
+                          title: 'Play IRL',
+                          content: _buildGameList(games, isLandscape),
+                        ),
+                        _buildTab(
+                          value: 'online',
+                          text: 'Online',
+                          title: 'Play Online',
+                          content: _buildGameList(games, isLandscape),
+                        ),
+                      ],
                     ),
                   ],
                 );
@@ -172,9 +177,6 @@ class ShadTabItem extends ShadTab<String> {
     required VoidCallback super.onPressed,
   }) : super(
           text: Text(text),
-          content: ShadCard(
-            title: Text(title),
-            content: content,
-          ),
+          content: content,
         );
 }
