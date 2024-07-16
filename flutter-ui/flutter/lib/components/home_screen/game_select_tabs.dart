@@ -1,7 +1,8 @@
 import 'package:devtodollars/models/game_select_model.dart';
+import 'package:devtodollars/components/home_screen/game_list.dart';
+import 'package:devtodollars/components/home_screen/shad_tab.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
 class GameSelectTabs extends ConsumerStatefulWidget {
@@ -30,78 +31,77 @@ class _GameSelectTabsState extends ConsumerState<GameSelectTabs> {
   Widget build(BuildContext context) {
     _getInitialInfo();
 
-    return ShadTabs<String>(
-      defaultValue: 'solo',
-      tabBarConstraints: const BoxConstraints(maxWidth: 400),
-      contentConstraints: const BoxConstraints(maxWidth: 400),
-      tabs: [
-        _buildTab(
-          value: 'solo',
-          text: 'Solo',
-          title: 'Play Solo',
-          content: _buildGameList(games),
-        ),
-        _buildTab(
-          value: 'irl',
-          text: 'IRL',
-          title: 'Play IRL',
-          content: _buildGameList(games),
-        ),
-        _buildTab(
-          value: 'online',
-          text: 'Online',
-          title: 'Play Online',
-          content: _buildGameList(games),
-        ),
-      ],
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        bool isLandscape = constraints.maxWidth > constraints.maxHeight;
+        return ShadTabs<String>(
+          defaultValue: 'solo',
+          tabBarConstraints: const BoxConstraints(maxWidth: 400),
+          contentConstraints: const BoxConstraints(maxWidth: 400),
+          tabs: [
+            _buildTab(
+              value: 'solo',
+              text: 'Solo',
+              title: 'Play Solo',
+              content: _buildGameList(games, isLandscape),
+            ),
+            _buildTab(
+              value: 'irl',
+              text: 'IRL',
+              title: 'Play IRL',
+              content: _buildGameList(games, isLandscape),
+            ),
+            _buildTab(
+              value: 'online',
+              text: 'Online',
+              title: 'Play Online',
+              content: _buildGameList(games, isLandscape),
+            ),
+          ],
+        );
+      },
     );
   }
 
-  ShadTab<String> _buildTab({
+  ShadTabItem _buildTab({
     required String value,
     required String text,
     required String title,
     required Widget content,
   }) {
-    return ShadTab<String>(
+    return ShadTabItem(
       value: value,
-      text: Text(text),
+      text: text,
+      title: title,
+      content: content,
       onPressed: () => _onItemTapped(value),
-      content: ShadCard(
-        title: Text(title),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [content],
-        ),
-      ),
     );
   }
 
-  Widget _buildGameList(List<GameSelectModel> games) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        const SizedBox(height: 20),
-        ListView.separated(
-          itemCount: games.length,
-          shrinkWrap: true,
-          separatorBuilder: (context, index) => const SizedBox(
-            height: 25,
-          ),
-          padding: const EdgeInsets.only(left: 20, right: 20),
-          itemBuilder: (context, index) {
-            return ListTile(
-              leading:
-                  CircleAvatar(child: Text(games[index].name[0].toUpperCase())),
-              title: Text(games[index].name),
-              onTap: () {
-                context
-                    .pushNamed('${games[index].baseRouteName}_$_selectedIndex');
-              },
-            );
-          },
-        )
-      ],
-    );
+  Widget _buildGameList(List<GameSelectModel> games, bool isLandscape) {
+    return isLandscape
+        ? Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const SizedBox(height: 20),
+              Expanded(child: GameList(games: games, selectedIndex: _selectedIndex)),
+            ],
+          )
+        : SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                minWidth: MediaQuery.of(context).size.width,
+                maxWidth: MediaQuery.of(context).size.width,
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const SizedBox(height: 20),
+                  GameList(games: games, selectedIndex: _selectedIndex),
+                ],
+              ),
+            ),
+          );
   }
 }
