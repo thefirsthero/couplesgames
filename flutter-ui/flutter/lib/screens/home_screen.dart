@@ -7,7 +7,7 @@ import 'package:devtodollars/models/game_list_model.dart';
 import 'package:devtodollars/services/auth_notifier.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
-  const HomeScreen({Key? key, required this.title}) : super(key: key);
+  const HomeScreen({super.key, required this.title});
 
   final String title;
 
@@ -83,6 +83,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         ),
                       ],
                     ),
+                    const SizedBox(height: 16),
+                    
+                    const Chip(
+                      label: Text('More games coming soon...'),
+                    ),
                   ],
                 );
               },
@@ -112,37 +117,20 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   Widget _buildGameList(List<GameListModel> games, bool isLandscape) {
-    return isLandscape
-        ? Column(
-          children: [
-            const SizedBox(height: 10),
-            Expanded(
-                child: ListView.separated(
-                  itemCount: games.length,
-                  shrinkWrap: true,
-                  separatorBuilder: (context, index) => const SizedBox(height: 25),
-                  padding: const EdgeInsets.only(left: 20, right: 20),
-                  itemBuilder: (context, index) {
-                    return _buildGameListItem(games[index]);
-                  },
-                ),
-              ),
-          ],
-        )
-        : Column(
-          children: [
-            const SizedBox(height: 10),
-            ListView.separated(
-              itemCount: games.length,
-              shrinkWrap: true,
-              separatorBuilder: (context, index) => const SizedBox(height: 25),
-              padding: const EdgeInsets.only(),
-              itemBuilder: (context, index) {
-                return _buildGameListItem(games[index]);
-              },
-            ),
-          ],
-        );
+    return Column(
+      children: [
+        const SizedBox(height: 10),
+        ListView.separated(
+          itemCount: games.length,
+          shrinkWrap: true,
+          separatorBuilder: (context, index) => const SizedBox(height: 25),
+          padding: const EdgeInsets.only(left: 20, right: 20),
+          itemBuilder: (context, index) {
+            return _buildGameListItem(games[index]);
+          },
+        ),
+      ],
+    );
   }
 
   Widget _buildGameListItem(GameListModel game) {
@@ -163,3 +151,4 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 }
+
