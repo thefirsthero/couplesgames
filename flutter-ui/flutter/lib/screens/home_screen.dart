@@ -83,14 +83,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           ),
                         ],
                       ),
-                      const SizedBox(height: 16),
-                      const Chip(
-                        label: Text('More games coming soon...'),
-                      ),
                     ],
                   ),
                 );
               },
+            ),
+            const SizedBox(height: 32),
+            const Chip(
+              label: Text('More games coming soon...'),
             ),
           ],
         ),
