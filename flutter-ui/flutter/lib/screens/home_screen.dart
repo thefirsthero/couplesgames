@@ -62,8 +62,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     const SizedBox(height: 20),
                     ShadTabs<String>(
                       defaultValue: 'solo',
-                      tabBarConstraints: const BoxConstraints(maxWidth: 400),
-                      contentConstraints: const BoxConstraints(maxWidth: 400),
                       tabs: [
                         _buildTab(
                           value: 'solo',
@@ -126,18 +124,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               },
             ),
           )
-        : SizedBox(
-            height: 3 * 75.0, // Adjust height to fit 3 list items
-            child: ListView.separated(
-              itemCount: games.length,
-              shrinkWrap: true,
-              separatorBuilder: (context, index) => const SizedBox(height: 25),
-              padding: const EdgeInsets.only(left: 20, right: 20),
-              itemBuilder: (context, index) {
-                return _buildGameListItem(games[index]);
-              },
-            ),
-          );
+        : ListView.separated(
+          itemCount: games.length,
+          shrinkWrap: true,
+          separatorBuilder: (context, index) => const SizedBox(height: 25),
+          padding: const EdgeInsets.only(left: 20, right: 20),
+          itemBuilder: (context, index) {
+            return _buildGameListItem(games[index]);
+          },
+        );
   }
 
   Widget _buildGameListItem(GameListModel game) {
