@@ -59,7 +59,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 bool isLandscape = constraints.maxWidth > constraints.maxHeight;
                 return Column(
                   children: [
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 8),
                     ShadTabs<String>(
                       defaultValue: 'solo',
                       tabs: [
@@ -113,25 +113,35 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   Widget _buildGameList(List<GameListModel> games, bool isLandscape) {
     return isLandscape
-        ? Expanded(
-            child: ListView.separated(
+        ? Column(
+          children: [
+            const SizedBox(height: 10),
+            Expanded(
+                child: ListView.separated(
+                  itemCount: games.length,
+                  shrinkWrap: true,
+                  separatorBuilder: (context, index) => const SizedBox(height: 25),
+                  padding: const EdgeInsets.only(left: 20, right: 20),
+                  itemBuilder: (context, index) {
+                    return _buildGameListItem(games[index]);
+                  },
+                ),
+              ),
+          ],
+        )
+        : Column(
+          children: [
+            const SizedBox(height: 10),
+            ListView.separated(
               itemCount: games.length,
               shrinkWrap: true,
               separatorBuilder: (context, index) => const SizedBox(height: 25),
-              padding: const EdgeInsets.only(left: 20, right: 20),
+              padding: const EdgeInsets.only(),
               itemBuilder: (context, index) {
                 return _buildGameListItem(games[index]);
               },
             ),
-          )
-        : ListView.separated(
-          itemCount: games.length,
-          shrinkWrap: true,
-          separatorBuilder: (context, index) => const SizedBox(height: 25),
-          padding: const EdgeInsets.only(left: 20, right: 20),
-          itemBuilder: (context, index) {
-            return _buildGameListItem(games[index]);
-          },
+          ],
         );
   }
 
