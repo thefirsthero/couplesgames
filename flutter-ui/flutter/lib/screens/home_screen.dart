@@ -56,7 +56,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           children: <Widget>[
             LayoutBuilder(
               builder: (context, constraints) {
-                bool isLandscape = constraints.maxWidth > constraints.maxHeight;
                 return Column(
                   children: [
                     const SizedBox(height: 8),
@@ -67,19 +66,19 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           value: 'solo',
                           text: 'Solo',
                           title: 'Play Solo',
-                          content: _buildGameList(games, isLandscape),
+                          content: _buildGameList(games),
                         ),
                         _buildTab(
                           value: 'irl',
                           text: 'IRL',
                           title: 'Play IRL',
-                          content: _buildGameList(games, isLandscape),
+                          content: _buildGameList(games),
                         ),
                         _buildTab(
                           value: 'online',
                           text: 'Online',
                           title: 'Play Online',
-                          content: _buildGameList(games, isLandscape),
+                          content: _buildGameList(games),
                         ),
                       ],
                     ),
@@ -116,7 +115,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 
-  Widget _buildGameList(List<GameListModel> games, bool isLandscape) {
+  Widget _buildGameList(List<GameListModel> games) {
     return Column(
       children: [
         const SizedBox(height: 10),
