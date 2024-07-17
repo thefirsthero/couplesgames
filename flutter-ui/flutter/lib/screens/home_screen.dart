@@ -52,42 +52,43 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       ),
       body: Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
             LayoutBuilder(
               builder: (context, constraints) {
-                return Column(
-                  children: [
-                    const SizedBox(height: 8),
-                    ShadTabs<String>(
-                      defaultValue: 'solo',
-                      tabs: [
-                        _buildTab(
-                          value: 'solo',
-                          text: 'Solo',
-                          title: 'Play Solo',
-                          content: _buildGameList(games),
-                        ),
-                        _buildTab(
-                          value: 'irl',
-                          text: 'IRL',
-                          title: 'Play IRL',
-                          content: _buildGameList(games),
-                        ),
-                        _buildTab(
-                          value: 'online',
-                          text: 'Online',
-                          title: 'Play Online',
-                          content: _buildGameList(games),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                    
-                    const Chip(
-                      label: Text('More games coming soon...'),
-                    ),
-                  ],
+                return Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    children: [
+                      ShadTabs<String>(
+                        defaultValue: 'solo',
+                        tabs: [
+                          _buildTab(
+                            value: 'solo',
+                            text: 'Solo',
+                            title: 'Play Solo',
+                            content: _buildGameList(games),
+                          ),
+                          _buildTab(
+                            value: 'irl',
+                            text: 'IRL',
+                            title: 'Play IRL',
+                            content: _buildGameList(games),
+                          ),
+                          _buildTab(
+                            value: 'online',
+                            text: 'Online',
+                            title: 'Play Online',
+                            content: _buildGameList(games),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      const Chip(
+                        label: Text('More games coming soon...'),
+                      ),
+                    ],
+                  ),
                 );
               },
             ),
@@ -118,7 +119,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   Widget _buildGameList(List<GameListModel> games) {
     return Column(
       children: [
-        const SizedBox(height: 10),
+        const SizedBox(height: 16),
         ListView.separated(
           itemCount: games.length,
           shrinkWrap: true,
@@ -150,4 +151,3 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 }
-
