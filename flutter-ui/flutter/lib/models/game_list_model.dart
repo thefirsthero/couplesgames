@@ -25,10 +25,10 @@ class GameListModel {
       baseRouteName: 'never_have_i_ever',
     ));
 
-    // games.add(GameListModel(
-    //   name: 'Deeper Questions',
-    //   baseRouteName: 'deeper_questions',
-    // ));
+    games.add(GameListModel(
+      name: 'Deeper Questions',
+      baseRouteName: 'deeper_questions',
+    ));
 
     return games;
   }

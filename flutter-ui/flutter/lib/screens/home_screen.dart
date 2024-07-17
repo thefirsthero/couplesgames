@@ -1,22 +1,33 @@
-import 'package:devtodollars/components/common/bottom_nav_bar.dart';
-import 'package:devtodollars/models/game_list_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:devtodollars/services/auth_notifier.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
+import 'package:devtodollars/components/common/bottom_nav_bar.dart';
+import 'package:devtodollars/models/game_list_model.dart';
+import 'package:devtodollars/services/auth_notifier.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
-  const HomeScreen({super.key, required this.title});
+  const HomeScreen({Key? key, required this.title}) : super(key: key);
 
   final String title;
 
   @override
-  ConsumerState<HomeScreen> createState() => _HomeScreenState();
+  _HomeScreenState createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
   String _selectedIndex = 'solo';
+  late List<GameListModel> games;
+
+  @override
+  void initState() {
+    super.initState();
+    _getInitialInfo();
+  }
+
+  void _getInitialInfo() {
+    games = GameListModel.getGames();
+  }
 
   void _onItemTapped(String index) {
     setState(() {
@@ -24,23 +35,19 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     });
   }
 
-  List<GameListModel> games = [];
-
-  void _getInitialInfo() {
-    games = GameListModel.getGames();
-  }
-
   @override
   Widget build(BuildContext context) {
-    _getInitialInfo();
-
     final authNotif = ref.watch(authProvider.notifier);
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(widget.title),
         actions: [
-          TextButton(onPressed: authNotif.signOut, child: const Text("Logout")),
+          TextButton(
+            onPressed: authNotif.signOut,
+            child: const Text("Logout"),
+          ),
         ],
       ),
       body: Center(
@@ -89,94 +96,65 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 
-  ShadTabItem _buildTab({
+  ShadTab<String> _buildTab({
     required String value,
     required String text,
     required String title,
     required Widget content,
   }) {
-    return ShadTabItem(
+    return ShadTab<String>(
       value: value,
-      text: text,
-      title: title,
-      content: content,
+      text: Text(text),
+      content: ShadCard(
+        title: Text(title),
+        content: content,
+      ),
       onPressed: () => _onItemTapped(value),
     );
   }
 
   Widget _buildGameList(List<GameListModel> games, bool isLandscape) {
     return isLandscape
-        ? Column(mainAxisSize: MainAxisSize.min, children: [
-            const SizedBox(height: 20),
-            Expanded(
-              child: ListView.separated(
-                itemCount: games.length,
-                shrinkWrap: true,
-                separatorBuilder: (context, index) => const SizedBox(
-                  height: 25,
-                ),
-                padding: const EdgeInsets.only(left: 20, right: 20),
-                itemBuilder: (context, index) {
-                  return ListTile(
-                    leading: CircleAvatar(
-                        child: Text(games[index].name[0].toUpperCase())),
-                    title: Text(games[index].name),
-                    onTap: () {
-                      context.pushNamed(
-                          '${games[index].baseRouteName}_$_selectedIndex');
-                    },
-                  );
-                },
-              ),
-            )
-          ])
-        : SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: ConstrainedBox(
-              constraints: BoxConstraints(
-                minWidth: MediaQuery.of(context).size.width,
-                maxWidth: MediaQuery.of(context).size.width,
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const SizedBox(height: 20),
-                  ListView.separated(
-                    itemCount: games.length,
-                    shrinkWrap: true,
-                    separatorBuilder: (context, index) => const SizedBox(
-                      height: 25,
-                    ),
-                    padding: const EdgeInsets.only(left: 20, right: 20),
-                    itemBuilder: (context, index) {
-                      return ListTile(
-                        leading: CircleAvatar(
-                            child: Text(games[index].name[0].toUpperCase())),
-                        title: Text(games[index].name),
-                        onTap: () {
-                          context.pushNamed(
-                              '${games[index].baseRouteName}_$_selectedIndex');
-                        },
-                      );
-                    },
-                  ),
-                ],
-              ),
+        ? Expanded(
+            child: ListView.separated(
+              itemCount: games.length,
+              shrinkWrap: true,
+              separatorBuilder: (context, index) => const SizedBox(height: 25),
+              padding: const EdgeInsets.only(left: 20, right: 20),
+              itemBuilder: (context, index) {
+                return _buildGameListItem(games[index]);
+              },
+            ),
+          )
+        : SizedBox(
+            height: 3 * 75.0, // Adjust height to fit 3 list items
+            child: ListView.separated(
+              itemCount: games.length,
+              shrinkWrap: true,
+              separatorBuilder: (context, index) => const SizedBox(height: 25),
+              padding: const EdgeInsets.only(left: 20, right: 20),
+              itemBuilder: (context, index) {
+                return _buildGameListItem(games[index]);
+              },
             ),
           );
   }
-}
 
-class ShadTabItem extends ShadTab<String> {
-  ShadTabItem({
-    super.key,
-    required super.value,
-    required String text,
-    required String title,
-    required Widget content,
-    required VoidCallback super.onPressed,
-  }) : super(
-          text: Text(text),
-          content: content,
-        );
+  Widget _buildGameListItem(GameListModel game) {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 5),
+      child: ListTile(
+        leading: CircleAvatar(child: Text(game.name[0].toUpperCase())),
+        title: Text(game.name),
+        onTap: () {
+          context.pushNamed('${game.baseRouteName}_$_selectedIndex');
+        },
+        tileColor: Theme.of(context).cardColor,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8.0),
+        ),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
+      ),
+    );
+  }
 }
