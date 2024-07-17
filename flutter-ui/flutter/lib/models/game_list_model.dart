@@ -15,20 +15,20 @@ class GameListModel {
       baseRouteName: 'would_you_rather',
     ));
 
-    games.add(GameListModel(
-      name: 'Truth or Dare',
-      baseRouteName: 'truth_or_dare',
-    ));
+    // games.add(GameListModel(
+    //   name: 'Truth or Dare',
+    //   baseRouteName: 'truth_or_dare',
+    // ));
 
-    games.add(GameListModel(
-      name: 'Never Have I Ever',
-      baseRouteName: 'never_have_i_ever',
-    ));
+    // games.add(GameListModel(
+    //   name: 'Never Have I Ever',
+    //   baseRouteName: 'never_have_i_ever',
+    // ));
 
-    games.add(GameListModel(
-      name: 'Deeper Questions',
-      baseRouteName: 'deeper_questions',
-    ));
+    // games.add(GameListModel(
+    //   name: 'Deeper Questions',
+    //   baseRouteName: 'deeper_questions',
+    // ));
 
     return games;
   }
