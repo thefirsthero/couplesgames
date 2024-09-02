@@ -1,5 +1,6 @@
 import 'package:devtodollars/screens/settings.dart';
 import 'package:devtodollars/screens/would_you_rather/gameover_screen.dart';
+import 'package:devtodollars/screens/would_you_rather/wyr_online_screen.dart';
 import 'package:devtodollars/screens/would_you_rather/wyr_solo_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -104,6 +105,13 @@ GoRouter router(RouterRef ref) {
         path: '/would_you_rather_solo',
         builder: (context, state) {
           return const WYRSoloScreen();
+        },
+      ),
+      GoRoute(
+        name: 'would_you_rather_online',
+        path: '/would_you_rather_online',
+        builder: (context, state) {
+          return const WYROnlineScreen();
         },
       ),
       GoRoute(
