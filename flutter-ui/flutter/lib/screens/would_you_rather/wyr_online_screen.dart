@@ -1,3 +1,4 @@
+import 'package:devtodollars/services/questions_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -11,6 +12,13 @@ class WYROnlineScreen extends ConsumerStatefulWidget {
 
 class _WYROnlineScreenState extends ConsumerState<WYROnlineScreen> {
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(userChoicesProvider.notifier).state = [];
+    });
+  }
+
   void _quitGame() {
     context.replaceNamed('gameover');
   }
