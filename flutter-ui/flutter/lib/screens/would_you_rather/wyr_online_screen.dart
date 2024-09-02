@@ -23,6 +23,7 @@ class _WYROnlineScreenState extends ConsumerState<WYROnlineScreen> {
     context.replaceNamed('gameover');
   }
 
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
