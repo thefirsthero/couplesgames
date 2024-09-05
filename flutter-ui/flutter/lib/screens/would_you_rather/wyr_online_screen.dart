@@ -74,8 +74,8 @@ class _WYROnlineScreenState extends ConsumerState<WYROnlineScreen> {
                         description:
                             const Text('Results will be displayed below'),
                         validator: (v) {
-                          if (v.length < 2) {
-                            return 'Username must be at least 2 characters.';
+                          if (v.length < 4) {
+                            return 'Room must be at least 4 characters.';
                           }
                           return null;
                         },
@@ -125,4 +125,3 @@ class _WYROnlineScreenState extends ConsumerState<WYROnlineScreen> {
     );
   }
 }
-
