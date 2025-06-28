@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\CouplesGamesApi.Core\CouplesGamesApi.Core.csproj" />
+  </ItemGroup>
+
 </Project>
