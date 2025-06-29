@@ -12,6 +12,8 @@ builder.Services.AddScoped<IFirebaseAuthService, FirebaseAuthService>();
 builder.Services.AddScoped<IFirestoreService, FirestoreService>();
 builder.Services.AddScoped<CreateRoomUseCase>();
 builder.Services.AddScoped<JoinRoomUseCase>();
+builder.Services.AddHostedService<SelfPingHostedService>();
+
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
