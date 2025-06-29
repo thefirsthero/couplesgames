@@ -11,6 +11,7 @@ COPY ["CouplesGames.Application/CouplesGames.Application.csproj", "CouplesGames.
 COPY ["CouplesGames.Infrastructure/CouplesGames.Infrastructure.csproj", "CouplesGames.Infrastructure/"]
 COPY ["CouplesGames.Tests/CouplesGames.Tests.csproj", "CouplesGames.Tests/"]
 COPY ["CouplesGames.WebAPI/CouplesGames.WebAPI.csproj", "CouplesGames.WebAPI/"]
+COPY ["CouplesGames.UI/CouplesGames.UI.esproj", "CouplesGames.UI/"]
 
 RUN dotnet restore
 
