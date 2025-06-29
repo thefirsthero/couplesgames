@@ -91,7 +91,8 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                             decoration: getInputDecoration(
                                 hint: 'E-mail',
                                 darkMode: isDarkMode(context),
-                                errorColor: Theme.of(context).errorColor),
+                                errorColor:
+                                    Theme.of(context).colorScheme.error),
                           ),
                         ),
                         Padding(
