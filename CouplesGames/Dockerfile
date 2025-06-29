@@ -34,4 +34,4 @@ EXPOSE 8080
 # Set environment variables if needed (override on Render)
 # ENV ASPNETCORE_URLS=http://+:8080
 
-ENTRYPOINT ["dotnet", "CouplesGames.dll"]
+ENTRYPOINT ["dotnet", "CouplesGames.WebAPI.dll"]
