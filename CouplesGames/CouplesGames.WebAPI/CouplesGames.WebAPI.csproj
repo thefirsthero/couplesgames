@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="DotNetEnv" Version="3.1.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.17" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CouplesGames.Application\CouplesGames.Application.csproj" />
+    <ProjectReference Include="..\CouplesGames.Core\CouplesGames.Core.csproj" />
+    <ProjectReference Include="..\CouplesGames.Infrastructure\CouplesGames.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>
