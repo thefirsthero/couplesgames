@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CouplesGames.Tests", "Coupl
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CouplesGames.WebAPI", "CouplesGames.WebAPI\CouplesGames.WebAPI.csproj", "{AD318EBA-F36E-76C3-D14F-17E43291E629}"
 EndProject
+Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "CouplesGames.UI", "CouplesGames.UI\CouplesGames.UI.esproj", "{E550BCE5-9DBD-972C-2AD2-66305CA1C95F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,12 @@ Global
 		{AD318EBA-F36E-76C3-D14F-17E43291E629}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AD318EBA-F36E-76C3-D14F-17E43291E629}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AD318EBA-F36E-76C3-D14F-17E43291E629}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E550BCE5-9DBD-972C-2AD2-66305CA1C95F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E550BCE5-9DBD-972C-2AD2-66305CA1C95F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E550BCE5-9DBD-972C-2AD2-66305CA1C95F}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{E550BCE5-9DBD-972C-2AD2-66305CA1C95F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E550BCE5-9DBD-972C-2AD2-66305CA1C95F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E550BCE5-9DBD-972C-2AD2-66305CA1C95F}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
