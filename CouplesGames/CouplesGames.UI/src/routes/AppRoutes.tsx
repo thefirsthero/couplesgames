@@ -7,17 +7,18 @@ import AuthPage from './../features/auth/AuthPage';
 import MainLayout from './../layouts/MainLayout';
 import RegisterPage from '../features/auth/RegisterPage';
 import ForgotPasswordPage from '../features/auth/ForgotPasswordPage';
-import Navbar from '../components/Navbar/Navbar';
 
 const AppRoutes: React.FC = () => (
   <BrowserRouter>
     <MainLayout>
-    <Navbar />
-      <Routes>
-        <Route path="/auth" element={<AuthPage />} />
-        <Route path="/rooms" element={<RoomPage />} />
-        <Route path="/" element={<h1>Welcome Home</h1>} />
-      </Routes>
+    <Routes>
+  <Route path="/" element={<Home />} />
+  <Route path="/rooms" element={<RoomPage />} />
+  <Route path="/auth" element={<AuthPage />} />
+  <Route path="/register" element={<RegisterPage />} />
+  <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+  <Route path="*" element={<NotFound />} />
+</Routes>
     </MainLayout>
   </BrowserRouter>
 );

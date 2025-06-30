@@ -1,6 +1,7 @@
 import React from 'react';
 import { useAuth } from '../../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
+import styles from './Navbar.module.css';
 
 const Navbar: React.FC = () => {
   const { user, logout } = useAuth();
@@ -15,15 +16,14 @@ const Navbar: React.FC = () => {
   };
 
   return (
-    <nav style={{
-      display: 'flex',
-      justifyContent: 'space-between',
-      padding: '10px 20px',
-      background: '#eee'
-    }}>
-      <h3 onClick={() => navigate('/')} style={{ cursor: 'pointer' }}>Would You Rather</h3>
+    <nav className={styles.navbar}>
+      <div className={styles.navLeft}>
+        <h3 onClick={() => navigate('/')} className={styles.title}>Would You Rather</h3>
+        <button onClick={() => navigate('/')} className={styles.navButton}>Home</button>
+        <button onClick={() => navigate('/rooms')} className={styles.navButton}>Rooms</button>
+      </div>
 
-      <button onClick={handleAuthAction}>
+      <button onClick={handleAuthAction} className={styles.navButton}>
         {user ? 'Logout' : 'Login'}
       </button>
     </nav>
