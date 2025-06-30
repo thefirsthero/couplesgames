@@ -1,4 +1,3 @@
-// Program.cs
 using CouplesGames.Core.Interfaces;
 using CouplesGames.Infrastructure.Services;
 using MediatR;
@@ -32,8 +31,10 @@ builder.Services.AddScoped<IFirestoreService, FirestoreService>();
 
 builder.Services.AddHostedService<SelfPingHostedService>();
 
-// Register MediatR
-builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
+// Register MediatR for the Application project assembly where handlers live
+builder.Services.AddMediatR(cfg =>
+    cfg.RegisterServicesFromAssembly(Assembly.Load("CouplesGames.Application"))
+);
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
