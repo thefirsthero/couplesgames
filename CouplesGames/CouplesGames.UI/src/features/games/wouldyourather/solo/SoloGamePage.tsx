@@ -1,9 +1,8 @@
-// src/features/games/wouldyourather/SoloGamePage.tsx
-
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../../../../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 import { fetchSoloWYRQuestions } from './api';
+import styles from './SoloGamePage.module.css';
 
 type Question = {
   id: string;
@@ -44,7 +43,6 @@ const SoloGamePage: React.FC = () => {
   }, []);
 
   if (loading) return <p>Loading...</p>;
-
   if (questions.length === 0) return <p>Loading questions...</p>;
 
   const currentQuestion = questions[currentIndex % questions.length];
@@ -59,37 +57,21 @@ const SoloGamePage: React.FC = () => {
   };
 
   return (
-    <div style={{ padding: '20px' }}>
-      <h1>Would You Rather</h1>
-      <div style={{ display: 'flex', gap: '20px', marginTop: '40px' }}>
-        <div
-          onClick={() => handleSelect(currentQuestion.optionA)}
-          style={{
-            flex: 1,
-            backgroundColor: colorSet[0],
-            padding: '40px',
-            borderRadius: '8px',
-            cursor: 'pointer',
-            opacity: selected === currentQuestion.optionA ? 0.6 : 1,
-            transition: 'opacity 0.3s',
-          }}
-        >
-          {currentQuestion.optionA}
-        </div>
-        <div
-          onClick={() => handleSelect(currentQuestion.optionB)}
-          style={{
-            flex: 1,
-            backgroundColor: colorSet[1],
-            padding: '40px',
-            borderRadius: '8px',
-            cursor: 'pointer',
-            opacity: selected === currentQuestion.optionB ? 0.6 : 1,
-            transition: 'opacity 0.3s',
-          }}
-        >
-          {currentQuestion.optionB}
-        </div>
+    <div className={styles.container}>
+      <h1 className={styles.heading}>Would You Rather</h1>
+      <div className={styles.tiles}>
+        {[currentQuestion.optionA, currentQuestion.optionB].map((option, i) => (
+          <div
+            key={i}
+            onClick={() => handleSelect(option)}
+            className={`${styles.tile} ${
+              selected === option ? styles.tileSelected : ''
+            }`}
+            style={{ backgroundColor: colorSet[i] }}
+          >
+            {option}
+          </div>
+        ))}
       </div>
     </div>
   );
