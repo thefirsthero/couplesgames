@@ -13,9 +13,14 @@ namespace CouplesGames.Infrastructure.Services
 
         public FirestoreService()
         {
-            var json = Environment.GetEnvironmentVariable("FIREBASE_SERVICE_ACCOUNT_JSON");
+            var jsonBase64 = Environment.GetEnvironmentVariable("FIREBASE_SERVICE_ACCOUNT_JSON_BASE64");
+            if (string.IsNullOrEmpty(jsonBase64))
+                throw new Exception("Missing FIREBASE_SERVICE_ACCOUNT_JSON_BASE64 environment variable.");
+
+            var json = System.Text.Encoding.UTF8.GetString(Convert.FromBase64String(jsonBase64));
+
             if (string.IsNullOrEmpty(json))
-                throw new Exception("Missing FIREBASE_SERVICE_ACCOUNT_JSON environment variable.");
+                throw new Exception("Missing FIREBASE_SERVICE_ACCOUNT_JSON_BASE64 environment variable.");
 
             var projectId = Environment.GetEnvironmentVariable("FIREBASE_PROJECT_ID");
             if (string.IsNullOrEmpty(projectId))
@@ -60,6 +65,26 @@ namespace CouplesGames.Infrastructure.Services
             var docRef = _db.Collection("questions").Document(questionId);
             var snapshot = await docRef.GetSnapshotAsync();
             return snapshot.Exists ? snapshot.ConvertTo<Question>() : null;
+        }
+
+        public async Task<List<Question>> GetSoloQuestionsAsync()
+        {
+            var collectionRef = _db.Collection("questions");
+            var snapshot = await collectionRef.GetSnapshotAsync();
+
+            var questions = new List<Question>();
+            foreach (var doc in snapshot.Documents)
+            {
+                if (doc.Exists)
+                {
+                    var question = doc.ConvertTo<Question>();
+                    if (question != null)
+                    {
+                        questions.Add(question);
+                    }
+                }
+            }
+            return questions;
         }
     }
 }

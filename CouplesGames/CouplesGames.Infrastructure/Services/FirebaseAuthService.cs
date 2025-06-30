@@ -20,7 +20,7 @@ namespace CouplesGames.Infrastructure.Services
                 var json = System.Text.Encoding.UTF8.GetString(Convert.FromBase64String(jsonBase64));
 
                 if (string.IsNullOrEmpty(json))
-                    throw new Exception("Missing FIREBASE_SERVICE_ACCOUNT_JSON environment variable.");
+                    throw new Exception("Missing FIREBASE_SERVICE_ACCOUNT_JSON_BASE64 environment variable.");
 
                 var credential = GoogleCredential.FromJson(json);
 
