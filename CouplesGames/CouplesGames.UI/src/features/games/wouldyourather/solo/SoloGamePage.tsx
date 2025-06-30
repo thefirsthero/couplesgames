@@ -7,8 +7,8 @@ import { fetchSoloWYRQuestions } from './api';
 
 type Question = {
   id: string;
-  option1: string;
-  option2: string;
+  optionA: string;
+  optionB: string;
 };
 
 const colors = [
@@ -63,32 +63,32 @@ const SoloGamePage: React.FC = () => {
       <h1>Would You Rather</h1>
       <div style={{ display: 'flex', gap: '20px', marginTop: '40px' }}>
         <div
-          onClick={() => handleSelect(currentQuestion.option1)}
+          onClick={() => handleSelect(currentQuestion.optionA)}
           style={{
             flex: 1,
             backgroundColor: colorSet[0],
             padding: '40px',
             borderRadius: '8px',
             cursor: 'pointer',
-            opacity: selected === currentQuestion.option1 ? 0.6 : 1,
+            opacity: selected === currentQuestion.optionA ? 0.6 : 1,
             transition: 'opacity 0.3s',
           }}
         >
-          {currentQuestion.option1}
+          {currentQuestion.optionA}
         </div>
         <div
-          onClick={() => handleSelect(currentQuestion.option2)}
+          onClick={() => handleSelect(currentQuestion.optionB)}
           style={{
             flex: 1,
             backgroundColor: colorSet[1],
             padding: '40px',
             borderRadius: '8px',
             cursor: 'pointer',
-            opacity: selected === currentQuestion.option2 ? 0.6 : 1,
+            opacity: selected === currentQuestion.optionB ? 0.6 : 1,
             transition: 'opacity 0.3s',
           }}
         >
-          {currentQuestion.option2}
+          {currentQuestion.optionB}
         </div>
       </div>
     </div>
