@@ -58,10 +58,6 @@ const SoloGamePage: React.FC = () => {
     }, 500);
   };
 
-  const quitGame = () => {
-    navigate('/');
-  };
-
   return (
     <div style={{ padding: '20px' }}>
       <h1>Would You Rather</h1>
