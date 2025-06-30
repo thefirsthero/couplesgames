@@ -1,14 +1,14 @@
-// src/features/games/wouldyourather/SoloGamePage.tsx
-
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../../../../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import { fetchSoloWYRQuestions } from './api';
+import styles from './SoloGamePage.module.css';
 
 type Question = {
   id: string;
-  option1: string;
-  option2: string;
+  optionA: string;
+  optionB: string;
 };
 
 const colors = [
@@ -21,7 +21,6 @@ const colors = [
 const SoloGamePage: React.FC = () => {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
-  const [questions, setQuestions] = useState<Question[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selected, setSelected] = useState<string | null>(null);
 
@@ -31,21 +30,14 @@ const SoloGamePage: React.FC = () => {
     }
   }, [user, loading, navigate]);
 
-  useEffect(() => {
-    const loadQuestions = async () => {
-      try {
-        const data = await fetchSoloWYRQuestions();
-        setQuestions(data);
-      } catch (error) {
-        console.error('Failed to load questions:', error);
-      }
-    };
-    loadQuestions();
-  }, []);
+  const { data: questions = [], isLoading, isError } = useQuery({
+    queryKey: ['soloQuestions'],
+    queryFn: fetchSoloWYRQuestions,
+    staleTime: Infinity, // Never refetch unless manually invalidated
+  });
 
-  if (loading) return <p>Loading...</p>;
-
-  if (questions.length === 0) return <p>Loading questions...</p>;
+  if (loading || isLoading) return <p>Loading...</p>;
+  if (isError || questions.length === 0) return <p>Failed to load questions.</p>;
 
   const currentQuestion = questions[currentIndex % questions.length];
   const colorSet = colors[currentIndex % colors.length];
@@ -59,37 +51,21 @@ const SoloGamePage: React.FC = () => {
   };
 
   return (
-    <div style={{ padding: '20px' }}>
-      <h1>Would You Rather</h1>
-      <div style={{ display: 'flex', gap: '20px', marginTop: '40px' }}>
-        <div
-          onClick={() => handleSelect(currentQuestion.option1)}
-          style={{
-            flex: 1,
-            backgroundColor: colorSet[0],
-            padding: '40px',
-            borderRadius: '8px',
-            cursor: 'pointer',
-            opacity: selected === currentQuestion.option1 ? 0.6 : 1,
-            transition: 'opacity 0.3s',
-          }}
-        >
-          {currentQuestion.option1}
-        </div>
-        <div
-          onClick={() => handleSelect(currentQuestion.option2)}
-          style={{
-            flex: 1,
-            backgroundColor: colorSet[1],
-            padding: '40px',
-            borderRadius: '8px',
-            cursor: 'pointer',
-            opacity: selected === currentQuestion.option2 ? 0.6 : 1,
-            transition: 'opacity 0.3s',
-          }}
-        >
-          {currentQuestion.option2}
-        </div>
+    <div className={styles.container}>
+      <h1 className={styles.heading}>Would You Rather</h1>
+      <div className={styles.tiles}>
+        {[currentQuestion.optionA, currentQuestion.optionB].map((option, i) => (
+          <div
+            key={i}
+            onClick={() => handleSelect(option)}
+            className={`${styles.tile} ${
+              selected === option ? styles.tileSelected : ''
+            }`}
+            style={{ backgroundColor: colorSet[i] }}
+          >
+            {option}
+          </div>
+        ))}
       </div>
     </div>
   );
