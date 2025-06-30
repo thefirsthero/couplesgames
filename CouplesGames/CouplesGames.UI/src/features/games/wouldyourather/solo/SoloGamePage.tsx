@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../../../../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import { fetchSoloWYRQuestions } from './api';
 import styles from './SoloGamePage.module.css';
 
@@ -20,7 +21,6 @@ const colors = [
 const SoloGamePage: React.FC = () => {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
-  const [questions, setQuestions] = useState<Question[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selected, setSelected] = useState<string | null>(null);
 
@@ -30,20 +30,14 @@ const SoloGamePage: React.FC = () => {
     }
   }, [user, loading, navigate]);
 
-  useEffect(() => {
-    const loadQuestions = async () => {
-      try {
-        const data = await fetchSoloWYRQuestions();
-        setQuestions(data);
-      } catch (error) {
-        console.error('Failed to load questions:', error);
-      }
-    };
-    loadQuestions();
-  }, []);
+  const { data: questions = [], isLoading, isError } = useQuery({
+    queryKey: ['soloQuestions'],
+    queryFn: fetchSoloWYRQuestions,
+    staleTime: Infinity, // Never refetch unless manually invalidated
+  });
 
-  if (loading) return <p>Loading...</p>;
-  if (questions.length === 0) return <p>Loading questions...</p>;
+  if (loading || isLoading) return <p>Loading...</p>;
+  if (isError || questions.length === 0) return <p>Failed to load questions.</p>;
 
   const currentQuestion = questions[currentIndex % questions.length];
   const colorSet = colors[currentIndex % colors.length];
