@@ -1,11 +1,9 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import Navbar from '../components/Navbar/Navbar';
 
 const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => (
   <div>
-    <nav>
-      <Link to="/">Home</Link> | <Link to="/rooms">Rooms</Link> | <Link to="/auth">Login</Link>
-    </nav>
+    <Navbar />
     <main>{children}</main>
   </div>
 );
