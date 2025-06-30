@@ -18,11 +18,9 @@ const Navbar: React.FC = () => {
   return (
     <nav className={styles.navbar}>
       <div className={styles.navLeft}>
-        <h3 onClick={() => navigate('/')} className={styles.title}>Would You Rather</h3>
+        <h3 onClick={() => navigate('/')} className={styles.title}>Couples Games</h3>
         <button onClick={() => navigate('/')} className={styles.navButton}>Home</button>
-        <button onClick={() => navigate('/rooms')} className={styles.navButton}>Rooms</button>
       </div>
-
       <button onClick={handleAuthAction} className={styles.navButton}>
         {user ? 'Logout' : 'Login'}
       </button>
