@@ -12,6 +12,7 @@ builder.Services.AddScoped<IFirebaseAuthService, FirebaseAuthService>();
 builder.Services.AddScoped<IFirestoreService, FirestoreService>();
 builder.Services.AddScoped<CreateRoomUseCase>();
 builder.Services.AddScoped<JoinRoomUseCase>();
+builder.Services.AddScoped<GetSoloWYRQuestionsUseCase>();
 builder.Services.AddHostedService<SelfPingHostedService>();
 
 
