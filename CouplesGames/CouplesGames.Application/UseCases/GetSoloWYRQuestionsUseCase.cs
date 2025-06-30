@@ -17,7 +17,7 @@ namespace CouplesGames.Application.UseCases
             _firestoreService = firestoreService;
         }
 
-        public async Task<List<Question>> Execute(string userId)
+        public async Task<List<Question>> Execute()
         {
             return await _firestoreService.GetSoloQuestionsAsync();
         }

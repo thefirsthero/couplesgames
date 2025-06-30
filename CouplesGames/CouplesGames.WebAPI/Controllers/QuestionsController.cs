@@ -22,7 +22,13 @@ namespace CouplesGames.WebAPI.Controllers
         public async Task<IActionResult> GetSoloWYRQuestions([FromHeader(Name = "Authorization")] string authorization)
         {
             var userId = await _firebaseAuthService.VerifyTokenAndGetUserIdAsync(authorization.Replace("Bearer ", ""));
-            var questions = await _getSoloWYRQuestionsUseCase.Execute(userId);
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized("Invalid or missing authorization token.");
+            }
+
+            var questions = await _getSoloWYRQuestionsUseCase.Execute();
             return Ok(questions);
         }
     }
