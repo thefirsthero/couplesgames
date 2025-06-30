@@ -7,6 +7,23 @@ var builder = WebApplication.CreateBuilder(args);
 // Load environment variables from .env file
 DotNetEnv.Env.Load();
 
+var frontendUrl = Environment.GetEnvironmentVariable("FRONTEND_URL");
+
+if (string.IsNullOrWhiteSpace(frontendUrl))
+{
+    throw new InvalidOperationException("FrontendUrl environment variable is not set.");
+}
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend", policy =>
+    {
+        policy.WithOrigins(frontendUrl)
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
+
 // Add services to the container.
 builder.Services.AddScoped<IFirebaseAuthService, FirebaseAuthService>();
 builder.Services.AddScoped<IFirestoreService, FirestoreService>();
