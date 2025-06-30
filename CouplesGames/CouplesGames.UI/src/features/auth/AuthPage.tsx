@@ -7,37 +7,45 @@ import {
   createUserWithEmailAndPassword,
   sendPasswordResetEmail,
 } from 'firebase/auth';
+import { useNavigate } from 'react-router-dom';
+import styles from './AuthPage.module.css';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const AuthPage: React.FC = () => {
   const [isRegistering, setIsRegistering] = useState(false);
   const [isResetting, setIsResetting] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [message, setMessage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  const navigate = useNavigate();
 
   const handleAuth = async () => {
     setLoading(true);
-    setMessage(null);
     try {
       if (isResetting) {
         await sendPasswordResetEmail(auth, email);
-        setMessage('Password reset email sent.');
+        toast.success('Password reset email sent.');
       } else if (isRegistering) {
         await createUserWithEmailAndPassword(auth, email, password);
-        setMessage('Registration successful.');
+        toast.success('Registration successful.');
+        navigate('/');
       } else {
         await signInWithEmailAndPassword(auth, email, password);
-        setMessage('Login successful.');
+        toast.success('Login successful.');
+        navigate('/');
       }
     } catch (error: any) {
-      setMessage(error.message);
+      toast.error(error.message);
     }
     setLoading(false);
   };
 
   return (
-    <div style={{ maxWidth: '400px', margin: 'auto' }}>
+    <div className={styles.container}>
+      <ToastContainer />
+
       <h1>{isResetting ? 'Reset Password' : isRegistering ? 'Register' : 'Login'}</h1>
 
       <input
@@ -45,7 +53,7 @@ const AuthPage: React.FC = () => {
         placeholder="Email"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
-        style={{ width: '100%', marginBottom: '10px' }}
+        className={styles.fullWidth}
       />
 
       {!isResetting && (
@@ -54,29 +62,40 @@ const AuthPage: React.FC = () => {
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          style={{ width: '100%', marginBottom: '10px' }}
+          className={styles.fullWidth}
         />
       )}
 
-      <button onClick={handleAuth} disabled={loading} style={{ width: '100%' }}>
-        {loading ? 'Processing...' : isResetting ? 'Send Reset Email' : isRegistering ? 'Register' : 'Login'}
+      <button
+        onClick={handleAuth}
+        disabled={loading}
+        className={styles.fullWidthButton}
+      >
+        {loading
+          ? 'Processing...'
+          : isResetting
+          ? 'Send Reset Email'
+          : isRegistering
+          ? 'Register'
+          : 'Login'}
       </button>
 
-      <div style={{ marginTop: '10px' }}>
+      <div className={styles.switchButtons}>
         {!isResetting && (
           <button
             onClick={() => setIsRegistering((prev) => !prev)}
-            style={{ marginRight: '10px' }}
+            className={styles.button}
           >
             {isRegistering ? 'Switch to Login' : 'Switch to Register'}
           </button>
         )}
-        <button onClick={() => setIsResetting((prev) => !prev)}>
+        <button
+          onClick={() => setIsResetting((prev) => !prev)}
+          className={styles.button}
+        >
           {isResetting ? 'Back to Login' : 'Forgot Password?'}
         </button>
       </div>
-
-      {message && <p>{message}</p>}
     </div>
   );
 };
