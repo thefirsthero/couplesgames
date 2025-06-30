@@ -69,7 +69,7 @@ namespace CouplesGames.Infrastructure.Services
 
         public async Task<List<Question>> GetSoloQuestionsAsync()
         {
-            var collectionRef = _db.Collection("questions");
+            var collectionRef = _db.Collection("would_you_rather");
             var snapshot = await collectionRef.GetSnapshotAsync();
 
             var questions = new List<Question>();
@@ -77,13 +77,20 @@ namespace CouplesGames.Infrastructure.Services
             {
                 if (doc.Exists)
                 {
-                    var question = doc.ConvertTo<Question>();
-                    if (question != null)
+                    var data = doc.ToDictionary();
+                    var createdAt = doc.CreateTime?.ToDateTime() ?? DateTime.UtcNow;
+
+                    var question = new Question
                     {
-                        questions.Add(question);
-                    }
+                        Id = doc.Id,
+                        OptionA = data.TryGetValue("option1", out object? optionA) && optionA != null ? optionA.ToString()! : "",
+                        OptionB = data.TryGetValue("option2", out object? optionB) && optionB != null ? optionB.ToString()! : "",
+                        CreatedAt = DateTime.SpecifyKind(createdAt, DateTimeKind.Utc)
+                    };
+                    questions.Add(question);
                 }
             }
+
             return questions;
         }
     }
