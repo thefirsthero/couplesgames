@@ -1,5 +1,6 @@
 ﻿using CouplesGames.Core.Entities;
 using CouplesGames.Core.Interfaces;
+using CouplesGames.Infrastructure.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,7 +20,19 @@ namespace CouplesGames.Application.UseCases
 
         public async Task<List<Question>> Execute()
         {
-            return await _firestoreService.GetSoloQuestionsAsync();
+            try
+            {
+                return await _firestoreService.GetSoloQuestionsAsync();
+            }
+            catch (Exception ex)
+            {
+                if (_firestoreService is FirestoreService fs)
+                {
+                    await fs.LogErrorAsync("GetSoloWYRQuestionsUseCase.Execute", ex);
+                }
+                throw;
+            }
         }
+
     }
 }

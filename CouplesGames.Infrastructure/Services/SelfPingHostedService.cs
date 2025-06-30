@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
-
 namespace CouplesGames.Infrastructure.Services
 {
     public class SelfPingHostedService : BackgroundService
@@ -46,6 +45,7 @@ namespace CouplesGames.Infrastructure.Services
                 catch (Exception ex)
                 {
                     _logger.LogError(ex, "Self ping exception");
+                    // Optionally log to FirestoreService here if desired
                 }
 
                 await Task.Delay(TimeSpan.FromMinutes(12), stoppingToken);

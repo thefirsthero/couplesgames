@@ -20,11 +20,11 @@ namespace CouplesGames.Infrastructure.Services
                 var json = System.Text.Encoding.UTF8.GetString(Convert.FromBase64String(jsonBase64));
 
                 if (string.IsNullOrEmpty(json))
-                    throw new Exception("Missing FIREBASE_SERVICE_ACCOUNT_JSON_BASE64 environment variable.");
+                    throw new Exception("Invalid FIREBASE_SERVICE_ACCOUNT_JSON_BASE64 environment variable.");
 
                 var credential = GoogleCredential.FromJson(json);
 
-                FirebaseApp.Create(new AppOptions()
+                FirebaseApp.Create(new AppOptions
                 {
                     Credential = credential,
                 });
@@ -35,8 +35,16 @@ namespace CouplesGames.Infrastructure.Services
 
         public async Task<string> VerifyTokenAndGetUserIdAsync(string idToken)
         {
-            var decodedToken = await _auth.VerifyIdTokenAsync(idToken);
-            return decodedToken.Uid;
+            try
+            {
+                var decodedToken = await _auth.VerifyIdTokenAsync(idToken);
+                return decodedToken.Uid;
+            }
+            catch (Exception ex)
+            {
+                // Consider logging this using FirestoreService if DI allows it, else throw directly
+                throw new UnauthorizedAccessException("Invalid Firebase token.", ex);
+            }
         }
     }
 }

@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CouplesGames.Core\CouplesGames.Core.csproj" />
+    <ProjectReference Include="..\CouplesGames.Infrastructure\CouplesGames.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>
