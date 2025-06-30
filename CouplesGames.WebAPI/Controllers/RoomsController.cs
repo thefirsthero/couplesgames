@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using CouplesGames.Application.UseCases;
 using CouplesGames.Core.Interfaces;
 using CouplesGames.Infrastructure.Services;
+using MediatR;
+using CouplesGames.Application.Commands.Rooms;
 
 namespace CouplesGames.Controllers
 {
@@ -10,15 +11,16 @@ namespace CouplesGames.Controllers
     public class RoomsController : ControllerBase
     {
         private readonly IFirebaseAuthService _firebaseAuthService;
-        private readonly CreateRoomUseCase _createRoomUseCase;
-        private readonly JoinRoomUseCase _joinRoomUseCase;
+        private readonly IMediator _mediator;
         private readonly FirestoreService _firestoreService;
 
-        public RoomsController(IFirebaseAuthService firebaseAuthService, CreateRoomUseCase createRoomUseCase, JoinRoomUseCase joinRoomUseCase, IFirestoreService firestoreService)
+        public RoomsController(
+            IFirebaseAuthService firebaseAuthService,
+            IMediator mediator,
+            IFirestoreService firestoreService)
         {
             _firebaseAuthService = firebaseAuthService;
-            _createRoomUseCase = createRoomUseCase;
-            _joinRoomUseCase = joinRoomUseCase;
+            _mediator = mediator;
             _firestoreService = (FirestoreService)firestoreService;
         }
 
@@ -28,8 +30,8 @@ namespace CouplesGames.Controllers
             try
             {
                 var userId = await _firebaseAuthService.VerifyTokenAndGetUserIdAsync(authorization.Replace("Bearer ", ""));
-                var room = await _createRoomUseCase.Execute(questionId, userId);
-                return Ok(room);
+                var result = await _mediator.Send(new CreateRoomCommand(questionId, userId));
+                return Ok(result);
             }
             catch (Exception ex)
             {
@@ -44,8 +46,8 @@ namespace CouplesGames.Controllers
             try
             {
                 var userId = await _firebaseAuthService.VerifyTokenAndGetUserIdAsync(authorization.Replace("Bearer ", ""));
-                var room = await _joinRoomUseCase.Execute(roomId, userId);
-                return Ok(room);
+                var result = await _mediator.Send(new JoinRoomCommand(roomId, userId));
+                return Ok(result);
             }
             catch (Exception ex)
             {

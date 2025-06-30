@@ -1,8 +1,8 @@
-﻿using CouplesGames.Application.UseCases;
-using CouplesGames.Core.Interfaces;
-using CouplesGames.Infrastructure.Services;
-using Microsoft.AspNetCore.Http;
+﻿using CouplesGames.Core.Interfaces;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using CouplesGames.Application.Queries.Questions;
+using CouplesGames.Infrastructure.Services;
 
 namespace CouplesGames.WebAPI.Controllers
 {
@@ -11,12 +11,17 @@ namespace CouplesGames.WebAPI.Controllers
     public class QuestionsController : Controller
     {
         private readonly IFirebaseAuthService _firebaseAuthService;
-        private readonly GetSoloWYRQuestionsUseCase _getSoloWYRQuestionsUseCase;
+        private readonly IMediator _mediator;
+        private readonly FirestoreService _firestoreService;
 
-        public QuestionsController(IFirebaseAuthService firebaseAuthService, GetSoloWYRQuestionsUseCase getSoloWYRQuestionsUseCase)
+        public QuestionsController(
+            IFirebaseAuthService firebaseAuthService,
+            IMediator mediator,
+            IFirestoreService firestoreService)
         {
             _firebaseAuthService = firebaseAuthService;
-            _getSoloWYRQuestionsUseCase = getSoloWYRQuestionsUseCase;
+            _mediator = mediator;
+            _firestoreService = (FirestoreService)firestoreService;
         }
 
         [HttpGet("solowyr")]
@@ -31,15 +36,12 @@ namespace CouplesGames.WebAPI.Controllers
                     return Unauthorized("Invalid or missing authorization token.");
                 }
 
-                var questions = await _getSoloWYRQuestionsUseCase.Execute();
+                var questions = await _mediator.Send(new GetSoloWYRQuestionsQuery());
                 return Ok(questions);
             }
             catch (Exception ex)
             {
-                if (_firebaseAuthService is FirestoreService fs)
-                {
-                    await fs.LogErrorAsync("QuestionsController.GetSoloWYRQuestions", ex);
-                }
+                await _firestoreService.LogErrorAsync("QuestionsController.GetSoloWYRQuestions", ex);
                 return StatusCode(500, "An unexpected error occurred.");
             }
         }

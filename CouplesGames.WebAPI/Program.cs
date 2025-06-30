@@ -1,6 +1,8 @@
+// Program.cs
 using CouplesGames.Core.Interfaces;
 using CouplesGames.Infrastructure.Services;
-using CouplesGames.Application.UseCases;
+using MediatR;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,32 +29,23 @@ builder.Services.AddCors(options =>
 // Add services to the container.
 builder.Services.AddScoped<IFirebaseAuthService, FirebaseAuthService>();
 builder.Services.AddScoped<IFirestoreService, FirestoreService>();
-builder.Services.AddScoped<CreateRoomUseCase>();
-builder.Services.AddScoped<JoinRoomUseCase>();
-builder.Services.AddScoped<GetSoloWYRQuestionsUseCase>();
+
 builder.Services.AddHostedService<SelfPingHostedService>();
 
+// Register MediatR
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-//if (app.Environment.IsDevelopment())
-//{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-//}
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
-
 app.UseCors("AllowFrontend");
-
 app.UseAuthorization();
-
 app.MapControllers();
-
 app.Run();
