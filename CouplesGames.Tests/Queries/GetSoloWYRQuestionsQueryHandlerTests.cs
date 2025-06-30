@@ -18,12 +18,6 @@ namespace CouplesGames.Tests.Queries
             var mockFirestore = new Mock<IFirestoreService>();
             var handler = new GetSoloWYRQuestionsQueryHandler(mockFirestore.Object);
 
-            mockFirestore.Setup(x => x.GetSoloQuestionsAsync())
-                .ReturnsAsync(new List<Question>
-                {
-                    new Question { Id = "q1", OptionA = "A", OptionB = "B" }
-                });
-
             var query = new GetSoloWYRQuestionsQuery();
 
             // Act

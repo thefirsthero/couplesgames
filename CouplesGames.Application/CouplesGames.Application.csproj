@@ -13,6 +13,10 @@
   <ItemGroup>
     <ProjectReference Include="..\CouplesGames.Core\CouplesGames.Core.csproj" />
     <ProjectReference Include="..\CouplesGames.Infrastructure\CouplesGames.Infrastructure.csproj" />
+	<Content Include="..\wyr_solo_questions.csv">
+		<Link>wyr_solo_questions.csv</Link>
+		<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	</Content>
   </ItemGroup>
 
 </Project>

@@ -29,7 +29,7 @@ namespace CouplesGames.Application.Queries.Health
             try
             {
                 // Perform a lightweight Firestore connectivity check
-                var test = await _firestoreService.GetSoloQuestionsAsync();
+                //var test = await _firestoreService.GetRoomAsync('');
                 result.Status = "Healthy";
                 result.Details = "Successfully connected to Firestore.";
             }

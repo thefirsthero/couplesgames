@@ -9,6 +9,5 @@ namespace CouplesGames.Core.Interfaces
         Task<Room?> GetRoomAsync(string roomId);
         Task<Room> UpdateRoomAsync(Room room);
         Task<Question?> GetQuestionAsync(string questionId);
-        Task<List<Question>> GetSoloQuestionsAsync();
     }
 }

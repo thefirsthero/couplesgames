@@ -117,40 +117,5 @@ namespace CouplesGames.Infrastructure.Services
                 throw;
             }
         }
-
-        public async Task<List<Question>> GetSoloQuestionsAsync()
-        {
-            try
-            {
-                var collectionRef = _db.Collection("would_you_rather");
-                var snapshot = await collectionRef.GetSnapshotAsync();
-
-                var questions = new List<Question>();
-                foreach (var doc in snapshot.Documents)
-                {
-                    if (doc.Exists)
-                    {
-                        var data = doc.ToDictionary();
-                        var createdAt = doc.CreateTime?.ToDateTime() ?? DateTime.UtcNow;
-
-                        var question = new Question
-                        {
-                            Id = doc.Id,
-                            OptionA = data.TryGetValue("option1", out object? optionA) && optionA != null ? optionA.ToString()! : "",
-                            OptionB = data.TryGetValue("option2", out object? optionB) && optionB != null ? optionB.ToString()! : "",
-                            CreatedAt = DateTime.SpecifyKind(createdAt, DateTimeKind.Utc)
-                        };
-                        questions.Add(question);
-                    }
-                }
-
-                return questions;
-            }
-            catch (Exception ex)
-            {
-                await LogErrorAsync("GetSoloQuestionsAsync", ex);
-                throw;
-            }
-        }
     }
 }
