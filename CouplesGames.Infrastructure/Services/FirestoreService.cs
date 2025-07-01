@@ -1,5 +1,6 @@
 ﻿using CouplesGames.Core.Entities;
 using CouplesGames.Core.Interfaces;
+using CouplesGames.Infrastructure.FirestoreDocuments;
 using Google.Apis.Auth.OAuth2;
 using Google.Cloud.Firestore;
 using Google.Cloud.Firestore.V1;
@@ -63,7 +64,8 @@ namespace CouplesGames.Infrastructure.Services
             try
             {
                 var docRef = _db.Collection("rooms").Document(room.Id);
-                await docRef.SetAsync(room);
+                var roomDoc = RoomDocument.FromDomain(room);
+                await docRef.SetAsync(roomDoc);
                 return room;
             }
             catch (Exception ex)
@@ -79,7 +81,12 @@ namespace CouplesGames.Infrastructure.Services
             {
                 var docRef = _db.Collection("rooms").Document(roomId);
                 var snapshot = await docRef.GetSnapshotAsync();
-                return snapshot.Exists ? snapshot.ConvertTo<Room>() : null;
+
+                if (!snapshot.Exists)
+                    return null;
+
+                var roomDoc = snapshot.ConvertTo<RoomDocument>();
+                return roomDoc.ToDomain();
             }
             catch (Exception ex)
             {
@@ -93,7 +100,8 @@ namespace CouplesGames.Infrastructure.Services
             try
             {
                 var docRef = _db.Collection("rooms").Document(room.Id);
-                await docRef.SetAsync(room);
+                var roomDoc = RoomDocument.FromDomain(room);
+                await docRef.SetAsync(roomDoc);
                 return room;
             }
             catch (Exception ex)
@@ -109,7 +117,12 @@ namespace CouplesGames.Infrastructure.Services
             {
                 var docRef = _db.Collection("questions").Document(questionId);
                 var snapshot = await docRef.GetSnapshotAsync();
-                return snapshot.Exists ? snapshot.ConvertTo<Question>() : null;
+
+                if (!snapshot.Exists)
+                    return null;
+
+                var questionDoc = snapshot.ConvertTo<QuestionDocument>();
+                return questionDoc.ToDomain();
             }
             catch (Exception ex)
             {
