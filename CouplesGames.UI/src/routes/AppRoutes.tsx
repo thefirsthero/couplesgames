@@ -6,6 +6,7 @@ import RoomPage from '../features/rooms/RoomPage';
 import AuthPage from '../features/auth/AuthPage';
 import NotFound from '../pages/NotFound';
 import MainLayout from '../layouts/MainLayout';
+import MultiplayerGamePage from '../features/games/wouldyourather/multiplayer/MultiplayerGamePage';
 
 const AppRoutes: React.FC = () => (
   <BrowserRouter>
@@ -14,6 +15,7 @@ const AppRoutes: React.FC = () => (
         <Route path="/" element={<HomePage />} />
         <Route path="/solo" element={<SoloGamePage />} />
         <Route path="/rooms" element={<RoomPage />} />
+        <Route path="/rooms/:roomId" element={<MultiplayerGamePage />} />
         <Route path="/auth" element={<AuthPage />} />
         <Route path="*" element={<NotFound />} />
       </Routes>

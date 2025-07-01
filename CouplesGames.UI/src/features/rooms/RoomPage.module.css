@@ -1,0 +1,104 @@
+.container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  .modeSelector {
+    margin-bottom: 30px;
+    padding: 20px;
+    background-color: #1e1e1e;
+    border-radius: 8px;
+  }
+  
+  .modeButtons {
+    display: flex;
+    gap: 15px;
+    margin: 15px 0;
+  }
+  
+  .modeButton {
+    flex: 1;
+    padding: 12px;
+    background-color: #333;
+    border: none;
+    border-radius: 4px;
+    color: #e0e0e0;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.2s;
+  }
+  
+  .modeButton:hover {
+    background-color: #444;
+  }
+  
+  .modeButton.active {
+    background-color: #007bff;
+  }
+  
+  .modeDescription {
+    font-style: italic;
+    color: #aaa;
+  }
+  
+  .createSection {
+    margin: 30px 0;
+    text-align: center;
+  }
+  
+  .createButton {
+    padding: 12px 30px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  
+  .createButton:hover {
+    background-color: #218838;
+  }
+  
+  .joinSection {
+    margin-top: 30px;
+    padding: 20px;
+    background-color: #1e1e1e;
+    border-radius: 8px;
+  }
+  
+  .joinForm {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+  }
+  
+  .roomInput {
+    flex: 1;
+    padding: 10px;
+    background-color: #2d2d2d;
+    border: 1px solid #444;
+    border-radius: 4px;
+    color: #e0e0e0;
+  }
+  
+  .joinButton {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .joinButton:hover {
+    background-color: #0069d9;
+  }
+  
+  .error {
+    color: #dc3545;
+    margin-top: 15px;
+    text-align: center;
+  }
