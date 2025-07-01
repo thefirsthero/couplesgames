@@ -2,47 +2,48 @@
 using CouplesGames.Core.Interfaces;
 using MediatR;
 
-namespace CouplesGames.Application.Commands.Rooms
+public class CreateRoomCommand : IRequest<Room>
 {
-    public class CreateRoomCommand : IRequest<Room>
-    {
-        public string QuestionId { get; set; }
-        public string UserId { get; set; }
+    public string GameMode { get; set; } // "existing_questions" or "ask_each_other"
+    public string? QuestionId { get; set; }
+    public string UserId { get; set; }
 
-        public CreateRoomCommand(string questionId, string userId)
-        {
-            QuestionId = questionId;
-            UserId = userId;
-        }
+    public CreateRoomCommand(string gameMode, string? questionId, string userId)
+    {
+        GameMode = gameMode;
+        QuestionId = questionId;
+        UserId = userId;
+    }
+}
+
+public class CreateRoomCommandHandler : IRequestHandler<CreateRoomCommand, Room>
+{
+    private readonly IFirestoreService _firestoreService;
+
+    public CreateRoomCommandHandler(IFirestoreService firestoreService)
+    {
+        _firestoreService = firestoreService;
     }
 
-    public class CreateRoomCommandHandler : IRequestHandler<CreateRoomCommand, Room>
+    public async Task<Room> Handle(CreateRoomCommand request, CancellationToken cancellationToken)
     {
-        private readonly IFirestoreService _firestoreService;
-
-        public CreateRoomCommandHandler(IFirestoreService firestoreService)
+        try
         {
-            _firestoreService = firestoreService;
+            var room = new Room
+            {
+                Id = Guid.NewGuid().ToString(),
+                GameMode = request.GameMode,
+                QuestionId = request.GameMode == "existing_questions" ? request.QuestionId : null,
+                UserIds = new List<string> { request.UserId },
+                AskingUserId = request.GameMode == "ask_each_other" ? request.UserId : null,
+            };
+
+            return await _firestoreService.CreateRoomAsync(room);
         }
-
-        public async Task<Room> Handle(CreateRoomCommand request, CancellationToken cancellationToken)
+        catch (Exception ex)
         {
-            try
-            {
-                var room = new Room
-                {
-                    Id = Guid.NewGuid().ToString(),
-                    QuestionId = request.QuestionId,
-                    UserIds = new List<string> { request.UserId }
-                };
-
-                return await _firestoreService.CreateRoomAsync(room);
-            }
-            catch (Exception ex)
-            {
-                await _firestoreService.LogErrorAsync("CreateRoomCommandHandler.Handle", ex);
-                throw;
-            }
+            await _firestoreService.LogErrorAsync("CreateRoomCommandHandler.Handle", ex);
+            throw;
         }
     }
 }

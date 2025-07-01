@@ -7,7 +7,7 @@ using CouplesGames.Application.Commands.Rooms;
 namespace CouplesGames.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/rooms")]
     public class RoomsController : ControllerBase
     {
         private readonly IFirebaseAuthService _firebaseAuthService;
@@ -24,13 +24,19 @@ namespace CouplesGames.Controllers
             _firestoreService = (FirestoreService)firestoreService;
         }
 
+        public class CreateRoomRequest
+        {
+            public string GameMode { get; set; } = "existing_questions";
+            public string? QuestionId { get; set; }
+        }
+
         [HttpPost("create")]
-        public async Task<IActionResult> CreateRoom([FromHeader(Name = "Authorization")] string authorization, [FromBody] string questionId)
+        public async Task<IActionResult> CreateRoom([FromHeader(Name = "Authorization")] string authorization, [FromBody] CreateRoomRequest request)
         {
             try
             {
                 var userId = await _firebaseAuthService.VerifyTokenAndGetUserIdAsync(authorization.Replace("Bearer ", ""));
-                var result = await _mediator.Send(new CreateRoomCommand(questionId, userId));
+                var result = await _mediator.Send(new CreateRoomCommand(request.GameMode, request.QuestionId, userId));
                 return Ok(result);
             }
             catch (Exception ex)
@@ -52,6 +58,27 @@ namespace CouplesGames.Controllers
             catch (Exception ex)
             {
                 await _firestoreService.LogErrorAsync("RoomsController.JoinRoom", ex);
+                return StatusCode(500, "An unexpected error occurred.");
+            }
+        }
+
+        [HttpPost("update-question")]
+        public async Task<IActionResult> UpdateQuestion([FromHeader(Name = "Authorization")] string authorization, [FromBody] UpdateQuestionCommand command)
+        {
+            try
+            {
+                var userId = await _firebaseAuthService.VerifyTokenAndGetUserIdAsync(authorization.Replace("Bearer ", ""));
+
+                // Ensure only asking user can set question
+                if (command.AskingUserId != userId)
+                    return Forbid();
+
+                var result = await _mediator.Send(command);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                await _firestoreService.LogErrorAsync("RoomsController.UpdateQuestion", ex);
                 return StatusCode(500, "An unexpected error occurred.");
             }
         }
