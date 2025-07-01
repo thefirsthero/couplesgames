@@ -1,6 +1,11 @@
 import apiClient from './../../lib/apiClient';
 
-export const getRooms = async () => {
-  const response = await apiClient.get('/api/rooms');
+export const createRoom = async () => {
+  const response = await apiClient.post('/api/Rooms/create');
+  return response.data;
+};
+
+export const joinRoom = async (roomId: string) => {
+  const response = await apiClient.post(`/api/Rooms/join/${roomId}`);
   return response.data;
 };

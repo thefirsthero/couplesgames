@@ -1,18 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import apiClient from './../../lib/apiClient';
-import { useAuth } from './../../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
-
-type Room = {
-  id: string;
-  questionId: string;
-  userIds: string[];
-};
+import { useAuth } from './../../hooks/useAuth';
+import { createRoom, joinRoom } from './api';
 
 const RoomPage: React.FC = () => {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
-  const [rooms, setRooms] = useState<Room[]>([]);
   const [roomIdToJoin, setRoomIdToJoin] = useState('');
   const [error, setError] = useState('');
 
@@ -22,23 +15,11 @@ const RoomPage: React.FC = () => {
     }
   }, [user, loading, navigate]);
 
-  useEffect(() => {
-    const fetchRooms = async () => {
-      try {
-        const response = await apiClient.get('/api/rooms');
-        setRooms(response.data);
-      } catch (err) {
-        console.error(err);
-      }
-    };
-    fetchRooms();
-  }, []);
-
   const handleCreateRoom = async () => {
     setError('');
     try {
-      await apiClient.post('/api/Rooms/create');
-      navigate('/rooms'); // Refresh rooms list
+      await createRoom();
+      navigate('/rooms'); // You might adjust this if /rooms renders this same page
     } catch (err) {
       setError('Failed to create room');
       console.error(err);
@@ -52,7 +33,7 @@ const RoomPage: React.FC = () => {
       return;
     }
     try {
-      await apiClient.post(`/api/Rooms/join/${roomIdToJoin}`);
+      await joinRoom(roomIdToJoin);
       navigate(`/rooms/${roomIdToJoin}`);
     } catch (err) {
       setError('Failed to join room');
@@ -76,15 +57,7 @@ const RoomPage: React.FC = () => {
         />
         <button onClick={handleJoinRoom}>Join Room</button>
       </div>
-      {error && <p style={{color: 'red'}}>{error}</p>}
-      <div>
-        {rooms.map((room) => (
-          <div key={room.id}>
-            <h2>Room ID: {room.id}</h2>
-            <p>Players: {room.userIds.join(', ')}</p>
-          </div>
-        ))}
-      </div>
+      {error && <p style={{ color: 'red' }}>{error}</p>}
     </div>
   );
 };

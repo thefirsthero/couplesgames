@@ -42,7 +42,9 @@ const SoloGamePage: React.FC = () => {
     queryKey: ['soloQuestions'],
     queryFn: fetchSoloWYRQuestions,
     staleTime: Infinity,
+    enabled: !loading && !!user,
   });
+  
 
   useEffect(() => {
     if (questions.length > 0) {
