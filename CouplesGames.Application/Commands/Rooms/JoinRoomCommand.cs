@@ -34,11 +34,15 @@ namespace CouplesGames.Application.Commands.Rooms
                 if (room == null)
                     throw new InvalidOperationException("Room does not exist.");
 
+                if (room.UserIds.Contains(request.UserId))
+                {
+                    return room;
+                }
+
                 if (room.UserIds.Count >= 2)
                     throw new InvalidOperationException("Room is full.");
 
-                if (!room.UserIds.Contains(request.UserId))
-                    room.UserIds.Add(request.UserId);
+                room.UserIds.Add(request.UserId);
 
                 return await _firestoreService.UpdateRoomAsync(room);
             }
