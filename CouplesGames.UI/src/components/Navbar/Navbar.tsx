@@ -27,12 +27,13 @@ const Navbar: React.FC = () => {
       <div className={styles.navLeft}>
         <h3 onClick={() => navigate('/')} className={styles.title}>Couples Games</h3>
         <button onClick={() => navigate('/')} className={styles.navButton}>Home</button>
-        {location.pathname === '/solo' && (
+        {location.pathname.match(/\/(solo|rooms\/.*)/) && (
           <button onClick={quitGame} className={styles.navButton}>
             Quit Game
           </button>
         )}
       </div>
+      <h4><b>Hi, {user ? user.email : 'Guest'}</b></h4>
       <button onClick={handleAuthAction} className={styles.navButton}>
         {user ? 'Logout' : 'Login'}
       </button>
