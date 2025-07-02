@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { useAuth } from '../../../../hooks/useAuth';
 import apiClient from '../../../../lib/apiClient';
 import QuestionForm from './components/QuestionForm';
@@ -25,7 +25,6 @@ interface Room {
 const MultiplayerGamePage: React.FC = () => {
   const { roomId } = useParams<{ roomId: string }>();
   const { user } = useAuth();
-//   const navigate = useNavigate();
   const [room, setRoom] = useState<Room | null>(null);
   const [players, setPlayers] = useState<Player[]>([]);
   const [loading, setLoading] = useState(true);
