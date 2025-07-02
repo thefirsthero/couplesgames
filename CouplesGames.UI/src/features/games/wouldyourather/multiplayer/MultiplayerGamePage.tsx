@@ -6,6 +6,7 @@ import QuestionForm from './components/QuestionForm';
 import AnswerForm from './components/AnswerForm';
 import ResultsView from './components/ResultsView';
 import styles from './MultiplayerGamePage.module.css';
+import { fetchSoloWYRQuestions } from '../solo/api'; // Added import
 
 interface Player {
   uid: string;
@@ -29,6 +30,7 @@ const MultiplayerGamePage: React.FC = () => {
   const [players, setPlayers] = useState<Player[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [hasSetQuestion, setHasSetQuestion] = useState(false); // New state
 
   // Fetch room data
   useEffect(() => {
@@ -61,6 +63,37 @@ const MultiplayerGamePage: React.FC = () => {
     const interval = setInterval(fetchRoom, 3000);
     return () => clearInterval(interval);
   }, [roomId, user]);
+
+  // Handle existing questions mode
+  useEffect(() => {
+    if (!room || !user || hasSetQuestion) return;
+
+    if (
+      room.gameMode === 'existing_questions' && 
+      room.userIds.length >= 2 && 
+      !room.currentQuestion
+    ) {
+      setHasSetQuestion(true);
+      const setRandomQuestion = async () => {
+        try {
+          const questions = await fetchSoloWYRQuestions();
+          if (questions.length === 0) return;
+          
+          const randomQuestion = questions[Math.floor(Math.random() * questions.length)];
+          const questionText = `Would you rather ${randomQuestion.optionA} or ${randomQuestion.optionB}?`;
+          
+          await apiClient.post('/api/rooms/update-question', {
+            roomId,
+            question: questionText,
+            askingUserId: user.uid
+          });
+        } catch (err) {
+          console.error('Failed to set question:', err);
+        }
+      };
+      setRandomQuestion();
+    }
+  }, [room, user, roomId, hasSetQuestion]);
 
   const handleSubmitQuestion = async (optionA: string, optionB: string) => {
     if (!roomId || !user) return;
@@ -95,6 +128,11 @@ const MultiplayerGamePage: React.FC = () => {
 
   const getGameStatus = () => {
     if (!room || !user) return 'loading';
+    
+    // For existing questions mode when question is not set yet
+    if (room.gameMode === 'existing_questions' && !room.currentQuestion) {
+      return room.userIds.length < 2 ? 'waiting' : 'loading';
+    }
     
     // If it's the user's turn to ask a question
     if (room.gameMode === 'ask_each_other' && room.askingUserId === user.uid && !room.currentQuestion) {
@@ -175,9 +213,11 @@ const MultiplayerGamePage: React.FC = () => {
 
         {gameStatus === 'waiting' && (
           <div className={styles.waiting}>
-            {room.askingUserId === user?.uid 
-              ? 'Waiting for you to ask a question...' 
-              : 'Waiting for other players...'}
+            {room.userIds.length < 2 
+              ? 'Waiting for other players to join...' 
+              : room.askingUserId === user?.uid 
+                ? 'Waiting for you to ask a question...' 
+                : 'Waiting for other players...'}
           </div>
         )}
       </div>
