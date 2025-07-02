@@ -25,7 +25,14 @@ namespace CouplesGames.Application.Queries.Rooms
 
         public async Task<Room?> Handle(GetRoomQuery request, CancellationToken cancellationToken)
         {
-            return await _firestoreService.GetRoomAsync(request.RoomId);
+            try { 
+                return await _firestoreService.GetRoomAsync(request.RoomId);
+            }
+            catch (Exception ex)
+            {
+                await _firestoreService.LogErrorAsync("GetRoomQueryHandler.Handle", ex);
+                throw;
+            }
         }
     }
 }

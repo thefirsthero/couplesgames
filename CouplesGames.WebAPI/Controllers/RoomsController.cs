@@ -6,7 +6,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
-namespace CouplesGames.Controllers
+namespace CouplesGames.WebAPI.Controllers
 {
     [ApiController]
     [Route("api/rooms")]
@@ -130,6 +130,33 @@ namespace CouplesGames.Controllers
             catch (Exception ex)
             {
                 await _firestoreService.LogErrorAsync("RoomsController.GetRoom", ex);
+                return StatusCode(500, "An unexpected error occurred.");
+            }
+        }
+
+        [HttpPost("answer")]
+        public async Task<IActionResult> SubmitAnswer(
+            [FromHeader(Name = "Authorization")] string authorization,
+            [FromBody] SubmitAnswerCommand command)
+        {
+            try
+            {
+                var userId = await _firebaseAuthService.VerifyTokenAndGetUserIdAsync(authorization.Replace("Bearer ", ""));
+
+                // Ensure only the user can submit their own answer
+                if (command.UserId != userId)
+                    return Forbid();
+
+                var result = await _mediator.Send(command);
+                return Ok(result);
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Unauthorized("Invalid token");
+            }
+            catch (Exception ex)
+            {
+                await _firestoreService.LogErrorAsync("RoomsController.SubmitAnswer", ex);
                 return StatusCode(500, "An unexpected error occurred.");
             }
         }

@@ -130,5 +130,23 @@ namespace CouplesGames.Infrastructure.Services
                 throw;
             }
         }
+
+        public async Task<User?> GetUserAsync(string userId)
+        {
+            try
+            {
+                var docRef = _db.Collection("users").Document(userId);
+                var snapshot = await docRef.GetSnapshotAsync();
+                if (!snapshot.Exists)
+                    return null;
+                var userDoc = snapshot.ConvertTo<UserDocument>();
+                return userDoc.ToDomain();
+            }
+            catch (Exception ex)
+            {
+                await LogErrorAsync("GetUserAsync", ex);
+                throw;
+            }
+        }
     }
 }
