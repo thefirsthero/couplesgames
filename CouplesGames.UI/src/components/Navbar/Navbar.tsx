@@ -1,5 +1,3 @@
-// src/components/Navbar/Navbar.tsx
-
 import React from 'react';
 import { useAuth } from '../../hooks/useAuth';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -33,7 +31,6 @@ const Navbar: React.FC = () => {
           </button>
         )}
       </div>
-      <h4><b>Hi, {user ? user.email : 'Guest'}</b></h4>
       <button onClick={handleAuthAction} className={styles.navButton}>
         {user ? 'Logout' : 'Login'}
       </button>
