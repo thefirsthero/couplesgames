@@ -29,7 +29,36 @@ public class CreateRoomCommandHandler : IRequestHandler<CreateRoomCommand, Room>
     {
         try
         {
-            var room = new Room
+            var allRooms = await _firestoreService.GetAllRoomsAsync();
+            foreach (var existingRoom in allRooms)
+            {
+                if (existingRoom.UserIds.Contains(request.UserId))
+                {
+                    existingRoom.UserIds.Remove(request.UserId);
+                    await _firestoreService.UpdateRoomAsync(existingRoom);
+                }
+            }
+
+            var reusableRoom = allRooms.FirstOrDefault(r => r.UserIds.Count == 0 && r.GameMode == request.GameMode);
+
+            if (reusableRoom != null)
+            {
+                reusableRoom.UserIds.Add(request.UserId);
+
+                if (request.GameMode == "ask_each_other")
+                {
+                    reusableRoom.AskingUserId = request.UserId;
+                }
+
+                if (request.GameMode == "existing_questions")
+                {
+                    reusableRoom.QuestionId = request.QuestionId;
+                }
+
+                return await _firestoreService.UpdateRoomAsync(reusableRoom);
+            }
+
+            var newRoom = new Room
             {
                 Id = Guid.NewGuid().ToString(),
                 GameMode = request.GameMode,
@@ -38,7 +67,7 @@ public class CreateRoomCommandHandler : IRequestHandler<CreateRoomCommand, Room>
                 AskingUserId = request.GameMode == "ask_each_other" ? request.UserId : null,
             };
 
-            return await _firestoreService.CreateRoomAsync(room);
+            return await _firestoreService.CreateRoomAsync(newRoom);
         }
         catch (Exception ex)
         {

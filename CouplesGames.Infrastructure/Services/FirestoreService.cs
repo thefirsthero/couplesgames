@@ -148,5 +148,27 @@ namespace CouplesGames.Infrastructure.Services
                 throw;
             }
         }
+
+        public async Task<List<Room>> GetAllRoomsAsync()
+        {
+            try
+            {
+                var snapshot = await _db.Collection("rooms").GetSnapshotAsync();
+                var rooms = new List<Room>();
+
+                foreach (var doc in snapshot.Documents)
+                {
+                    var roomDoc = doc.ConvertTo<RoomDocument>();
+                    rooms.Add(roomDoc.ToDomain());
+                }
+
+                return rooms;
+            }
+            catch (Exception ex)
+            {
+                await LogErrorAsync("GetAllRoomsAsync", ex);
+                throw;
+            }
+        }
     }
 }
