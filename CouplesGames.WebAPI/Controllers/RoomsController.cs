@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using CouplesGames.Application.Commands.Rooms;
+using CouplesGames.Application.Queries.Rooms;
 using CouplesGames.Core.Interfaces;
 using CouplesGames.Infrastructure.Services;
 using MediatR;
-using CouplesGames.Application.Commands.Rooms;
+using Microsoft.AspNetCore.Mvc;
+using System.Net;
 
 namespace CouplesGames.Controllers
 {
@@ -39,6 +41,10 @@ namespace CouplesGames.Controllers
                 var result = await _mediator.Send(new CreateRoomCommand(request.GameMode, request.QuestionId, userId));
                 return Ok(result);
             }
+            catch (UnauthorizedAccessException)
+            {
+                return Unauthorized("Invalid token");
+            }
             catch (Exception ex)
             {
                 await _firestoreService.LogErrorAsync("RoomsController.CreateRoom", ex);
@@ -54,6 +60,10 @@ namespace CouplesGames.Controllers
                 var userId = await _firebaseAuthService.VerifyTokenAndGetUserIdAsync(authorization.Replace("Bearer ", ""));
                 var result = await _mediator.Send(new JoinRoomCommand(roomId, userId));
                 return Ok(result);
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Unauthorized("Invalid token");
             }
             catch (Exception ex)
             {
@@ -76,9 +86,50 @@ namespace CouplesGames.Controllers
                 var result = await _mediator.Send(command);
                 return Ok(result);
             }
+            catch (UnauthorizedAccessException)
+            {
+                return Unauthorized("Invalid token");
+            }
             catch (Exception ex)
             {
                 await _firestoreService.LogErrorAsync("RoomsController.UpdateQuestion", ex);
+                return StatusCode(500, "An unexpected error occurred.");
+            }
+        }
+
+        [HttpGet("{roomId}")]
+        public async Task<IActionResult> GetRoom([FromHeader(Name = "Authorization")] string authorization, string roomId)
+        {
+            try
+            {
+                var userId = await _firebaseAuthService.VerifyTokenAndGetUserIdAsync(authorization.Replace("Bearer ", ""));
+
+                if (string.IsNullOrEmpty(userId))
+                {
+                    return Unauthorized("Invalid or missing authorization token.");
+                }
+
+                var room = await _mediator.Send(new GetRoomQuery(roomId));
+                if (room == null)
+                {
+                    return NotFound();
+                }
+
+                // Verify user is in the room
+                if (!room.UserIds.Contains(userId))
+                {
+                    return Forbid();
+                }
+
+                return Ok(room);
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Unauthorized("Invalid token");
+            }
+            catch (Exception ex)
+            {
+                await _firestoreService.LogErrorAsync("RoomsController.GetRoom", ex);
                 return StatusCode(500, "An unexpected error occurred.");
             }
         }

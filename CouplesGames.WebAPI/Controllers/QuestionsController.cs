@@ -39,6 +39,10 @@ namespace CouplesGames.WebAPI.Controllers
                 var questions = await _mediator.Send(new GetSoloWYRQuestionsQuery());
                 return Ok(questions);
             }
+            catch (UnauthorizedAccessException)
+            {
+                return Unauthorized("Invalid token");
+            }
             catch (Exception ex)
             {
                 await _firestoreService.LogErrorAsync("QuestionsController.GetSoloWYRQuestions", ex);
