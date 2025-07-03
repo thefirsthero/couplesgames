@@ -16,32 +16,35 @@ const ResultsView: React.FC<ResultsViewProps> = ({ question, answers, players })
   // Extract options from question text
   const getOptions = () => {
     const match = question.match(/Would you rather (.+) or (.+)\?/i);
-    if (match && match.length === 3) {
-      return [match[1], match[2]];
-    }
-    return ['Option A', 'Option B'];
+    return match && match.length === 3 ? [match[1], match[2]] : ['Option A', 'Option B'];
   };
 
   const [optionA, optionB] = getOptions();
 
-  // Build a map of player -> chosen option text
+  // Build player choices
   const playerChoices = players.map(player => {
     const answer = answers[player.uid];
-    let choiceText = '';
+    
+    if (!answer) return {
+      name: player.displayName,
+      choice: 'No answer'
+    };
 
-    if (answer) {
-      // If backend stores 'A'/'B', map to option text
-      if (answer === 'A') choiceText = optionA;
-      else if (answer === 'B') choiceText = optionB;
-      // If backend stores actual text, use it directly
-      else choiceText = answer;
-    } else {
-      choiceText = 'No answer';
-    }
+    // Handle answer formats
+    if (answer === 'A') return {
+      name: player.displayName,
+      choice: optionA
+    };
 
+    if (answer === 'B') return {
+      name: player.displayName,
+      choice: optionB
+    };
+
+    // For custom questions
     return {
       name: player.displayName,
-      choice: choiceText,
+      choice: answer
     };
   });
 
@@ -53,7 +56,8 @@ const ResultsView: React.FC<ResultsViewProps> = ({ question, answers, players })
       <div className={styles.resultsList}>
         {playerChoices.map((p) => (
           <div key={p.name} className={styles.resultItem}>
-            <span className={styles.playerName}>{p.name}</span>: <span className={styles.choice}>{p.choice}</span>
+            <span className={styles.playerName}>{p.name}</span>: 
+            <span className={styles.choice}>{p.choice}</span>
           </div>
         ))}
       </div>

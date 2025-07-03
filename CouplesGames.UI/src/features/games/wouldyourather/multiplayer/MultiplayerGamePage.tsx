@@ -1,29 +1,22 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import { useAuth } from '../../../../hooks/useAuth';
-import apiClient from '../../../../lib/apiClient';
+import {
+  fetchRoom,
+  fetchPlayers,
+  updateQuestion,
+  resetQuestion,
+  submitAnswer,
+  getRandomExistingQuestion,
+  type Room,
+  type Player,
+} from './api';
 import QuestionForm from './components/QuestionForm';
 import AnswerForm from './components/AnswerForm';
 import ResultsView from './components/ResultsView';
 import styles from './MultiplayerGamePage.module.css';
-import { fetchSoloWYRQuestions } from '../solo/api';
 import { colors } from '../../../../lib/colors';
 import { useLoading } from './../../../../contexts/LoadingContext';
-
-interface Player {
-  uid: string;
-  displayName: string;
-}
-
-interface Room {
-  id: string;
-  gameMode: string;
-  userIds: string[];
-  currentQuestion?: string;
-  askingUserId?: string;
-  answers: Record<string, string>;
-  roundNumber: number;
-}
 
 const MultiplayerGamePage: React.FC = () => {
   const { roomId } = useParams<{ roomId: string }>();
@@ -33,20 +26,16 @@ const MultiplayerGamePage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const { startLoading, stopLoading } = useLoading();
+  const isSettingQuestion = useRef(false);
+  const isResetting = useRef(false);
 
-  const fetchRoom = async () => {
+  const loadRoomData = async () => {
     if (!roomId || !user) return;
-    
+
     try {
-      const response = await apiClient.get(`/api/rooms/${roomId}`);
-      setRoom(response.data);
-
-      const playerPromises = response.data.userIds.map(async (uid: string) => {
-        const playerResponse = await apiClient.get(`/api/users/${uid}`);
-        return playerResponse.data;
-      });
-
-      const playerData = await Promise.all(playerPromises);
+      const roomData = await fetchRoom(roomId);
+      setRoom(roomData);
+      const playerData = await fetchPlayers(roomData.userIds);
       setPlayers(playerData);
     } catch (err) {
       setError('Failed to load room data');
@@ -57,64 +46,63 @@ const MultiplayerGamePage: React.FC = () => {
   };
 
   useEffect(() => {
-    // Initial load with loading indicator
     startLoading();
-    fetchRoom().finally(() => stopLoading());
-    
-    // Set up interval without loading indicators
-    const interval = setInterval(fetchRoom, 3000);
+    loadRoomData().finally(() => stopLoading());
+
+    const interval = setInterval(loadRoomData, 3000);
     return () => clearInterval(interval);
   }, [roomId, user]);
 
-  // Handle existing questions mode
   useEffect(() => {
-    const setRandomQuestion = async () => {
-      if (!room || !user) return;
+    const setRandomQuestionIfNeeded = async () => {
+      if (!room || !user || isSettingQuestion.current || isResetting.current) return;
 
+      // Only set question if all conditions are met
       if (
         room.gameMode === 'existing_questions' &&
         room.userIds.length >= 2 &&
-        !room.currentQuestion
+        !room.currentQuestion &&
+        !room.askingUserId
       ) {
+        isSettingQuestion.current = true;
         try {
-          const questions = await fetchSoloWYRQuestions();
-          if (questions.length === 0) return;
-
-          const randomQuestion = questions[Math.floor(Math.random() * questions.length)];
-          const questionText = `Would you rather ${randomQuestion.optionA} or ${randomQuestion.optionB}?`;
-
-          await apiClient.post('/api/rooms/update-question', {
-            roomId,
-            question: questionText,
-            askingUserId: user.uid,
-          });
+          const questionData = await getRandomExistingQuestion();
+          if (!questionData) return;
+          
+          await updateQuestion(
+            roomId!,
+            questionData.text,
+            user.uid,
+            questionData.id
+          );
         } catch (err) {
           console.error('Failed to set question:', err);
+        } finally {
+          isSettingQuestion.current = false;
         }
       }
     };
 
-    setRandomQuestion();
+    setRandomQuestionIfNeeded();
   }, [room, user, roomId]);
 
-  // Reset question and switch turn after both players answer
   useEffect(() => {
     const resetQuestionIfNeeded = async () => {
-      if (!room || room.gameMode !== 'existing_questions') return;
+      if (!room || room.gameMode !== 'existing_questions' || isResetting.current) return;
 
-      const allAnswered = room.userIds.every((uid) => room.answers[uid]);
-      if (allAnswered) {
+      const allAnswered = room.userIds.every(uid => room.answers[uid]);
+      if (allAnswered && !isSettingQuestion.current) {
+        isResetting.current = true;
         try {
           const currentIndex = room.userIds.indexOf(room.askingUserId || '');
           const nextIndex = (currentIndex + 1) % room.userIds.length;
           const nextUserId = room.userIds[nextIndex];
 
-          await apiClient.post('/api/rooms/reset-question', {
-            roomId: room.id,
-            askingUserId: nextUserId,
-          });
+          await resetQuestion(room.id, nextUserId);
         } catch (err) {
           console.error('Failed to reset question:', err);
+        } finally {
+          isResetting.current = false;
         }
       }
     };
@@ -128,11 +116,7 @@ const MultiplayerGamePage: React.FC = () => {
     startLoading();
     try {
       const question = `Would you rather ${optionA} or ${optionB}?`;
-      await apiClient.post('/api/rooms/update-question', {
-        roomId,
-        question,
-        askingUserId: user.uid,
-      });
+      await updateQuestion(roomId, question, user.uid, null);
     } catch (err) {
       setError('Failed to submit question');
       console.error(err);
@@ -146,11 +130,7 @@ const MultiplayerGamePage: React.FC = () => {
 
     startLoading();
     try {
-      await apiClient.post('/api/rooms/answer', {
-        roomId,
-        userId: user.uid,
-        answer,
-      });
+      await submitAnswer(roomId, user.uid, answer);
     } catch (err) {
       setError('Failed to submit answer');
       console.error(err);
@@ -162,22 +142,28 @@ const MultiplayerGamePage: React.FC = () => {
   const getGameStatus = () => {
     if (!room || !user) return 'loading';
 
+    // State 1: Waiting for players or question setup
     if (room.gameMode === 'existing_questions' && !room.currentQuestion) {
       return room.userIds.length < 2 ? 'waiting' : 'loading';
     }
 
+    // State 2: User's turn to ask a question
     if (room.gameMode === 'ask_each_other' && room.askingUserId === user.uid && !room.currentQuestion) {
       return 'asking';
     }
 
+    // State 3: User needs to answer current question
     if (room.currentQuestion && !room.answers[user.uid]) {
       return 'answering';
     }
 
-    if (room.currentQuestion && room.userIds.every((uid) => room.answers[uid])) {
+    // State 4: Both players have answered - show results
+    const allAnswered = room.userIds.every(uid => room.answers[uid]);
+    if (allAnswered) {
       return 'results';
     }
 
+    // Default state: Waiting for other player
     return 'waiting';
   };
 
@@ -220,10 +206,14 @@ const MultiplayerGamePage: React.FC = () => {
           />
         )}
 
-        {gameStatus === 'results' && room.currentQuestion && (
+        {gameStatus === 'results' && (
           <ResultsView
-            question={room.currentQuestion}
-            answers={room.answers}
+            question={room.currentQuestion || room.previousRound?.question || 'No question'}
+            answers={
+              room.currentQuestion && Object.keys(room.answers).length > 0
+                ? room.answers
+                : room.previousRound?.answers || {}
+            }
             players={players}
           />
         )}

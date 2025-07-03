@@ -17,5 +17,14 @@
         public int RoundNumber { get; set; } = 1;
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+        public PreviousRoundData? PreviousRound { get; set; }
+    }
+
+    public class PreviousRoundData
+    {
+        public string? Question { get; set; }
+        public string? AskingUserId { get; set; }
+        public Dictionary<string, string> Answers { get; set; } = new();
     }
 }
