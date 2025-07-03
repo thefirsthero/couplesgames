@@ -135,9 +135,7 @@ namespace CouplesGames.WebAPI.Controllers
         }
 
         [HttpPost("answer")]
-        public async Task<IActionResult> SubmitAnswer(
-            [FromHeader(Name = "Authorization")] string authorization,
-            [FromBody] SubmitAnswerCommand command)
+        public async Task<IActionResult> SubmitAnswer([FromHeader(Name = "Authorization")] string authorization,[FromBody] SubmitAnswerCommand command)
         {
             try
             {
@@ -157,6 +155,35 @@ namespace CouplesGames.WebAPI.Controllers
             catch (Exception ex)
             {
                 await _firestoreService.LogErrorAsync("RoomsController.SubmitAnswer", ex);
+                return StatusCode(500, "An unexpected error occurred.");
+            }
+        }
+
+        [HttpPost("reset-question")]
+        public async Task<IActionResult> ResetQuestion([FromHeader(Name = "Authorization")] string authorization, [FromBody] ResetQuestionCommand command)
+        {
+            try
+            {
+                var userId = await _firebaseAuthService.VerifyTokenAndGetUserIdAsync(authorization.Replace("Bearer ", ""));
+
+                var room = await _mediator.Send(new GetRoomQuery(command.RoomId));
+
+                if (room == null)
+                    return NotFound();
+
+                if (!room.UserIds.Contains(userId))
+                    return Forbid();
+
+                var result = await _mediator.Send(command);
+                return Ok(result);
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Unauthorized("Invalid token");
+            }
+            catch (Exception ex)
+            {
+                await _firestoreService.LogErrorAsync("RoomsController.ResetQuestion", ex);
                 return StatusCode(500, "An unexpected error occurred.");
             }
         }

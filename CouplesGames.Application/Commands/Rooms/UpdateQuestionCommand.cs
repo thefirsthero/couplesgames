@@ -39,6 +39,8 @@ namespace CouplesGames.Application.Commands.Rooms
                 room.AskingUserId = request.AskingUserId;
                 room.RoundNumber += 1;
 
+                room.Answers.Clear();
+
                 return await _firestoreService.UpdateRoomAsync(room);
             }
             catch (Exception ex)
@@ -47,5 +49,6 @@ namespace CouplesGames.Application.Commands.Rooms
                 throw;
             }
         }
+
     }
 }
