@@ -4,9 +4,10 @@ import styles from './AnswerForm.module.css';
 interface AnswerFormProps {
   question: string;
   onSubmit: (answer: string) => void;
+  colors: string[];
 }
 
-const AnswerForm: React.FC<AnswerFormProps> = ({ question, onSubmit }) => {
+const AnswerForm: React.FC<AnswerFormProps> = ({ question, onSubmit, colors }) => {
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
 
   const handleSubmit = () => {
@@ -34,6 +35,7 @@ const AnswerForm: React.FC<AnswerFormProps> = ({ question, onSubmit }) => {
         <button
           className={`${styles.optionButton} ${selectedOption === 'A' ? styles.selected : ''}`}
           onClick={() => setSelectedOption('A')}
+          style={{ backgroundColor: colors[0] }}
         >
           {optionA}
         </button>
@@ -43,6 +45,7 @@ const AnswerForm: React.FC<AnswerFormProps> = ({ question, onSubmit }) => {
         <button
           className={`${styles.optionButton} ${selectedOption === 'B' ? styles.selected : ''}`}
           onClick={() => setSelectedOption('B')}
+          style={{ backgroundColor: colors[1] }}
         >
           {optionB}
         </button>

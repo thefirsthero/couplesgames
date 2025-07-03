@@ -24,37 +24,38 @@ const ResultsView: React.FC<ResultsViewProps> = ({ question, answers, players })
 
   const [optionA, optionB] = getOptions();
 
+  // Build a map of player -> chosen option text
+  const playerChoices = players.map(player => {
+    const answer = answers[player.uid];
+    let choiceText = '';
+
+    if (answer) {
+      // If backend stores 'A'/'B', map to option text
+      if (answer === 'A') choiceText = optionA;
+      else if (answer === 'B') choiceText = optionB;
+      // If backend stores actual text, use it directly
+      else choiceText = answer;
+    } else {
+      choiceText = 'No answer';
+    }
+
+    return {
+      name: player.displayName,
+      choice: choiceText,
+    };
+  });
+
   return (
     <div className={styles.container}>
       <h2>Results</h2>
       <div className={styles.question}>{question}</div>
-      
-      <div className={styles.resultsContainer}>
-        <div className={styles.optionResult}>
-          <h3>{optionA}</h3>
-          <ul className={styles.playersList}>
-            {players
-              .filter(player => answers[player.uid] === 'A')
-              .map(player => (
-                <li key={player.uid} className={styles.player}>
-                  {player.displayName}
-                </li>
-              ))}
-          </ul>
-        </div>
-        
-        <div className={styles.optionResult}>
-          <h3>{optionB}</h3>
-          <ul className={styles.playersList}>
-            {players
-              .filter(player => answers[player.uid] === 'B')
-              .map(player => (
-                <li key={player.uid} className={styles.player}>
-                  {player.displayName}
-                </li>
-              ))}
-          </ul>
-        </div>
+
+      <div className={styles.resultsList}>
+        {playerChoices.map((p) => (
+          <div key={p.name} className={styles.resultItem}>
+            <span className={styles.playerName}>{p.name}</span>: <span className={styles.choice}>{p.choice}</span>
+          </div>
+        ))}
       </div>
     </div>
   );

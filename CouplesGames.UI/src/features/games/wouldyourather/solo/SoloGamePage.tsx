@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { fetchSoloWYRQuestions } from './api';
 import styles from './SoloGamePage.module.css';
+import { colors } from '../../../../lib/colors';
 
 const shuffleArray = <T,>(array: T[]): T[] => {
   const newArray = [...array];
@@ -13,13 +14,6 @@ const shuffleArray = <T,>(array: T[]): T[] => {
   }
   return newArray;
 };
-
-const colors = [
-  ['#FF6B6B', '#4ECDC4'],
-  ['#FFD93D', '#6A4C93'],
-  ['#00C49A', '#FF6F91'],
-  ['#FF9671', '#00C2A8'],
-];
 
 const SoloGamePage: React.FC = () => {
   const { user, loading } = useAuth();

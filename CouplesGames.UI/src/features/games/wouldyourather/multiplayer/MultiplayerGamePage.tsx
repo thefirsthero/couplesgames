@@ -7,6 +7,7 @@ import AnswerForm from './components/AnswerForm';
 import ResultsView from './components/ResultsView';
 import styles from './MultiplayerGamePage.module.css';
 import { fetchSoloWYRQuestions } from '../solo/api';
+import { colors } from '../../../../lib/colors';
 
 interface Player {
   uid: string;
@@ -31,7 +32,6 @@ const MultiplayerGamePage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  // Fetch room and players
   const fetchRoom = async () => {
     if (!roomId || !user) return;
 
@@ -60,7 +60,7 @@ const MultiplayerGamePage: React.FC = () => {
     return () => clearInterval(interval);
   }, [roomId, user]);
 
-  // Handle existing questions mode: set question when needed
+  // Handle existing questions mode
   useEffect(() => {
     const setRandomQuestion = async () => {
       if (!room || !user) return;
@@ -99,7 +99,6 @@ const MultiplayerGamePage: React.FC = () => {
       const allAnswered = room.userIds.every((uid) => room.answers[uid]);
       if (allAnswered) {
         try {
-          // Determine next asking user
           const currentIndex = room.userIds.indexOf(room.askingUserId || '');
           const nextIndex = (currentIndex + 1) % room.userIds.length;
           const nextUserId = room.userIds[nextIndex];
@@ -171,6 +170,7 @@ const MultiplayerGamePage: React.FC = () => {
   };
 
   const gameStatus = getGameStatus();
+  const colorSet = colors[(room?.roundNumber || 1) % colors.length];
 
   if (loading) return <div className={styles.loading}>Loading game...</div>;
   if (error) return <div className={styles.error}>{error}</div>;
@@ -199,19 +199,30 @@ const MultiplayerGamePage: React.FC = () => {
 
       <div className={styles.gameArea}>
         {gameStatus === 'asking' && <QuestionForm onSubmit={handleSubmitQuestion} />}
+
         {gameStatus === 'answering' && room.currentQuestion && (
-          <AnswerForm question={room.currentQuestion} onSubmit={handleSubmitAnswer} />
+          <AnswerForm
+            question={room.currentQuestion}
+            onSubmit={handleSubmitAnswer}
+            colors={colorSet}
+          />
         )}
+
         {gameStatus === 'results' && room.currentQuestion && (
-          <ResultsView question={room.currentQuestion} answers={room.answers} players={players} />
+          <ResultsView
+            question={room.currentQuestion}
+            answers={room.answers}
+            players={players}
+          />
         )}
+
         {gameStatus === 'waiting' && (
           <div className={styles.waiting}>
             {room.userIds.length < 2
-              ? 'Waiting for other players to join...'
-              : room.askingUserId === user?.uid
-              ? 'Waiting for you to ask a question...'
-              : 'Waiting for other players...'}
+              ? 'Waiting for another player to join...'
+              : !room.currentQuestion
+              ? 'Preparing next question...'
+              : 'Waiting for other player to choose...'}
           </div>
         )}
       </div>
