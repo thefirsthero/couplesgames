@@ -1,5 +1,3 @@
-// src/features/auth/AuthPage.tsx
-
 import React, { useState } from 'react';
 import { auth } from './../../lib/firebase';
 import {
@@ -11,18 +9,19 @@ import { useNavigate } from 'react-router-dom';
 import styles from './AuthPage.module.css';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { useLoading } from '../../contexts/LoadingContext';
 
 const AuthPage: React.FC = () => {
   const [isRegistering, setIsRegistering] = useState(false);
   const [isResetting, setIsResetting] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [loading, setLoading] = useState(false);
+  const { isLoading, startLoading, stopLoading } = useLoading();
 
   const navigate = useNavigate();
 
   const handleAuth = async () => {
-    setLoading(true);
+    startLoading();
     try {
       if (isResetting) {
         await sendPasswordResetEmail(auth, email);
@@ -38,8 +37,9 @@ const AuthPage: React.FC = () => {
       }
     } catch (error: any) {
       toast.error(error.message);
+    } finally {
+      stopLoading();
     }
-    setLoading(false);
   };
 
   return (
@@ -68,10 +68,10 @@ const AuthPage: React.FC = () => {
 
       <button
         onClick={handleAuth}
-        disabled={loading}
+        disabled={isLoading}
         className={styles.fullWidthButton}
       >
-        {loading
+        {isLoading
           ? 'Processing...'
           : isResetting
           ? 'Send Reset Email'

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from './../../hooks/useAuth';
 import { createRoom, joinRoom } from './api';
 import styles from './RoomPage.module.css';
+import { useLoading } from '../../contexts/LoadingContext';
 
 const RoomPage: React.FC = () => {
   const { user, loading } = useAuth();
@@ -10,6 +11,7 @@ const RoomPage: React.FC = () => {
   const [roomIdToJoin, setRoomIdToJoin] = useState('');
   const [error, setError] = useState('');
   const [gameMode, setGameMode] = useState<'existing_questions' | 'ask_each_other'>('existing_questions');
+  const { isLoading, startLoading, stopLoading } = useLoading();
 
   useEffect(() => {
     if (!loading && !user) {
@@ -19,19 +21,24 @@ const RoomPage: React.FC = () => {
 
   const handleCreateRoom = async () => {
     setError('');
+    startLoading();
     try {
       const room = await createRoom(gameMode);
       navigate(`/rooms/${room.id}`);
     } catch (err) {
       setError('Failed to create room');
       console.error(err);
+    } finally {
+      stopLoading();
     }
   };
 
   const handleJoinRoom = async () => {
     setError('');
+    startLoading();
     if (!roomIdToJoin) {
       setError('Please enter a room ID');
+      stopLoading();
       return;
     }
     try {
@@ -40,6 +47,8 @@ const RoomPage: React.FC = () => {
     } catch (err) {
       setError('Failed to join room');
       console.error(err);
+    } finally {
+      stopLoading();
     }
   };
 
@@ -74,9 +83,10 @@ const RoomPage: React.FC = () => {
       <div className={styles.createSection}>
         <button 
           onClick={handleCreateRoom} 
+          disabled={isLoading}
           className={styles.createButton}
         >
-          Create Room
+          {isLoading ? 'Creating...' : 'Create Room'}
         </button>
       </div>
 
@@ -92,9 +102,10 @@ const RoomPage: React.FC = () => {
           />
           <button 
             onClick={handleJoinRoom} 
+            disabled={isLoading}
             className={styles.joinButton}
           >
-            Join Room
+            {isLoading ? 'Joining...' : 'Join Room'}
           </button>
         </div>
       </div>

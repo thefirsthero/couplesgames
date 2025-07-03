@@ -8,6 +8,7 @@ import ResultsView from './components/ResultsView';
 import styles from './MultiplayerGamePage.module.css';
 import { fetchSoloWYRQuestions } from '../solo/api';
 import { colors } from '../../../../lib/colors';
+import { useLoading } from './../../../../contexts/LoadingContext';
 
 interface Player {
   uid: string;
@@ -31,10 +32,11 @@ const MultiplayerGamePage: React.FC = () => {
   const [players, setPlayers] = useState<Player[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const { startLoading, stopLoading } = useLoading();
 
   const fetchRoom = async () => {
     if (!roomId || !user) return;
-
+    
     try {
       const response = await apiClient.get(`/api/rooms/${roomId}`);
       setRoom(response.data);
@@ -55,7 +57,11 @@ const MultiplayerGamePage: React.FC = () => {
   };
 
   useEffect(() => {
-    fetchRoom();
+    // Initial load with loading indicator
+    startLoading();
+    fetchRoom().finally(() => stopLoading());
+    
+    // Set up interval without loading indicators
     const interval = setInterval(fetchRoom, 3000);
     return () => clearInterval(interval);
   }, [roomId, user]);
@@ -119,6 +125,7 @@ const MultiplayerGamePage: React.FC = () => {
   const handleSubmitQuestion = async (optionA: string, optionB: string) => {
     if (!roomId || !user) return;
 
+    startLoading();
     try {
       const question = `Would you rather ${optionA} or ${optionB}?`;
       await apiClient.post('/api/rooms/update-question', {
@@ -129,12 +136,15 @@ const MultiplayerGamePage: React.FC = () => {
     } catch (err) {
       setError('Failed to submit question');
       console.error(err);
+    } finally {
+      stopLoading();
     }
   };
 
   const handleSubmitAnswer = async (answer: string) => {
     if (!roomId || !user) return;
 
+    startLoading();
     try {
       await apiClient.post('/api/rooms/answer', {
         roomId,
@@ -144,6 +154,8 @@ const MultiplayerGamePage: React.FC = () => {
     } catch (err) {
       setError('Failed to submit answer');
       console.error(err);
+    } finally {
+      stopLoading();
     }
   };
 
