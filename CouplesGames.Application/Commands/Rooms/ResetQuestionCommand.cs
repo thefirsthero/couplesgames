@@ -33,10 +33,36 @@ namespace CouplesGames.Application.Commands.Rooms
             if (room.UserIds.Any(uid => !room.Answers.ContainsKey(uid)))
                 return room; // Skip reset if not all answered
 
-            room.CurrentQuestion = null;
-            room.AskingUserId = null;
-            room.Answers.Clear();
+            // Increment round
             room.RoundNumber += 1;
+
+            // For ask_each_other mode: set next AskingUserId
+            if (room.GameMode == "ask_each_other")
+            {
+                string nextAskingUserId;
+
+                if (string.IsNullOrEmpty(room.AskingUserId))
+                {
+                    // If no current asker, start with first user
+                    nextAskingUserId = room.UserIds.First();
+                }
+                else
+                {
+                    var currentIndex = room.UserIds.IndexOf(room.AskingUserId);
+                    var nextIndex = (currentIndex + 1) % room.UserIds.Count;
+                    nextAskingUserId = room.UserIds[nextIndex];
+                }
+
+                room.AskingUserId = nextAskingUserId;
+            }
+            else
+            {
+                // For existing_questions mode: clear AskingUserId as before
+                room.AskingUserId = null;
+            }
+
+            room.CurrentQuestion = null;
+            room.Answers.Clear();
 
             return await _firestoreService.UpdateRoomAsync(room);
         }
