@@ -203,8 +203,8 @@ const MultiplayerGamePage: React.FC = () => {
 
         {gameStatus === 'results' && (
           <ResultsView
-            question={room.previousRound?.question || 'No question'}
-            answers={room.previousRound?.answers || {}}
+            question={room.currentQuestion || 'No question'}
+            answers={room.answers || {}}
             currentUserUid={user.uid}
           />
         )}

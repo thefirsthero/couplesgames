@@ -35,9 +35,6 @@ namespace CouplesGames.Infrastructure.FirestoreDocuments
         [FirestoreProperty]
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-        [FirestoreProperty]
-        public PreviousRoundDataDocument? PreviousRound { get; set; }
-
         // Mapping functions
         public static RoomDocument FromDomain(Room room) => new RoomDocument
         {
@@ -50,7 +47,6 @@ namespace CouplesGames.Infrastructure.FirestoreDocuments
             AskingUserId = room.AskingUserId,
             RoundNumber = room.RoundNumber,
             CreatedAt = room.CreatedAt,
-            PreviousRound = room.PreviousRound != null ? PreviousRoundDataDocument.FromDomain(room.PreviousRound) : null
         };
 
         public Room ToDomain() => new Room
@@ -64,7 +60,6 @@ namespace CouplesGames.Infrastructure.FirestoreDocuments
             AskingUserId = this.AskingUserId,
             RoundNumber = this.RoundNumber,
             CreatedAt = this.CreatedAt,
-            PreviousRound = this.PreviousRound != null ? this.PreviousRound.ToDomain() : null
         };
     }
 }
