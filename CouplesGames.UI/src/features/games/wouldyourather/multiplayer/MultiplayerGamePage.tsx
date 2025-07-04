@@ -87,8 +87,8 @@ const MultiplayerGamePage: React.FC = () => {
 
   useEffect(() => {
     const resetQuestionIfNeeded = async () => {
-      if (!room || room.gameMode !== 'existing_questions' || isResetting.current) return;
-
+      if (!room || isResetting.current) return;
+  
       const allAnswered = room.userIds.every(uid => room.answers[uid]);
       if (allAnswered && !isSettingQuestion.current) {
         isResetting.current = true;
@@ -96,7 +96,7 @@ const MultiplayerGamePage: React.FC = () => {
           const currentIndex = room.userIds.indexOf(room.askingUserId || '');
           const nextIndex = (currentIndex + 1) % room.userIds.length;
           const nextUserId = room.userIds[nextIndex];
-
+  
           await resetQuestion(room.id, nextUserId);
         } catch (err) {
           console.error('Failed to reset question:', err);
@@ -105,9 +105,9 @@ const MultiplayerGamePage: React.FC = () => {
         }
       }
     };
-
+  
     resetQuestionIfNeeded();
-  }, [room]);
+  }, [room]);  
 
   const handleSubmitQuestion = async (optionA: string, optionB: string) => {
     if (!roomId || !user) return;
@@ -140,26 +140,30 @@ const MultiplayerGamePage: React.FC = () => {
 
   const getGameStatus = () => {
     if (!room || !user) return 'loading';
-
-    if (room.gameMode === 'existing_questions' && !room.currentQuestion) {
-      return room.userIds.length < 2 ? 'waiting' : 'loading';
+  
+    if (room.userIds.length < 2) {
+      return 'waiting';
     }
-
+  
+    if (room.gameMode === 'existing_questions' && !room.currentQuestion) {
+      return 'loading';
+    }
+  
     if (room.gameMode === 'ask_each_other' && room.askingUserId === user.uid && !room.currentQuestion) {
       return 'asking';
     }
-
+  
     if (room.currentQuestion && !room.answers[user.uid]) {
       return 'answering';
     }
-
+  
     const allAnswered = room.userIds.every(uid => room.answers[uid]);
     if (allAnswered) {
       return 'results';
     }
-
+  
     return 'waiting';
-  };
+  };  
 
   const gameStatus = getGameStatus();
   const colorSet = colors[(room?.roundNumber || 1) % colors.length];
