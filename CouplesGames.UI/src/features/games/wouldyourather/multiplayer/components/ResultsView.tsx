@@ -1,18 +1,13 @@
 import React from 'react';
 import styles from './ResultsView.module.css';
 
-interface Player {
-  uid: string;
-  displayName: string;
-}
-
 interface ResultsViewProps {
   question: string;
   answers: Record<string, string>;
-  players: Player[];
+  currentUserUid: string;
 }
 
-const ResultsView: React.FC<ResultsViewProps> = ({ question, answers, players }) => {
+const ResultsView: React.FC<ResultsViewProps> = ({ question, answers, currentUserUid }) => {
   // Extract options from question text
   const getOptions = () => {
     const match = question.match(/Would you rather (.+) or (.+)\?/i);
@@ -21,46 +16,33 @@ const ResultsView: React.FC<ResultsViewProps> = ({ question, answers, players })
 
   const [optionA, optionB] = getOptions();
 
-  // Build player choices
-  const playerChoices = players.map(player => {
-    const answer = answers[player.uid];
-    
-    if (!answer) return {
-      name: player.displayName,
-      choice: 'No answer'
-    };
-
-    // Handle answer formats
-    if (answer === 'A') return {
-      name: player.displayName,
-      choice: optionA
-    };
-
-    if (answer === 'B') return {
-      name: player.displayName,
-      choice: optionB
-    };
-
-    // For custom questions
-    return {
-      name: player.displayName,
-      choice: answer
-    };
-  });
+  // Build choices excluding current user
+  const otherChoices = Object.entries(answers)
+    .filter(([uid]) => uid !== currentUserUid)
+    .map(([uid, answer]) => {
+      const choiceText = answer === 'A' ? optionA : answer === 'B' ? optionB : answer;
+      return {
+        uid,
+        choice: choiceText
+      };
+    });
 
   return (
     <div className={styles.container}>
       <h2>Results</h2>
       <div className={styles.question}>{question}</div>
 
-      <div className={styles.resultsList}>
-        {playerChoices.map((p) => (
-          <div key={p.name} className={styles.resultItem}>
-            <span className={styles.playerName}>{p.name}</span>: 
-            <span className={styles.choice}>{p.choice}</span>
-          </div>
-        ))}
-      </div>
+      {otherChoices.length > 0 ? (
+        <div className={styles.resultsList}>
+          {otherChoices.map(({ uid, choice }) => (
+            <div key={uid} className={styles.resultItem}>
+              They chose option: <span className={styles.choice}>{choice}</span>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className={styles.noOtherAnswers}>No other player answered yet.</div>
+      )}
     </div>
   );
 };

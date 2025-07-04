@@ -57,7 +57,6 @@ const MultiplayerGamePage: React.FC = () => {
     const setRandomQuestionIfNeeded = async () => {
       if (!room || !user || isSettingQuestion.current || isResetting.current) return;
 
-      // Only set question if all conditions are met
       if (
         room.gameMode === 'existing_questions' &&
         room.userIds.length >= 2 &&
@@ -68,7 +67,7 @@ const MultiplayerGamePage: React.FC = () => {
         try {
           const questionData = await getRandomExistingQuestion();
           if (!questionData) return;
-          
+
           await updateQuestion(
             roomId!,
             questionData.text,
@@ -142,34 +141,30 @@ const MultiplayerGamePage: React.FC = () => {
   const getGameStatus = () => {
     if (!room || !user) return 'loading';
 
-    // State 1: Waiting for players or question setup
     if (room.gameMode === 'existing_questions' && !room.currentQuestion) {
       return room.userIds.length < 2 ? 'waiting' : 'loading';
     }
 
-    // State 2: User's turn to ask a question
     if (room.gameMode === 'ask_each_other' && room.askingUserId === user.uid && !room.currentQuestion) {
       return 'asking';
     }
 
-    // State 3: User needs to answer current question
     if (room.currentQuestion && !room.answers[user.uid]) {
       return 'answering';
     }
 
-    // State 4: Both players have answered - show results
     const allAnswered = room.userIds.every(uid => room.answers[uid]);
     if (allAnswered) {
       return 'results';
     }
 
-    // Default state: Waiting for other player
     return 'waiting';
   };
 
   const gameStatus = getGameStatus();
   const colorSet = colors[(room?.roundNumber || 1) % colors.length];
 
+  if (!user) return <div className={styles.error}>User not authenticated</div>;
   if (loading) return <div className={styles.loading}>Loading game...</div>;
   if (error) return <div className={styles.error}>{error}</div>;
   if (!room) return <div className={styles.error}>Room not found</div>;
@@ -185,7 +180,7 @@ const MultiplayerGamePage: React.FC = () => {
         {players.map((player) => (
           <div
             key={player.uid}
-            className={`${styles.player} ${player.uid === user?.uid ? styles.currentPlayer : ''}`}
+            className={`${styles.player} ${player.uid === user.uid ? styles.currentPlayer : ''}`}
           >
             {player.displayName}
             {room.askingUserId === player.uid && (
@@ -208,13 +203,9 @@ const MultiplayerGamePage: React.FC = () => {
 
         {gameStatus === 'results' && (
           <ResultsView
-            question={room.currentQuestion || room.previousRound?.question || 'No question'}
-            answers={
-              room.currentQuestion && Object.keys(room.answers).length > 0
-                ? room.answers
-                : room.previousRound?.answers || {}
-            }
-            players={players}
+            question={room.previousRound?.question || 'No question'}
+            answers={room.previousRound?.answers || {}}
+            currentUserUid={user.uid}
           />
         )}
 
