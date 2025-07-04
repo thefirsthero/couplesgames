@@ -1,0 +1,39 @@
+.copyContainer {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    z-index: 10;
+  }
+  
+  .copyButton {
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.85rem;
+    transition: background-color 0.2s, transform 0.1s;
+    white-space: nowrap;
+  }
+  
+  .copyButton:hover {
+    background: #0069d9;
+  }
+  
+  .copyButton:active {
+    transform: scale(0.97);
+  }
+  
+  .icon {
+    width: 16px;
+    height: 16px;
+  }  
+  
+  .buttonText {
+    font-weight: 500;
+  }
+  

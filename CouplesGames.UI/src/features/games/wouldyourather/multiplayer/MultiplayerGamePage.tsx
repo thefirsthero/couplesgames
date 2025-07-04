@@ -17,6 +17,7 @@ import ResultsView from './components/ResultsView';
 import styles from './MultiplayerGamePage.module.css';
 import { colors } from '../../../../lib/colors';
 import { useLoading } from './../../../../contexts/LoadingContext';
+import CopyRoomIdButton from './components/CopyRoomIdButton';
 
 const MultiplayerGamePage: React.FC = () => {
   const { roomId } = useParams<{ roomId: string }>();
@@ -176,8 +177,15 @@ const MultiplayerGamePage: React.FC = () => {
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <h1>{room.gameMode === 'existing_questions' ? 'Existing Questions' : 'Ask Each Other'}</h1>
-        <div className={styles.round}>Round {room.roundNumber}</div>
+        <div className={styles.headerContent}>
+          <h1>
+            {room.gameMode === 'existing_questions'
+              ? 'Existing Questions'
+              : 'Ask Each Other'}
+          </h1>
+          <div className={styles.round}>Round {room.roundNumber}</div>
+        </div>
+        <CopyRoomIdButton roomId={room.id} />
       </div>
 
       <div className={styles.players}>
