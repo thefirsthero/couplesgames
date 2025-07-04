@@ -31,7 +31,7 @@ namespace CouplesGames.Application.Commands.Rooms
 
             // Guard: ensure all users have answered before reset
             if (room.UserIds.Any(uid => !room.Answers.ContainsKey(uid)))
-                return room; // Skip reset if not all answered
+                return room;
 
             // Increment round
             room.RoundNumber += 1;
@@ -57,7 +57,7 @@ namespace CouplesGames.Application.Commands.Rooms
             }
             else
             {
-                // For existing_questions mode: clear AskingUserId as before
+                // For existing_questions mode: clear AskingUserId
                 room.AskingUserId = null;
             }
 
