@@ -29,7 +29,6 @@ const AnswerForm: React.FC<AnswerFormProps> = ({ question, onSubmit, colors }) =
   return (
     <div className={styles.container}>
       <h2>Would You Rather...</h2>
-      <div className={styles.question}>{question}</div>
       
       <div className={styles.options}>
         <button

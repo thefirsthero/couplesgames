@@ -188,20 +188,6 @@ const MultiplayerGamePage: React.FC = () => {
         <CopyRoomIdButton roomId={room.id} />
       </div>
 
-      <div className={styles.players}>
-        {players.map((player) => (
-          <div
-            key={player.uid}
-            className={`${styles.player} ${player.uid === user.uid ? styles.currentPlayer : ''}`}
-          >
-            {player.displayName}
-            {room.askingUserId === player.uid && (
-              <span className={styles.askingBadge}>Asking</span>
-            )}
-          </div>
-        ))}
-      </div>
-
       <div className={styles.gameArea}>
         {gameStatus === 'asking' && <QuestionForm onSubmit={handleSubmitQuestion} />}
 
