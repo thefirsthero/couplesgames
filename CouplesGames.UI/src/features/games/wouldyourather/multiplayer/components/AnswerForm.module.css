@@ -88,3 +88,34 @@
 .skipButton:hover {
   background-color: #138496;
 }
+
+.options {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  margin-top: 40px;
+}
+
+.orDivider {
+  display: none;
+}
+
+/* Mobile styles */
+@media (max-width: 480px) {
+  .options {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .orDivider {
+    display: block;
+    text-align: center;
+    margin: 10px 0;
+    font-weight: bold;
+    color: #aaa;
+  }
+  
+  .optionButton {
+    padding: 25px;
+  }
+}
