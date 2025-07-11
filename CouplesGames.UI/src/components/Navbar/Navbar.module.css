@@ -5,17 +5,26 @@
   padding: 10px 20px;
   background: #222;
   color: white;
+  position: relative;
 }
 
 .navLeft {
   display: flex;
   align-items: center;
   gap: 20px;
+  width: 100%;
+  justify-content: space-between;
 }
 
 .title {
   cursor: pointer;
   margin: 0;
+}
+
+/* Hide nav links on small screens */
+.navLinks {
+  display: flex;
+  gap: 20px;
 }
 
 .navButton {
@@ -25,4 +34,38 @@
   padding: 6px 12px;
   border-radius: 4px;
   cursor: pointer;
+}
+
+/* Hamburger menu button hidden on desktop */
+.menuButton {
+  display: none;
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+}
+
+/* Side menu styling */
+.sideMenu {
+  position: absolute;
+  top: 60px; /* height of navbar */
+  right: 0;
+  background: #333;
+  width: 200px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px;
+  z-index: 1000;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .navLinks {
+    display: none;
+  }
+
+  .menuButton {
+    display: block;
+  }
 }
