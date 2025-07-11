@@ -16,7 +16,7 @@ const Navbar: React.FC = () => {
     }
   };
 
-  const quitGame = () => {
+  const leaveGame = () => {
     navigate('/');
   };
 
@@ -26,8 +26,8 @@ const Navbar: React.FC = () => {
         <h3 onClick={() => navigate('/')} className={styles.title}>Couples Games</h3>
         <button onClick={() => navigate('/')} className={styles.navButton}>Home</button>
         {location.pathname.match(/\/(solo|rooms\/.*)/) && (
-          <button onClick={quitGame} className={styles.navButton}>
-            Quit Game
+          <button onClick={leaveGame} className={styles.navButton}>
+            Leave
           </button>
         )}
       </div>
