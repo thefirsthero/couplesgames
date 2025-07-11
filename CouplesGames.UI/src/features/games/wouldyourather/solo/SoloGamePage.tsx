@@ -72,18 +72,27 @@ const SoloGamePage: React.FC = () => {
         Question {currentIndex + 1} of {shuffledQuestions.length}
       </div>
       <div className={styles.tiles}>
-        {[currentQuestion.optionA, currentQuestion.optionB].map((option, i) => (
-          <div
-            key={i}
-            onClick={() => handleSelect(option)}
-            className={`${styles.tile} ${
-              selected === option ? styles.tileSelected : ''
-            }`}
-            style={{ backgroundColor: colorSet[i] }}
-          >
-            {option}
-          </div>
-        ))}
+        <div
+          onClick={() => handleSelect(currentQuestion.optionA)}
+          className={`${styles.tile} ${
+            selected === currentQuestion.optionA ? styles.tileSelected : ''
+          }`}
+          style={{ backgroundColor: colorSet[0] }}
+        >
+          {currentQuestion.optionA}
+        </div>
+        
+        <div className={styles.orDivider}>OR</div>
+        
+        <div
+          onClick={() => handleSelect(currentQuestion.optionB)}
+          className={`${styles.tile} ${
+            selected === currentQuestion.optionB ? styles.tileSelected : ''
+          }`}
+          style={{ backgroundColor: colorSet[1] }}
+        >
+          {currentQuestion.optionB}
+        </div>
       </div>
     </div>
   );

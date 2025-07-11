@@ -37,6 +37,10 @@
   opacity: 0.6;
 }
 
+.orDivider {
+  display: none;
+}
+
 /* Mobile styles */
 @media (max-width: 480px) {
   .tiles {
@@ -46,5 +50,13 @@
   
   .tile {
     padding: 25px;
+  }
+  
+  .orDivider {
+    display: block;
+    text-align: center;
+    margin: 10px 0;
+    font-weight: bold;
+    color: #aaa;
   }
 }
