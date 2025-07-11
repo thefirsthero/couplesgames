@@ -23,7 +23,7 @@ const MultiplayerGamePage: React.FC = () => {
   const { roomId } = useParams<{ roomId: string }>();
   const { user } = useAuth();
   const [room, setRoom] = useState<Room | null>(null);
-  const [players, setPlayers] = useState<Player[]>([]);
+  const [_, setPlayers] = useState<Player[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const { startLoading, stopLoading } = useLoading();
