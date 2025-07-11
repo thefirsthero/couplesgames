@@ -13,7 +13,7 @@ import {
 } from './api';
 import QuestionForm from './components/QuestionForm';
 import AnswerForm from './components/AnswerForm';
-import ResultsView from './components/ResultsView';
+import ResultsPopup from './components/ResultsPopup';
 import styles from './MultiplayerGamePage.module.css';
 import { colors } from '../../../../lib/colors';
 import { useLoading } from './../../../../contexts/LoadingContext';
@@ -23,19 +23,36 @@ const MultiplayerGamePage: React.FC = () => {
   const { roomId } = useParams<{ roomId: string }>();
   const { user } = useAuth();
   const [room, setRoom] = useState<Room | null>(null);
-  const [_, setPlayers] = useState<Player[]>([]);
+  const [players, setPlayers] = useState<Player[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [showResults, setShowResults] = useState(false);
+  const [resultsData, setResultsData] = useState<{question: string, answers: Record<string, string>} | null>(null);
   const { startLoading, stopLoading } = useLoading();
   const isSettingQuestion = useRef(false);
   const isResetting = useRef(false);
+  const previousRoom = useRef<Room | null>(null);
 
   const loadRoomData = async () => {
     if (!roomId || !user) return;
 
     try {
       const roomData = await fetchRoom(roomId);
+      
+      // Check if we've just completed a round
+      if (previousRoom.current && 
+          previousRoom.current.currentQuestion && 
+          !roomData.currentQuestion) {
+        setResultsData({
+          question: previousRoom.current.currentQuestion,
+          answers: previousRoom.current.answers
+        });
+        setShowResults(true);
+      }
+      
       setRoom(roomData);
+      previousRoom.current = roomData;
+      
       const playerData = await fetchPlayers(roomData.userIds);
       setPlayers(playerData);
     } catch (err) {
@@ -158,11 +175,6 @@ const MultiplayerGamePage: React.FC = () => {
       return 'answering';
     }
   
-    const allAnswered = room.userIds.every(uid => room.answers[uid] !== undefined);
-    if (allAnswered) {
-      return 'results';
-    }
-  
     return 'waiting';
   };  
 
@@ -199,14 +211,6 @@ const MultiplayerGamePage: React.FC = () => {
           />
         )}
 
-        {gameStatus === 'results' && (
-          <ResultsView
-            question={room.currentQuestion || 'No question'}
-            answers={room.answers || {}}
-            currentUserUid={user.uid}
-          />
-        )}
-
         {gameStatus === 'waiting' && (
           <div className={styles.waiting}>
             {room.userIds.length < 2
@@ -219,6 +223,16 @@ const MultiplayerGamePage: React.FC = () => {
           </div>
         )}
       </div>
+
+      {showResults && resultsData && (
+      <ResultsPopup
+        question={resultsData.question}
+        answers={resultsData.answers}
+        players={players}
+        currentUserUid={user.uid} // Pass current user UID
+        onDismiss={() => setShowResults(false)}
+      />
+    )}
 
       {error && <div className={styles.errorMessage}>{error}</div>}
     </div>

@@ -10,6 +10,7 @@ export interface PreviousRoundData {
   question?: string;
   askingUserId?: string;
   answers: Record<string, string>;
+  roundNumber?: number; // Added for clarity
 }
 
 export interface Room {

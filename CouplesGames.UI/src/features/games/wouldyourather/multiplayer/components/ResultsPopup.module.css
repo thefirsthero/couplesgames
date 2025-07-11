@@ -1,0 +1,92 @@
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+  
+  .popup {
+    background-color: #1e1e1e;
+    border-radius: 12px;
+    padding: 30px;
+    max-width: 90%;
+    width: 600px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    border: 1px solid #444;
+  }
+  
+  .question {
+    font-size: 1.3rem;
+    margin: 20px 0;
+    padding: 15px;
+    background-color: #2d2d2d;
+    border-radius: 8px;
+    text-align: center;
+    color: #fff;
+  }
+  
+  .resultsList {
+    max-height: 300px;
+    overflow-y: auto;
+    margin: 20px 0;
+    padding: 10px;
+    background-color: #252525;
+    border-radius: 8px;
+  }
+  
+  .resultItem {
+    padding: 12px 15px;
+    margin-bottom: 8px;
+    background-color: #2d2d2d;
+    border-radius: 6px;
+    font-size: 1.1rem;
+    color: #fff;
+  }
+  
+  .youChose {
+    font-weight: bold;
+    color: #4CAF50;
+  }
+  
+  .theyChose {
+    font-weight: bold;
+    color: #2196F3;
+  }
+  
+  .choice {
+    font-weight: normal;
+    color: #e0e0e0;
+  }
+  
+  .skipped {
+    font-style: italic;
+    color: #9E9E9E;
+  }
+  
+  .actions {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+  }
+  
+  .dismissButton {
+    padding: 12px 30px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    border: none;
+    border-radius: 6px;
+    background-color: #2196F3;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .dismissButton:hover {
+    background-color: #0b7dda;
+  }
