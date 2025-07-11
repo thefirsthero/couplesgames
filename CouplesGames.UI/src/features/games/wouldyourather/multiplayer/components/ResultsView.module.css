@@ -1,39 +1,36 @@
 .container {
-    width: 100%;
-    text-align: center;
-  }
-  
-  .question {
-    font-size: 1.4rem;
-    margin: 25px 0 40px;
-    padding: 20px;
-    background-color: #2d2d2d;
-    border-radius: 8px;
-  }
-  
-  .resultsContainer {
-    display: flex;
-    gap: 30px;
-    justify-content: center;
-  }
-  
-  .optionResult {
-    flex: 1;
-    max-width: 300px;
-    padding: 20px;
-    background-color: #1e1e1e;
-    border-radius: 8px;
-  }
-  
-  .playersList {
-    list-style: none;
-    padding: 0;
-    margin: 20px 0 0;
-  }
-  
-  .player {
-    padding: 10px;
-    margin-bottom: 8px;
-    background-color: #333;
-    border-radius: 4px;
-  }
+  width: 100%;
+  text-align: center;
+}
+
+.question {
+  font-size: 1.4rem;
+  margin: 25px 0 40px;
+  padding: 20px;
+  background-color: #2d2d2d;
+  border-radius: 8px;
+}
+
+.resultsList {
+  list-style: none;
+  padding: 0;
+  margin: 20px 0;
+}
+
+.resultItem {
+  padding: 15px;
+  margin-bottom: 10px;
+  background-color: #2d2d2d;
+  border-radius: 8px;
+  font-size: 1.1rem;
+}
+
+.choice {
+  font-weight: bold;
+  color: #007bff;
+}
+
+.noOtherAnswers {
+  font-style: italic;
+  color: #aaa;
+}

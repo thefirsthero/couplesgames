@@ -20,7 +20,17 @@ const ResultsView: React.FC<ResultsViewProps> = ({ question, answers, currentUse
   const otherChoices = Object.entries(answers)
     .filter(([uid]) => uid !== currentUserUid)
     .map(([uid, answer]) => {
-      const choiceText = answer === 'A' ? optionA : answer === 'B' ? optionB : answer;
+      let choiceText;
+      if (answer === 'skip') {
+        choiceText = 'Skipped';
+      } else if (answer === 'A') {
+        choiceText = optionA;
+      } else if (answer === 'B') {
+        choiceText = optionB;
+      } else {
+        choiceText = answer;
+      }
+      
       return {
         uid,
         choice: choiceText
@@ -36,7 +46,7 @@ const ResultsView: React.FC<ResultsViewProps> = ({ question, answers, currentUse
         <div className={styles.resultsList}>
           {otherChoices.map(({ uid, choice }) => (
             <div key={uid} className={styles.resultItem}>
-              They chose option: <span className={styles.choice}>{choice}</span>
+              They chose: <span className={styles.choice}>{choice}</span>
             </div>
           ))}
         </div>

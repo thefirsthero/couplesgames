@@ -15,6 +15,10 @@ const AnswerForm: React.FC<AnswerFormProps> = ({ question, onSubmit, colors }) =
     onSubmit(selectedOption);
   };
 
+  const handleSkip = () => {
+    onSubmit('skip');
+  };
+
   // Extract options from question text
   const getOptions = () => {
     const match = question.match(/Would you rather (.+) or (.+)\?/i);
@@ -50,13 +54,21 @@ const AnswerForm: React.FC<AnswerFormProps> = ({ question, onSubmit, colors }) =
         </button>
       </div>
       
-      <button 
-        className={styles.submitButton}
-        onClick={handleSubmit}
-        disabled={!selectedOption}
-      >
-        Submit Answer
-      </button>
+      <div className={styles.actions}>
+        <button 
+          className={styles.skipButton}
+          onClick={handleSkip}
+        >
+          Skip Question
+        </button>
+        <button 
+          className={styles.submitButton}
+          onClick={handleSubmit}
+          disabled={!selectedOption}
+        >
+          Submit Answer
+        </button>
+      </div>
     </div>
   );
 };

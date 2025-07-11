@@ -90,7 +90,7 @@ const MultiplayerGamePage: React.FC = () => {
     const resetQuestionIfNeeded = async () => {
       if (!room || isResetting.current) return;
   
-      const allAnswered = room.userIds.every(uid => room.answers[uid]);
+      const allAnswered = room.userIds.every(uid => room.answers[uid] !== undefined);
       if (allAnswered && !isSettingQuestion.current) {
         isResetting.current = true;
         try {
@@ -154,11 +154,11 @@ const MultiplayerGamePage: React.FC = () => {
       return 'asking';
     }
   
-    if (room.currentQuestion && !room.answers[user.uid]) {
+    if (room.currentQuestion && !room.answers[user.uid] && room.answers[user.uid] !== 'skip') {
       return 'answering';
     }
   
-    const allAnswered = room.userIds.every(uid => room.answers[uid]);
+    const allAnswered = room.userIds.every(uid => room.answers[uid] !== undefined);
     if (allAnswered) {
       return 'results';
     }
@@ -213,6 +213,8 @@ const MultiplayerGamePage: React.FC = () => {
               ? 'Waiting for another player to join...'
               : !room.currentQuestion
               ? 'Preparing next question...'
+              : room.answers[user.uid] === 'skip'
+              ? "You've skipped this question"
               : 'Waiting for other player to choose...'}
           </div>
         )}
