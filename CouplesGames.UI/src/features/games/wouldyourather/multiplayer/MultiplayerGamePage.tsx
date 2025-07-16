@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import { useAuth } from '../../../../hooks/useAuth';
+import { signalRService } from '../../../../services/signalRService';
 import {
   fetchRoom,
   fetchPlayers,
@@ -21,7 +22,7 @@ import CopyRoomIdButton from './components/CopyRoomIdButton';
 
 const MultiplayerGamePage: React.FC = () => {
   const { roomId } = useParams<{ roomId: string }>();
-  const { user } = useAuth();
+  const { user, token, loading: authLoading } = useAuth();
   const [room, setRoom] = useState<Room | null>(null);
   const [players, setPlayers] = useState<Player[]>([]);
   const [loading, setLoading] = useState(true);
@@ -32,6 +33,99 @@ const MultiplayerGamePage: React.FC = () => {
   const isSettingQuestion = useRef(false);
   const isResetting = useRef(false);
   const previousRoom = useRef<Room | null>(null);
+  const [isConnected, setIsConnected] = useState(false);
+
+  // Initialize SignalR connection
+  useEffect(() => {
+    if (!token || !roomId) return;
+
+    const initializeConnection = async () => {
+      try {
+        await signalRService.initialize(token);
+        await signalRService.joinRoom(roomId);
+        setIsConnected(true);
+        await loadRoomData();
+      } catch (error) {
+        console.error('Failed to connect to game hub:', error);
+        setError('Failed to establish real-time connection');
+      }
+    };
+
+    initializeConnection();
+
+    return () => {
+      signalRService.dispose();
+    };
+  }, [token, roomId]);
+
+  const checkAndShowResults = (currentRoom: Room, previousRoomState: Room | null) => {
+    if (previousRoomState?.currentQuestion && !currentRoom.currentQuestion) {
+      setResultsData({
+        question: previousRoomState.currentQuestion,
+        answers: previousRoomState.answers
+      });
+      setShowResults(true);
+    }
+    previousRoom.current = currentRoom;
+  };
+
+  // Initial load of room data
+  useEffect(() => {
+    const loadInitialData = async () => {
+      if (!roomId || !user) return;
+      startLoading();
+      try {
+        const roomData = await fetchRoom(roomId);
+        setRoom(roomData);
+        previousRoom.current = roomData;
+        
+        const playerData = await fetchPlayers(roomData.userIds);
+        setPlayers(playerData);
+      } catch (err) {
+        setError('Failed to load room data');
+        console.error(err);
+      } finally {
+        setLoading(false);
+        stopLoading();
+      }
+    };
+
+    loadInitialData();
+  }, [roomId, user]);
+
+  // Set up SignalR event handlers
+  useEffect(() => {
+    if (!isConnected) return;
+
+    signalRService.onPlayerJoined(async (userId) => {
+      if (!room) return;
+      console.log('Player joined:', userId);
+      const playerData = await fetchPlayers([...room.userIds, userId]);
+      setPlayers(playerData);
+    });
+
+    signalRService.onAnswerSubmitted(async (data) => {
+      console.log('Answer submitted:', data);
+      checkAndShowResults(data.roomState, previousRoom.current);
+      setRoom(data.roomState);
+      const playerData = await fetchPlayers(data.roomState.userIds);
+      setPlayers(playerData);
+    });
+
+    signalRService.onQuestionUpdated((updatedRoom) => {
+      checkAndShowResults(updatedRoom, previousRoom.current);
+      setRoom(updatedRoom);
+    });
+
+    signalRService.onQuestionReset((updatedRoom) => {
+      checkAndShowResults(updatedRoom, previousRoom.current);
+      setRoom(updatedRoom);
+    });
+
+    return () => {
+      signalRService.clearListeners();
+    };
+  }, [isConnected, room]);
 
   const loadRoomData = async () => {
     if (!roomId || !user) return;
@@ -62,14 +156,6 @@ const MultiplayerGamePage: React.FC = () => {
       setLoading(false);
     }
   };
-
-  useEffect(() => {
-    startLoading();
-    loadRoomData().finally(() => stopLoading());
-
-    const interval = setInterval(loadRoomData, 3000);
-    return () => clearInterval(interval);
-  }, [roomId, user]);
 
   useEffect(() => {
     const setRandomQuestionIfNeeded = async () => {
@@ -181,7 +267,8 @@ const MultiplayerGamePage: React.FC = () => {
   const gameStatus = getGameStatus();
   const colorSet = colors[(room?.roundNumber || 1) % colors.length];
 
-  if (!user) return <div className={styles.error}>User not authenticated</div>;
+  if (authLoading) return <div className={styles.loading}>Loading...</div>;
+  if (!user || !token) return <div className={styles.error}>Please login to play</div>;
   if (loading) return <div className={styles.loading}>Loading game...</div>;
   if (error) return <div className={styles.error}>{error}</div>;
   if (!room) return <div className={styles.error}>Room not found</div>;
@@ -225,14 +312,14 @@ const MultiplayerGamePage: React.FC = () => {
       </div>
 
       {showResults && resultsData && (
-      <ResultsPopup
-        question={resultsData.question}
-        answers={resultsData.answers}
-        players={players}
-        currentUserUid={user.uid} // Pass current user UID
-        onDismiss={() => setShowResults(false)}
-      />
-    )}
+        <ResultsPopup
+          question={resultsData.question}
+          answers={resultsData.answers}
+          players={players}
+          currentUserUid={user.uid}
+          onDismiss={() => setShowResults(false)}
+        />
+      )}
 
       {error && <div className={styles.errorMessage}>{error}</div>}
     </div>

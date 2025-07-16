@@ -2,8 +2,10 @@
 using CouplesGames.Application.Queries.Rooms;
 using CouplesGames.Core.Interfaces;
 using CouplesGames.Infrastructure.Services;
+using CouplesGames.WebAPI.Hubs;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using System.Net;
 
 namespace CouplesGames.WebAPI.Controllers
@@ -15,15 +17,18 @@ namespace CouplesGames.WebAPI.Controllers
         private readonly IFirebaseAuthService _firebaseAuthService;
         private readonly IMediator _mediator;
         private readonly FirestoreService _firestoreService;
+        private readonly IHubContext<GameHub> _hubContext;
 
         public RoomsController(
             IFirebaseAuthService firebaseAuthService,
             IMediator mediator,
-            IFirestoreService firestoreService)
+            IFirestoreService firestoreService,
+            IHubContext<GameHub> hubContext)
         {
             _firebaseAuthService = firebaseAuthService;
             _mediator = mediator;
             _firestoreService = (FirestoreService)firestoreService;
+            _hubContext = hubContext;
         }
 
         public class CreateRoomRequest
@@ -59,6 +64,9 @@ namespace CouplesGames.WebAPI.Controllers
             {
                 var userId = await _firebaseAuthService.VerifyTokenAndGetUserIdAsync(authorization.Replace("Bearer ", ""));
                 var result = await _mediator.Send(new JoinRoomCommand(roomId, userId));
+                
+                await _hubContext.Clients.Group($"room_{roomId}").SendAsync("PlayerJoined", userId);
+                
                 return Ok(result);
             }
             catch (UnauthorizedAccessException)
@@ -84,6 +92,9 @@ namespace CouplesGames.WebAPI.Controllers
                     return Forbid();
 
                 var result = await _mediator.Send(command);
+                
+                await _hubContext.Clients.Group($"room_{command.RoomId}").SendAsync("QuestionUpdated", result);
+                
                 return Ok(result);
             }
             catch (UnauthorizedAccessException)
@@ -115,7 +126,6 @@ namespace CouplesGames.WebAPI.Controllers
                     return NotFound();
                 }
 
-                // Verify user is in the room
                 if (!room.UserIds.Contains(userId))
                 {
                     return Forbid();
@@ -135,17 +145,24 @@ namespace CouplesGames.WebAPI.Controllers
         }
 
         [HttpPost("answer")]
-        public async Task<IActionResult> SubmitAnswer([FromHeader(Name = "Authorization")] string authorization,[FromBody] SubmitAnswerCommand command)
+        public async Task<IActionResult> SubmitAnswer([FromHeader(Name = "Authorization")] string authorization, [FromBody] SubmitAnswerCommand command)
         {
             try
             {
                 var userId = await _firebaseAuthService.VerifyTokenAndGetUserIdAsync(authorization.Replace("Bearer ", ""));
 
-                // Ensure only the user can submit their own answer
                 if (command.UserId != userId)
                     return Forbid();
 
                 var result = await _mediator.Send(command);
+                
+                await _hubContext.Clients.Group($"room_{command.RoomId}").SendAsync("AnswerSubmitted", new
+                {
+                    userId = command.UserId,
+                    answer = command.Answer,
+                    roomState = result
+                });
+                
                 return Ok(result);
             }
             catch (UnauthorizedAccessException)
@@ -167,7 +184,6 @@ namespace CouplesGames.WebAPI.Controllers
                 var userId = await _firebaseAuthService.VerifyTokenAndGetUserIdAsync(authorization.Replace("Bearer ", ""));
 
                 var room = await _mediator.Send(new GetRoomQuery(command.RoomId));
-
                 if (room == null)
                     return NotFound();
 
@@ -175,6 +191,9 @@ namespace CouplesGames.WebAPI.Controllers
                     return Forbid();
 
                 var result = await _mediator.Send(command);
+                
+                await _hubContext.Clients.Group($"room_{command.RoomId}").SendAsync("QuestionReset", result);
+                
                 return Ok(result);
             }
             catch (UnauthorizedAccessException)
