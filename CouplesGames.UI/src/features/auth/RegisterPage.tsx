@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth } from './../../lib/firebase';
 import { useNavigate, Link } from 'react-router-dom';
+import { logger } from '../../utils/logger';
 
 const RegisterPage: React.FC = () => {
   const navigate = useNavigate();
@@ -17,7 +18,7 @@ const RegisterPage: React.FC = () => {
       navigate('/rooms');
     } catch (err) {
       setError('Failed to register');
-      console.error(err);
+      logger.error(err);
     }
   };
 

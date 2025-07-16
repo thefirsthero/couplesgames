@@ -4,6 +4,7 @@ import { useAuth } from './../../hooks/useAuth';
 import { createRoom, joinRoom } from './api';
 import styles from './RoomPage.module.css';
 import { useLoading } from '../../contexts/LoadingContext';
+import { logger } from '../../utils/logger';
 
 const RoomPage: React.FC = () => {
   const { user, loading } = useAuth();
@@ -27,7 +28,7 @@ const RoomPage: React.FC = () => {
       navigate(`/rooms/${room.id}`);
     } catch (err) {
       setError('Failed to create room');
-      console.error(err);
+      logger.error(err);
     } finally {
       stopLoading();
     }
@@ -46,7 +47,7 @@ const RoomPage: React.FC = () => {
       navigate(`/rooms/${roomIdToJoin}`);
     } catch (err) {
       setError('Failed to join room');
-      console.error(err);
+      logger.error(err);
     } finally {
       stopLoading();
     }

@@ -1,5 +1,6 @@
 import * as signalR from '@microsoft/signalr';
 import type { Room } from '../features/games/wouldyourather/multiplayer/api';
+import { logger } from '../utils/logger';
 
 class SignalRService {
   private hubConnection: signalR.HubConnection | null = null;
@@ -15,21 +16,21 @@ class SignalRService {
         skipNegotiation: true,
         transport: signalR.HttpTransportType.WebSockets
       })
-      .withAutomaticReconnect([0, 2000, 5000, 10000, 30000]) // Retry intervals
+      .withAutomaticReconnect([0, 2000, 5000, 10000, 30000])
       .configureLogging(signalR.LogLevel.Information)
       .build();
 
     // Set up connection event handlers
     this.hubConnection.onreconnecting(error => {
-      console.log('Reconnecting to game hub...', error);
+      logger.log('Reconnecting to game hub...', error);
     });
 
     this.hubConnection.onreconnected(connectionId => {
-      console.log('Reconnected to game hub', connectionId);
+      logger.log('Reconnected to game hub', connectionId);
     });
 
     this.hubConnection.onclose(error => {
-      console.log('Connection closed', error);
+      logger.log('Connection closed', error);
     });
 
     await this.hubConnection.start();

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from './../../lib/firebase';
 import { useNavigate, Link } from 'react-router-dom';
+import { logger } from '../../utils/logger';
 
 const LoginPage: React.FC = () => {
   const navigate = useNavigate();
@@ -17,7 +18,7 @@ const LoginPage: React.FC = () => {
       navigate('/rooms');
     } catch (err) {
       setError('Invalid email or password');
-      console.error(err);
+      logger.error(err);
     }
   };
 

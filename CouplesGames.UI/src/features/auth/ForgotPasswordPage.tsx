@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { sendPasswordResetEmail } from 'firebase/auth';
 import { auth } from './../../lib/firebase';
 import { Link } from 'react-router-dom';
+import { logger } from '../../utils/logger';
 
 const ForgotPasswordPage: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -14,7 +15,7 @@ const ForgotPasswordPage: React.FC = () => {
       setMessage('Password reset email sent');
     } catch (err) {
       setMessage('Failed to send reset email');
-      console.error(err);
+      logger.error(err);
     }
   };
 

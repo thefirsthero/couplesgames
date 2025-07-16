@@ -19,6 +19,7 @@ import styles from './MultiplayerGamePage.module.css';
 import { colors } from '../../../../lib/colors';
 import { useLoading } from './../../../../contexts/LoadingContext';
 import CopyRoomIdButton from './components/CopyRoomIdButton';
+import { logger } from '../../../../utils/logger';
 
 const MultiplayerGamePage: React.FC = () => {
   const { roomId } = useParams<{ roomId: string }>();
@@ -46,7 +47,7 @@ const MultiplayerGamePage: React.FC = () => {
         setIsConnected(true);
         await loadRoomData();
       } catch (error) {
-        console.error('Failed to connect to game hub:', error);
+        logger.error('Failed to connect to game hub:', error);
         setError('Failed to establish real-time connection');
       }
     };
@@ -83,7 +84,7 @@ const MultiplayerGamePage: React.FC = () => {
         setPlayers(playerData);
       } catch (err) {
         setError('Failed to load room data');
-        console.error(err);
+        logger.error(err);
       } finally {
         setLoading(false);
         stopLoading();
@@ -99,13 +100,13 @@ const MultiplayerGamePage: React.FC = () => {
 
     signalRService.onPlayerJoined(async (userId) => {
       if (!room) return;
-      console.log('Player joined:', userId);
+      logger.log('Player joined:', userId);
       const playerData = await fetchPlayers([...room.userIds, userId]);
       setPlayers(playerData);
     });
 
     signalRService.onAnswerSubmitted(async (data) => {
-      console.log('Answer submitted:', data);
+      logger.log('Answer submitted:', data);
       checkAndShowResults(data.roomState, previousRoom.current);
       setRoom(data.roomState);
       const playerData = await fetchPlayers(data.roomState.userIds);
@@ -151,7 +152,7 @@ const MultiplayerGamePage: React.FC = () => {
       setPlayers(playerData);
     } catch (err) {
       setError('Failed to load room data');
-      console.error(err);
+      logger.error(err);
     } finally {
       setLoading(false);
     }
@@ -179,7 +180,7 @@ const MultiplayerGamePage: React.FC = () => {
             questionData.id
           );
         } catch (err) {
-          console.error('Failed to set question:', err);
+          logger.error('Failed to set question:', err);
         } finally {
           isSettingQuestion.current = false;
         }
@@ -203,7 +204,7 @@ const MultiplayerGamePage: React.FC = () => {
   
           await resetQuestion(room.id, nextUserId);
         } catch (err) {
-          console.error('Failed to reset question:', err);
+          logger.error('Failed to reset question:', err);
         } finally {
           isResetting.current = false;
         }
@@ -222,7 +223,7 @@ const MultiplayerGamePage: React.FC = () => {
       await updateQuestion(roomId, question, user.uid, null);
     } catch (err) {
       setError('Failed to submit question');
-      console.error(err);
+      logger.error(err);
     } finally {
       stopLoading();
     }
@@ -236,7 +237,7 @@ const MultiplayerGamePage: React.FC = () => {
       await submitAnswer(roomId, user.uid, answer);
     } catch (err) {
       setError('Failed to submit answer');
-      console.error(err);
+      logger.error(err);
     } finally {
       stopLoading();
     }
