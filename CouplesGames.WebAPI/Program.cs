@@ -1,3 +1,4 @@
+using CouplesGames.Core.Configuration;
 using CouplesGames.Core.Interfaces;
 using CouplesGames.Infrastructure.Services;
 using MediatR;
@@ -9,11 +10,27 @@ var builder = WebApplication.CreateBuilder(args);
 // Load environment variables from .env file
 DotNetEnv.Env.Load();
 
-var frontendUrl = Environment.GetEnvironmentVariable("FRONTEND_URL");
+// Configure strongly typed settings
+builder.Services.Configure<FirebaseSettings>(options =>
+{
+    options.ProjectId = Environment.GetEnvironmentVariable("FIREBASE_PROJECT_ID") ?? 
+        builder.Configuration.GetValue<string>("Firebase:ProjectId") ?? "";
+    options.ServiceAccountJsonBase64 = Environment.GetEnvironmentVariable("FIREBASE_SERVICE_ACCOUNT_JSON_BASE64") ?? 
+        builder.Configuration.GetValue<string>("Firebase:ServiceAccountJsonBase64") ?? "";
+});
 
+builder.Services.Configure<FrontendSettings>(options =>
+{
+    options.Url = Environment.GetEnvironmentVariable("FRONTEND_URL") ?? 
+        builder.Configuration.GetValue<string>("Frontend:Url") ?? "";
+});
+
+// Validate required configuration
+var frontendUrl = Environment.GetEnvironmentVariable("FRONTEND_URL") ?? 
+    builder.Configuration.GetValue<string>("Frontend:Url") ?? "";
 if (string.IsNullOrWhiteSpace(frontendUrl))
 {
-    throw new InvalidOperationException("FrontendUrl environment variable is not set.");
+    throw new InvalidOperationException("Frontend URL is not configured");
 }
 
 builder.Services.AddCors(options =>
@@ -28,8 +45,8 @@ builder.Services.AddCors(options =>
 });
 
 // Add services to the container.
-builder.Services.AddScoped<IFirebaseAuthService, FirebaseAuthService>();
-builder.Services.AddScoped<IFirestoreService, FirestoreService>();
+builder.Services.AddSingleton<IFirebaseAuthService, FirebaseAuthService>();
+builder.Services.AddSingleton<IFirestoreService, FirestoreService>();
 
 builder.Services.AddHostedService<SelfPingHostedService>();
 
@@ -55,8 +72,7 @@ var app = builder.Build();
 app.UseSwagger();
 app.UseSwaggerUI();
 
-// Correct middleware ordering
-app.UseCors("AllowFrontend"); // CORS needs to be before routing for SignalR
+app.UseCors("AllowFrontend");
 app.UseRouting();
 app.UseHttpsRedirection();
 app.UseAuthorization();
