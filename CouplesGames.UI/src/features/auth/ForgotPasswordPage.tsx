@@ -15,9 +15,13 @@ const ForgotPasswordPage: React.FC = () => {
       setMessage('Password reset email sent');
     } catch (err) {
       setMessage('Failed to send reset email');
-      logger.error(err);
+      if (err instanceof Error) {
+        logger.error(err);
+      } else {
+        logger.error(String(err));
+      }
     }
-  };
+  };  
 
   return (
     <div>

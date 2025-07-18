@@ -18,9 +18,13 @@ const RegisterPage: React.FC = () => {
       navigate('/rooms');
     } catch (err) {
       setError('Failed to register');
-      logger.error(err);
+      if (err instanceof Error) {
+        logger.error(err);
+      } else {
+        logger.error(String(err));
+      }
     }
-  };
+  };  
 
   return (
     <div>

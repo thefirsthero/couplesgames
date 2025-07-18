@@ -18,9 +18,13 @@ const LoginPage: React.FC = () => {
       navigate('/rooms');
     } catch (err) {
       setError('Invalid email or password');
-      logger.error(err);
+      if (err instanceof Error) {
+        logger.error(err);
+      } else {
+        logger.error(String(err));
+      }
     }
-  };
+  };  
 
   return (
     <div>
