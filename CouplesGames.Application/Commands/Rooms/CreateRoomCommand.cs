@@ -35,23 +35,11 @@ public class CreateRoomCommandHandler : IRequestHandler<CreateRoomCommand, Room>
                 if (existingRoom.UserIds.Contains(request.UserId))
                 {
                     existingRoom.UserIds.Remove(request.UserId);
-                    await _firestoreService.UpdateRoomAsync(existingRoom);
+                    if (existingRoom.UserIds.Count == 0)
+                        await _firestoreService.DeleteRoomAsync(existingRoom.Id);
+                    else
+                        await _firestoreService.UpdateRoomAsync(existingRoom);
                 }
-            }
-
-            var reusableRoom = allRooms.FirstOrDefault(r => r.UserIds.Count == 0 && r.GameMode == request.GameMode);
-
-            if (reusableRoom != null)
-            {
-                reusableRoom.UserIds.Clear();
-                reusableRoom.UserIds.Add(request.UserId);
-                reusableRoom.Answers.Clear();
-                reusableRoom.CurrentQuestion = null;
-                reusableRoom.RoundNumber = 1;
-                reusableRoom.AskingUserId = request.GameMode == "ask_each_other" ? request.UserId : null;
-                reusableRoom.QuestionId = request.GameMode == "existing_questions" ? request.QuestionId : null;
-
-                return await _firestoreService.UpdateRoomAsync(reusableRoom);
             }
 
             var newRoom = new Room

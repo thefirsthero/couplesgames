@@ -170,5 +170,19 @@ namespace CouplesGames.Infrastructure.Services
                 throw;
             }
         }
+
+        public async Task DeleteRoomAsync(string roomId)
+        {
+            try
+            {
+                var docRef = _db.Collection("rooms").Document(roomId);
+                await docRef.DeleteAsync();
+            }
+            catch (Exception ex)
+            {
+                await LogErrorAsync("DeleteRoomAsync", ex);
+                throw;
+            }
+        }
     }
 }
