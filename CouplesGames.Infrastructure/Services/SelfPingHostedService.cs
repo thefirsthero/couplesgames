@@ -1,21 +1,24 @@
-﻿using Microsoft.Extensions.Hosting;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 
 namespace CouplesGames.Infrastructure.Services
 {
     public class SelfPingHostedService : BackgroundService
     {
-        private readonly HttpClient _httpClient;
+        private readonly IHttpClientFactory _httpClientFactory;
         private readonly string? _pingUrl;
         private readonly ILogger<SelfPingHostedService> _logger;
 
-        public SelfPingHostedService(IConfiguration configuration, ILogger<SelfPingHostedService> logger)
+        public SelfPingHostedService(
+            IConfiguration configuration,
+            ILogger<SelfPingHostedService> logger,
+            IHttpClientFactory httpClientFactory)
         {
-            _httpClient = new HttpClient();
+            _httpClientFactory = httpClientFactory;
             _pingUrl = configuration["SELF_PING_URL"];
             _logger = logger;
         }
@@ -28,11 +31,13 @@ namespace CouplesGames.Infrastructure.Services
                 return;
             }
 
+            var httpClient = _httpClientFactory.CreateClient();
+
             while (!stoppingToken.IsCancellationRequested)
             {
                 try
                 {
-                    var response = await _httpClient.GetAsync(_pingUrl, stoppingToken);
+                    var response = await httpClient.GetAsync(_pingUrl, stoppingToken);
                     if (response.IsSuccessStatusCode)
                     {
                         _logger.LogInformation($"Self ping successful at {DateTime.UtcNow}");
@@ -45,7 +50,6 @@ namespace CouplesGames.Infrastructure.Services
                 catch (Exception ex)
                 {
                     _logger.LogError(ex, "Self ping exception");
-                    // Optionally log to FirestoreService here if desired
                 }
 
                 await Task.Delay(TimeSpan.FromMinutes(12), stoppingToken);
