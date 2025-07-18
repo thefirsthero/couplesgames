@@ -28,12 +28,16 @@ const RoomPage: React.FC = () => {
       navigate(`/rooms/${room.id}`);
     } catch (err) {
       setError('Failed to create room');
-      logger.error(err);
+      if (err instanceof Error) {
+        logger.error(err);
+      } else {
+        logger.error(String(err));
+      }
     } finally {
       stopLoading();
     }
   };
-
+  
   const handleJoinRoom = async () => {
     setError('');
     startLoading();
@@ -47,11 +51,15 @@ const RoomPage: React.FC = () => {
       navigate(`/rooms/${roomIdToJoin}`);
     } catch (err) {
       setError('Failed to join room');
-      logger.error(err);
+      if (err instanceof Error) {
+        logger.error(err);
+      } else {
+        logger.error(String(err));
+      }
     } finally {
       stopLoading();
     }
-  };
+  };  
 
   if (loading) return <p>Loading...</p>;
 
