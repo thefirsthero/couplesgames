@@ -20,6 +20,7 @@ import { colors } from '../../../../lib/colors';
 import { useLoading } from './../../../../contexts/LoadingContext';
 import CopyRoomIdButton from './components/CopyRoomIdButton';
 import { logger } from '../../../../utils/logger';
+import { ErrorBoundary } from '../../../../components/ErrorBoundary';
 
 const MultiplayerGamePage: React.FC = () => {
   const { roomId } = useParams<{ roomId: string }>();
@@ -29,7 +30,7 @@ const MultiplayerGamePage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [showResults, setShowResults] = useState(false);
-  const [resultsData, setResultsData] = useState<{question: string, answers: Record<string, string>} | null>(null);
+  const [resultsData, setResultsData] = useState<{ question: string, answers: Record<string, string> } | null>(null);
   const { startLoading, stopLoading } = useLoading();
   const isSettingQuestion = useRef(false);
   const isResetting = useRef(false);
@@ -47,7 +48,12 @@ const MultiplayerGamePage: React.FC = () => {
         setIsConnected(true);
         await loadRoomData();
       } catch (error) {
-        logger.error('Failed to connect to game hub:', error);
+        logger.error(error instanceof Error ? error : String(error), {
+          component: 'MultiplayerGamePage',
+          action: 'initializeConnection',
+          userId: user?.uid,
+          additionalInfo: { roomId }
+        });
         setError('Failed to establish real-time connection');
       }
     };
@@ -70,28 +76,34 @@ const MultiplayerGamePage: React.FC = () => {
     previousRoom.current = currentRoom;
   };
 
+  const loadRoomData = async () => {
+    if (!roomId || !user) return;
+
+    startLoading();
+    try {
+      const roomData = await fetchRoom(roomId);
+      setRoom(roomData);
+      previousRoom.current = roomData;
+
+      const playerData = await fetchPlayers(roomData.userIds);
+      setPlayers(playerData);
+    } catch (error) {
+      setError('Failed to load room data');
+      logger.error(error instanceof Error ? error : String(error), {
+        component: 'MultiplayerGamePage',
+        action: 'loadRoomData',
+        userId: user?.uid,
+        additionalInfo: { roomId }
+      });
+    } finally {
+      setLoading(false);
+      stopLoading();
+    }
+  };
+
   // Initial load of room data
   useEffect(() => {
-    const loadInitialData = async () => {
-      if (!roomId || !user) return;
-      startLoading();
-      try {
-        const roomData = await fetchRoom(roomId);
-        setRoom(roomData);
-        previousRoom.current = roomData;
-        
-        const playerData = await fetchPlayers(roomData.userIds);
-        setPlayers(playerData);
-      } catch (err) {
-        setError('Failed to load room data');
-        logger.error(err);
-      } finally {
-        setLoading(false);
-        stopLoading();
-      }
-    };
-
-    loadInitialData();
+    loadRoomData();
   }, [roomId, user]);
 
   // Set up SignalR event handlers
@@ -128,36 +140,6 @@ const MultiplayerGamePage: React.FC = () => {
     };
   }, [isConnected, room]);
 
-  const loadRoomData = async () => {
-    if (!roomId || !user) return;
-
-    try {
-      const roomData = await fetchRoom(roomId);
-      
-      // Check if we've just completed a round
-      if (previousRoom.current && 
-          previousRoom.current.currentQuestion && 
-          !roomData.currentQuestion) {
-        setResultsData({
-          question: previousRoom.current.currentQuestion,
-          answers: previousRoom.current.answers
-        });
-        setShowResults(true);
-      }
-      
-      setRoom(roomData);
-      previousRoom.current = roomData;
-      
-      const playerData = await fetchPlayers(roomData.userIds);
-      setPlayers(playerData);
-    } catch (err) {
-      setError('Failed to load room data');
-      logger.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
     const setRandomQuestionIfNeeded = async () => {
       if (!room || !user || isSettingQuestion.current || isResetting.current) return;
@@ -179,8 +161,12 @@ const MultiplayerGamePage: React.FC = () => {
             user.uid,
             questionData.id
           );
-        } catch (err) {
-          logger.error('Failed to set question:', err);
+        } catch (error) {
+          logger.error(error instanceof Error ? error : String(error), {
+            component: 'MultiplayerGamePage',
+            action: 'setRandomQuestionIfNeeded',
+            userId: user?.uid
+          });
         } finally {
           isSettingQuestion.current = false;
         }
@@ -193,7 +179,7 @@ const MultiplayerGamePage: React.FC = () => {
   useEffect(() => {
     const resetQuestionIfNeeded = async () => {
       if (!room || isResetting.current) return;
-  
+
       const allAnswered = room.userIds.every(uid => room.answers[uid] !== undefined);
       if (allAnswered && !isSettingQuestion.current) {
         isResetting.current = true;
@@ -201,18 +187,22 @@ const MultiplayerGamePage: React.FC = () => {
           const currentIndex = room.userIds.indexOf(room.askingUserId || '');
           const nextIndex = (currentIndex + 1) % room.userIds.length;
           const nextUserId = room.userIds[nextIndex];
-  
+
           await resetQuestion(room.id, nextUserId);
-        } catch (err) {
-          logger.error('Failed to reset question:', err);
+        } catch (error) {
+          logger.error(error instanceof Error ? error : String(error), {
+            component: 'MultiplayerGamePage',
+            action: 'resetQuestionIfNeeded',
+            userId: user?.uid
+          });
         } finally {
           isResetting.current = false;
         }
       }
     };
-  
+
     resetQuestionIfNeeded();
-  }, [room]);  
+  }, [room]);
 
   const handleSubmitQuestion = async (optionA: string, optionB: string) => {
     if (!roomId || !user) return;
@@ -221,9 +211,13 @@ const MultiplayerGamePage: React.FC = () => {
     try {
       const question = `Would you rather ${optionA} or ${optionB}?`;
       await updateQuestion(roomId, question, user.uid, null);
-    } catch (err) {
+    } catch (error) {
       setError('Failed to submit question');
-      logger.error(err);
+      logger.error(error instanceof Error ? error : String(error), {
+        component: 'MultiplayerGamePage',
+        action: 'handleSubmitQuestion',
+        userId: user?.uid
+      });
     } finally {
       stopLoading();
     }
@@ -235,9 +229,13 @@ const MultiplayerGamePage: React.FC = () => {
     startLoading();
     try {
       await submitAnswer(roomId, user.uid, answer);
-    } catch (err) {
+    } catch (error) {
       setError('Failed to submit answer');
-      logger.error(err);
+      logger.error(error instanceof Error ? error : String(error), {
+        component: 'MultiplayerGamePage',
+        action: 'handleSubmitAnswer',
+        userId: user?.uid
+      });
     } finally {
       stopLoading();
     }
@@ -245,85 +243,92 @@ const MultiplayerGamePage: React.FC = () => {
 
   const getGameStatus = () => {
     if (!room || !user) return 'loading';
-  
+
     if (room.userIds.length < 2) {
       return 'waiting';
     }
-  
+
     if (room.gameMode === 'existing_questions' && !room.currentQuestion) {
       return 'loading';
     }
-  
+
     if (room.gameMode === 'ask_each_other' && room.askingUserId === user.uid && !room.currentQuestion) {
       return 'asking';
     }
-  
+
     if (room.currentQuestion && !room.answers[user.uid] && room.answers[user.uid] !== 'skip') {
       return 'answering';
     }
-  
+
     return 'waiting';
-  };  
+  };
 
   const gameStatus = getGameStatus();
   const colorSet = colors[(room?.roundNumber || 1) % colors.length];
 
-  if (authLoading) return <div className={styles.loading}>Loading...</div>;
-  if (!user || !token) return <div className={styles.error}>Please login to play</div>;
-  if (loading) return <div className={styles.loading}>Loading game...</div>;
-  if (error) return <div className={styles.error}>{error}</div>;
-  if (!room) return <div className={styles.error}>Room not found</div>;
-
   return (
-    <div className={styles.container}>
-      <div className={styles.header}>
-        <div className={styles.headerContent}>
-          <h1>
-            {room.gameMode === 'existing_questions'
-              ? 'Existing Questions'
-              : 'Ask Each Other'}
-          </h1>
-          <div className={styles.round}>Round {room.roundNumber}</div>
-        </div>
-        <CopyRoomIdButton roomId={room.id} />
-      </div>
-
-      <div className={styles.gameArea}>
-        {gameStatus === 'asking' && <QuestionForm onSubmit={handleSubmitQuestion} />}
-
-        {gameStatus === 'answering' && room.currentQuestion && (
-          <AnswerForm
-            question={room.currentQuestion}
-            onSubmit={handleSubmitAnswer}
-            colors={colorSet}
-          />
-        )}
-
-        {gameStatus === 'waiting' && (
-          <div className={styles.waiting}>
-            {room.userIds.length < 2
-              ? 'Waiting for another player to join...'
-              : !room.currentQuestion
-              ? 'Preparing next question...'
-              : room.answers[user.uid] === 'skip'
-              ? "You've skipped this question"
-              : 'Waiting for other player to choose...'}
+    <ErrorBoundary>
+      {authLoading && <div className={styles.loading}>Loading...</div>}
+      {!user || !token ? (
+        <div className={styles.error}>Please login to play</div>
+      ) : loading ? (
+        <div className={styles.loading}>Loading game...</div>
+      ) : error ? (
+        <div className={styles.error}>{error}</div>
+      ) : !room ? (
+        <div className={styles.error}>Room not found</div>
+      ) : (
+        <div className={styles.container}>
+          <div className={styles.header}>
+            <div className={styles.headerContent}>
+              <h1>
+                {room.gameMode === 'existing_questions'
+                  ? 'Existing Questions'
+                  : 'Ask Each Other'}
+              </h1>
+              <div className={styles.round}>Round {room.roundNumber}</div>
+            </div>
+            <CopyRoomIdButton roomId={room.id} />
           </div>
-        )}
-      </div>
 
-      {showResults && resultsData && (
-        <ResultsPopup
-          question={resultsData.question}
-          answers={resultsData.answers}
-          players={players}
-          currentUserUid={user.uid}
-          onDismiss={() => setShowResults(false)}
-        />
+          <div className={styles.gameArea}>
+            {gameStatus === 'asking' && <QuestionForm onSubmit={handleSubmitQuestion} />}
+
+            {gameStatus === 'answering' && room.currentQuestion && (
+              <AnswerForm
+                question={room.currentQuestion}
+                onSubmit={handleSubmitAnswer}
+                colors={colorSet}
+              />
+            )}
+
+            {gameStatus === 'waiting' && (
+              <div className={styles.waiting}>
+                {room.userIds.length < 2
+                  ? 'Waiting for another player to join...'
+                  : !room.currentQuestion
+                    ? 'Preparing next question...'
+                    : room.answers[user.uid] === 'skip'
+                      ? "You've skipped this question"
+                      : 'Waiting for other player to choose...'}
+              </div>
+            )}
+          </div>
+
+          {showResults && resultsData && (
+            <ResultsPopup
+              question={resultsData.question}
+              answers={resultsData.answers}
+              players={players}
+              currentUserUid={user.uid}
+              onDismiss={() => setShowResults(false)}
+            />
+          )}
+
+          {error && <div className={styles.errorMessage}>{error}</div>}
+        </div>
       )}
-
-      {error && <div className={styles.errorMessage}>{error}</div>}
-    </div>
+    </ErrorBoundary>
   );
 };
 

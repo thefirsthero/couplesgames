@@ -12,40 +12,83 @@ class SignalRService {
     }
 
     const cleanApiUrl = apiUrl.replace(/\/$/, '');
+    const url = `${cleanApiUrl}/gameHub?token=${token}`;
 
-    this.hubConnection = new signalR.HubConnectionBuilder()
-      .withUrl(`${cleanApiUrl}/gameHub?token=${token}`, {
-        skipNegotiation: true,
-        transport: signalR.HttpTransportType.WebSockets
-      })
-      .withAutomaticReconnect([0, 2000, 5000, 10000, 30000])
-      .configureLogging(signalR.LogLevel.Warning)
-      .build();
+    try {
+      this.hubConnection = new signalR.HubConnectionBuilder()
+        .withUrl(url, {
+          skipNegotiation: true,
+          transport: signalR.HttpTransportType.WebSockets
+        })
+        .withAutomaticReconnect([0, 2000, 5000, 10000, 30000])
+        .configureLogging(signalR.LogLevel.Warning)
+        .build();
 
-    // Set up connection event handlers
-    this.hubConnection.onreconnecting(error => {
-      logger.log('Reconnecting to game hub...', error);
-    });
+      this.hubConnection.onreconnecting(error => {
+        logger.error(error || 'SignalR reconnecting', {
+          component: 'SignalRService',
+          action: 'onreconnecting'
+        });
+      });
 
-    this.hubConnection.onreconnected(connectionId => {
-      logger.log('Reconnected to game hub', connectionId);
-    });
+      this.hubConnection.onreconnected(connectionId => {
+        logger.log('SignalR reconnected', {
+          component: 'SignalRService',
+          action: 'onreconnected',
+          connectionId
+        });
+      });
 
-    this.hubConnection.onclose(error => {
-      logger.log('Connection closed', error);
-    });
+      this.hubConnection.onclose(error => {
+        logger.error(error || 'SignalR connection closed', {
+          component: 'SignalRService',
+          action: 'onclose'
+        });
+      });
 
-    await this.hubConnection.start();
+      await this.hubConnection.start();
+      logger.log('SignalR connected', {
+        component: 'SignalRService',
+        action: 'initialize'
+      });
+    } catch (error) {
+      logger.error(error instanceof Error ? error : String(error), {
+        component: 'SignalRService',
+        action: 'initialize'
+      });
+    }
   }
 
   public async joinRoom(roomId: string): Promise<void> {
     if (!this.hubConnection) throw new Error('Hub connection not initialized');
-    await this.hubConnection.invoke('JoinRoom', roomId);
+    try {
+      await this.hubConnection.invoke('JoinRoom', roomId);
+      logger.log(`Joined room: ${roomId}`, {
+        component: 'SignalRService',
+        action: 'joinRoom'
+      });
+    } catch (error) {
+      logger.error(error instanceof Error ? error : String(error), {
+        component: 'SignalRService',
+        action: 'joinRoom'
+      });
+    }
   }
 
   public async leaveRoom(roomId: string): Promise<void> {
     if (!this.hubConnection) throw new Error('Hub connection not initialized');
-    await this.hubConnection.invoke('LeaveRoom', roomId);
+    try {
+      await this.hubConnection.invoke('LeaveRoom', roomId);
+      logger.log(`Left room: ${roomId}`, {
+        component: 'SignalRService',
+        action: 'leaveRoom'
+      });
+    } catch (error) {
+      logger.error(error instanceof Error ? error : String(error), {
+        component: 'SignalRService',
+        action: 'leaveRoom'
+      });
+    }
   }
 
   public onPlayerJoined(callback: (userId: string) => void): void {
@@ -76,11 +119,23 @@ class SignalRService {
     this.hubConnection.off('QuestionReset');
   }
 
-  public dispose(): void {
+  public async dispose(): Promise<void> {
     if (this.hubConnection) {
-      this.clearListeners();
-      this.hubConnection.stop();
-      this.hubConnection = null;
+      try {
+        this.clearListeners();
+        await this.hubConnection.stop();
+        logger.log('SignalR disconnected', {
+          component: 'SignalRService',
+          action: 'dispose'
+        });
+      } catch (error) {
+        logger.error(error instanceof Error ? error : String(error), {
+          component: 'SignalRService',
+          action: 'dispose'
+        });
+      } finally {
+        this.hubConnection = null;
+      }
     }
   }
 }
