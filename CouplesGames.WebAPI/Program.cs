@@ -55,12 +55,13 @@ var app = builder.Build();
 app.UseSwagger();
 app.UseSwaggerUI();
 
-app.UseHttpsRedirection();
+// Correct middleware ordering
+app.UseCors("AllowFrontend"); // CORS needs to be before routing for SignalR
 app.UseRouting();
-app.UseCors("AllowFrontend");
+app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapHub<GameHub>("/gameHub");
-
 app.MapControllers();
+
 app.Run();

@@ -11,8 +11,10 @@ class SignalRService {
       throw new Error('VITE_API_URL environment variable is not defined');
     }
 
+    const cleanApiUrl = apiUrl.replace(/\/$/, '');
+
     this.hubConnection = new signalR.HubConnectionBuilder()
-      .withUrl(`${apiUrl}gameHub?token=${token}`, {
+      .withUrl(`${cleanApiUrl}/gameHub?token=${token}`, {
         skipNegotiation: true,
         transport: signalR.HttpTransportType.WebSockets
       })
