@@ -13,20 +13,20 @@ DotNetEnv.Env.Load();
 // Configure strongly typed settings
 builder.Services.Configure<FirebaseSettings>(options =>
 {
-    options.ProjectId = Environment.GetEnvironmentVariable("FIREBASE_PROJECT_ID") ?? 
+    options.ProjectId = Environment.GetEnvironmentVariable("FIREBASE_PROJECT_ID") ??
         builder.Configuration.GetValue<string>("Firebase:ProjectId") ?? "";
-    options.ServiceAccountJsonBase64 = Environment.GetEnvironmentVariable("FIREBASE_SERVICE_ACCOUNT_JSON_BASE64") ?? 
+    options.ServiceAccountJsonBase64 = Environment.GetEnvironmentVariable("FIREBASE_SERVICE_ACCOUNT_JSON_BASE64") ??
         builder.Configuration.GetValue<string>("Firebase:ServiceAccountJsonBase64") ?? "";
 });
 
 builder.Services.Configure<FrontendSettings>(options =>
 {
-    options.Url = Environment.GetEnvironmentVariable("FRONTEND_URL") ?? 
+    options.Url = Environment.GetEnvironmentVariable("FRONTEND_URL") ??
         builder.Configuration.GetValue<string>("Frontend:Url") ?? "";
 });
 
 // Validate required configuration
-var frontendUrl = Environment.GetEnvironmentVariable("FRONTEND_URL") ?? 
+var frontendUrl = Environment.GetEnvironmentVariable("FRONTEND_URL") ??
     builder.Configuration.GetValue<string>("Frontend:Url") ?? "";
 if (string.IsNullOrWhiteSpace(frontendUrl))
 {
@@ -49,9 +49,16 @@ builder.Services.AddHttpClient();
 builder.Services.AddSingleton<IFirebaseAuthService, FirebaseAuthService>();
 builder.Services.AddSingleton<IFirestoreService, FirestoreService>();
 
-builder.Services.AddHostedService<SelfPingHostedService>();
+// Conditionally register SelfPingHostedService based on environment variable
+var enableSelfPing = Environment.GetEnvironmentVariable("ENABLE_SELF_PING")
+                     ?? builder.Configuration.GetValue<string>("EnableSelfPing")
+                     ?? "false";
 
-// Register MediatR for the Application project assembly where handlers live
+if (enableSelfPing.Equals("true", StringComparison.OrdinalIgnoreCase))
+{
+    builder.Services.AddHostedService<SelfPingHostedService>();
+}
+
 builder.Services.AddMediatR(cfg =>
     cfg.RegisterServicesFromAssembly(Assembly.Load("CouplesGames.Application"))
 );
