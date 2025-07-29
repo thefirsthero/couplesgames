@@ -1,6 +1,13 @@
 @CouplesGames_HostAddress = http://localhost:5119
 
-GET {{CouplesGames_HostAddress}}/weatherforecast/
+// health check
+GET {{CouplesGames_HostAddress}}/api/health
+Accept: application/json
+
+###
+
+// get solo games questions
+GET {{CouplesGames_HostAddress}}/api/questions/solowyr
 Accept: application/json
 
 ###

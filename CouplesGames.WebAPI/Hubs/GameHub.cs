@@ -34,7 +34,7 @@ namespace CouplesGames.WebAPI.Hubs
                 }
 
                 await Groups.AddToGroupAsync(Context.ConnectionId, userId);
-                
+
                 await base.OnConnectedAsync();
             }
             catch
