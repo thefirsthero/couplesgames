@@ -49,16 +49,6 @@ builder.Services.AddHttpClient();
 builder.Services.AddSingleton<IFirebaseAuthService, FirebaseAuthService>();
 builder.Services.AddSingleton<IFirestoreService, FirestoreService>();
 
-// Conditionally register SelfPingHostedService based on environment variable
-var enableSelfPing = Environment.GetEnvironmentVariable("ENABLE_SELF_PING")
-                     ?? builder.Configuration.GetValue<string>("EnableSelfPing")
-                     ?? "false";
-
-if (enableSelfPing.Equals("true", StringComparison.OrdinalIgnoreCase))
-{
-    builder.Services.AddHostedService<SelfPingHostedService>();
-}
-
 builder.Services.AddMediatR(cfg =>
     cfg.RegisterServicesFromAssembly(Assembly.Load("CouplesGames.Application"))
 );
