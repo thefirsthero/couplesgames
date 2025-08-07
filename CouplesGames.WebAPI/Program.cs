@@ -23,6 +23,8 @@ builder.Services.Configure<FrontendSettings>(options =>
 {
     options.Url = Environment.GetEnvironmentVariable("FRONTEND_URL") ??
         builder.Configuration.GetValue<string>("Frontend:Url") ?? "";
+    options.SecondaryUrl = Environment.GetEnvironmentVariable("FRONTEND_URL_2") ??
+        builder.Configuration.GetValue<string>("Frontend:SecondaryUrl") ?? "";
 });
 
 // Validate required configuration
@@ -37,7 +39,14 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
     {
-        policy.WithOrigins(frontendUrl)
+        var secondaryUrl = Environment.GetEnvironmentVariable("FRONTEND_URL_2") ??
+            builder.Configuration.GetValue<string>("Frontend:SecondaryUrl") ?? "";
+
+        var origins = string.IsNullOrWhiteSpace(secondaryUrl) 
+            ? new[] { frontendUrl }
+            : new[] { frontendUrl, secondaryUrl };
+
+        policy.WithOrigins(origins)
               .AllowAnyHeader()
               .AllowAnyMethod()
               .AllowCredentials();
